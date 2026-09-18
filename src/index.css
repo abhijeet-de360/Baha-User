@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-background: #FFFDF8;
+  --color-card: #FFFFFF;
+  --color-text-main: #292936;
+  --color-text-muted: #686777;
+  --color-text-light: #9B99A9;
+
+  --color-brand-purple: #6C63A8;
+  --color-brand-purple-light: #F0EEF8;
+  --color-brand-purple-dark: #554E87;
+  --color-brand-blue: #A8D8E8;
+  --color-brand-blue-light: #EDF7FA;
+  --color-brand-yellow: #FFD66B;
+  --color-brand-yellow-light: #FFF8E7;
+  --color-brand-yellow-dark: #E5BD52;
+  --color-brand-mint: #A9D8B8;
+  --color-brand-mint-light: #EEF8F1;
+  --color-brand-coral: #F28C82;
+  --color-brand-coral-light: #FDEEEB;
+  --color-brand-coral-dark: #D96F65;
+
+  --font-heading: 'Baloo 2', cursive, sans-serif;
+  --font-body: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 28px;
+  --radius-4xl: 36px;
+
+  --shadow-soft: 0 8px 30px -4px rgba(108, 99, 168, 0.08);
+  --shadow-soft-hover: 0 16px 36px -6px rgba(108, 99, 168, 0.16);
+  --shadow-card: 0 4px 20px -2px rgba(41, 41, 54, 0.05);
+  --shadow-glow-yellow: 0 0 25px rgba(255, 214, 107, 0.45);
+  --shadow-glow-purple: 0 0 25px rgba(108, 99, 168, 0.35);
+
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-float-delayed: float 4s ease-in-out 2s infinite;
+  --animate-bounce-subtle: bounce-subtle 2s ease-in-out infinite;
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes bounce-subtle {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+}
+
+:root {
+  --bg-main: #FFFDF8;
+  --primary: #6C63A8;
+  --secondary: #A8D8E8;
+  --accent: #FFD66B;
+  --mint: #A9D8B8;
+  --coral: #F28C82;
+  --text-color: #292936;
+}
+
+body {
+  background-color: #FFFDF8;
+  color: #292936;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
+  font-family: 'Baloo 2', cursive, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background-color: #FFD66B;
+  color: #292936;
+}
+
+/* Hide scrollbar completely cross-browser */
+html, body, * {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+*::-webkit-scrollbar,
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+
+/* Swiper Hero Banner Custom Styles */
+.hero-swiper .swiper-pagination-bullet {
+  width: 10px;
+  height: 10px;
+  background: #292936;
+  opacity: 0.3;
+  transition: all 0.3s ease;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+  width: 28px;
+  border-radius: 9999px;
+  background: #6C63A8;
+  opacity: 1;
+}

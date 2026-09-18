@@ -1,0 +1,520 @@
+{
+  "categories": [
+    {
+      "id": "cat-1",
+      "slug": "boys",
+      "title": "Boys",
+      "image": "/assets/category/boys.png",
+      "bgGradient": "from-[#EDF7FA] to-[#EEF8F1]"
+    },
+    {
+      "id": "cat-2",
+      "slug": "girls",
+      "title": "Girls",
+      "image": "/assets/category/girls.png",
+      "bgGradient": "from-[#FDEEEB] to-[#FFF8E7]"
+    },
+    {
+      "id": "cat-3",
+      "slug": "baby",
+      "title": "Baby",
+      "image": "/assets/category/baby.png",
+      "bgGradient": "from-[#F0EEF8] to-[#FFF8E7]"
+    },
+    {
+      "id": "cat-4",
+      "slug": "newborn",
+      "title": "Newborn",
+      "image": "/assets/category/newborn.png",
+      "bgGradient": "from-[#FFF8E7] to-[#EDF7FA]"
+    },
+    {
+      "id": "cat-5",
+      "slug": "ethnic-wear",
+      "title": "Ethnic Wear",
+      "image": "/assets/category/ethnic.png",
+      "bgGradient": "from-[#FDEEEB] to-[#F0EEF8]"
+    },
+    {
+      "id": "cat-6",
+      "slug": "sets",
+      "title": "Party Wear",
+      "image": "/assets/category/party.png",
+      "bgGradient": "from-[#EEF8F1] to-[#FFF8E7]"
+    },
+    {
+      "id": "cat-7",
+      "slug": "casual-wear",
+      "title": "Casual Wear",
+      "image": "/assets/category/casual.png",
+      "bgGradient": "from-[#FFF8E7] to-[#EDF7FA]"
+    },
+    {
+      "id": "cat-8",
+      "slug": "accessories",
+      "title": "Accessories",
+      "image": "/assets/category/accessories.png",
+      "bgGradient": "from-[#EDF7FA] to-[#F0EEF8]"
+    }
+  ],
+  "products": [
+    {
+      "id": "prod-1",
+      "name": "Sunny Meadow Embroidered Linen Romper",
+      "category": "Baby & Toddler",
+      "ageGroup": "baby",
+      "gender": "unisex",
+      "price": 34.00,
+      "originalPrice": 42.00,
+      "rating": 4.9,
+      "reviewsCount": 128,
+      "colors": [
+        { "name": "Honey Dijon", "hex": "#E5BD52", "image": "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Sage Leaf", "hex": "#A9D8B8", "image": "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Lavender Mist", "hex": "#6C63A8", "image": "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["0-3M", "3-6M", "6-12M", "12-18M", "18-24M"],
+      "badges": ["organic", "sale"],
+      "discountPercent": 20,
+      "description": "Ultra-soft, breathable certified organic linen romper featuring delicate sunbeam hand-embroidery and snap-bottom fasteners for easy diaper changes.",
+      "fabric": "100% GOTS Certified Organic French Linen",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=800&q=80",
+      "tags": ["organic", "linen", "romper", "bestseller"]
+    },
+    {
+      "id": "prod-2",
+      "name": "Dino Explorer Waffle-Knit Cotton Tee",
+      "category": "Little Boys",
+      "ageGroup": "kids",
+      "gender": "boys",
+      "price": 24.50,
+      "rating": 4.8,
+      "reviewsCount": 94,
+      "colors": [
+        { "name": "Sky Blue", "hex": "#A8D8E8", "image": "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Warm Biscuit", "hex": "#E7DFCC", "image": "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Charcoal Slate", "hex": "#292936", "image": "https://images.unsplash.com/photo-1543332164-6e82f355badc?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["2T", "3T", "4T", "5T", "6-7Y", "8-9Y"],
+      "badges": ["bestseller"],
+      "description": "Textured breathable waffle knit designed for playground adventures. Pre-washed for zero shrinkage and maximum cuddle-softness.",
+      "fabric": "100% Combed Slub Cotton",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=800&q=80",
+      "tags": ["cotton", "boys", "waffle", "everyday"]
+    },
+    {
+      "id": "prod-3",
+      "name": "Pastel Bloom Tiered Twirl Dress",
+      "category": "Little Girls",
+      "ageGroup": "kids",
+      "gender": "girls",
+      "price": 38.00,
+      "originalPrice": 48.00,
+      "rating": 5.0,
+      "reviewsCount": 156,
+      "colors": [
+        { "name": "Coral Rose", "hex": "#F28C82", "image": "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Buttercup", "hex": "#FFD66B", "image": "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Lilac Cloud", "hex": "#6C63A8", "image": "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["2T", "3T", "4T", "5-6Y", "7-8Y", "9-10Y"],
+      "badges": ["sale", "bestseller"],
+      "discountPercent": 25,
+      "description": "The ultimate spin-and-twirl party dress with a double-layered airy skirt, ruffle wing shoulders, and smooth invisible back zip.",
+      "fabric": "Organic Cotton Voile with Soft Cotton Lining",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=800&q=80",
+      "tags": ["girls", "dress", "party", "twirl"]
+    },
+    {
+      "id": "prod-4",
+      "name": "CloudSoft Bamboo 2-Piece Sleepwear Set",
+      "category": "Organic Sleepwear",
+      "ageGroup": "all",
+      "gender": "unisex",
+      "price": 29.00,
+      "rating": 4.9,
+      "reviewsCount": 210,
+      "colors": [
+        { "name": "Mint Meadow", "hex": "#A9D8B8", "image": "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Cloud Blue", "hex": "#A8D8E8", "image": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Cream Oat", "hex": "#FFF8E7", "image": "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["6-12M", "12-18M", "2T", "3T", "4T", "5T", "6-8Y"],
+      "badges": ["organic"],
+      "description": "Thermo-regulating bamboo viscose pajamas that keep little ones warm in winter and cool in summer. Tagless with flat-lock anti-chafing seams.",
+      "fabric": "95% Bamboo Rayon, 5% Spandex",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=800&q=80",
+      "tags": ["sleepwear", "bamboo", "organic", "pajamas"]
+    },
+    {
+      "id": "prod-5",
+      "name": "Little Sailor Striped Organic Dungarees",
+      "category": "Baby & Toddler",
+      "ageGroup": "toddler",
+      "gender": "unisex",
+      "price": 36.00,
+      "rating": 4.7,
+      "reviewsCount": 68,
+      "colors": [
+        { "name": "French Navy & Cream", "hex": "#292936", "image": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Mustard Stripe", "hex": "#FFD66B", "image": "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["6-12M", "12-18M", "18-24M", "2T", "3T"],
+      "badges": ["new", "organic"],
+      "description": "Vintage-inspired yarn-dyed striped overalls with real coconut wood buttons and adjustable shoulder straps that grow with your toddler.",
+      "fabric": "100% GOTS Certified Organic Cotton Twill",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=800&q=80",
+      "tags": ["dungarees", "overalls", "vintage", "new"]
+    },
+    {
+      "id": "prod-6",
+      "name": "Cozy Bear Ears Fleece Hooded Zip Jacket",
+      "category": "Outerwear",
+      "ageGroup": "kids",
+      "gender": "unisex",
+      "price": 45.00,
+      "originalPrice": 55.00,
+      "rating": 4.9,
+      "reviewsCount": 312,
+      "colors": [
+        { "name": "Caramel Bear", "hex": "#B8824C", "image": "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Polar White", "hex": "#F5F5F7", "image": "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["12-18M", "2T", "3T", "4T", "5-6Y"],
+      "badges": ["sale", "bestseller"],
+      "discountPercent": 18,
+      "description": "Adorably cozy sherpa fleece jacket with cute 3D bear ears on the hood. Features a chin-guard zipper protector for safety.",
+      "fabric": "Recycled Eco-Plush Fleece with Jersey Lining",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=800&q=80",
+      "tags": ["jacket", "fleece", "winter", "outerwear"]
+    },
+    {
+      "id": "prod-7",
+      "name": "Retro Canvas Low-Top Play Sneakers",
+      "category": "Shoes & Soles",
+      "ageGroup": "kids",
+      "gender": "unisex",
+      "price": 32.00,
+      "rating": 4.8,
+      "reviewsCount": 88,
+      "colors": [
+        { "name": "Sunny Yellow", "hex": "#FFD66B", "image": "https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Sky Cadet", "hex": "#A8D8E8", "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Lavender Pop", "hex": "#6C63A8", "image": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["EU 22 (US 6)", "EU 24 (US 7.5)", "EU 26 (US 9)", "EU 28 (US 11)", "EU 30 (US 12.5)"],
+      "badges": ["new"],
+      "description": "Flexible, wide-toe-box sneakers engineered for natural foot development with easy Velcro double straps for independent kids.",
+      "fabric": "Organic Washed Canvas & Natural Rubber Outsole",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=800&q=80",
+      "tags": ["shoes", "sneakers", "canvas", "footwear"]
+    },
+    {
+      "id": "prod-8",
+      "name": "Sweet Strawberry Knitted Cotton Cardigan",
+      "category": "Little Girls",
+      "ageGroup": "kids",
+      "gender": "girls",
+      "price": 35.00,
+      "rating": 5.0,
+      "reviewsCount": 142,
+      "colors": [
+        { "name": "Milk & Berry", "hex": "#FFFDF8", "image": "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Coral Pop", "hex": "#F28C82", "image": "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["2T", "3T", "4T", "5-6Y", "7-8Y"],
+      "badges": ["bestseller", "organic"],
+      "description": "Charming hand-knitted pure cotton cardigan featuring sweet embroidered strawberries and scalloped pearl edges.",
+      "fabric": "100% Breathable Combed Cotton Knit",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=800&q=80",
+      "tags": ["cardigan", "knit", "girls", "sweet"]
+    },
+    {
+      "id": "prod-9",
+      "name": "Festive Golden Peacock Kurta & Dhoti Set",
+      "category": "Ethnic Wear",
+      "ageGroup": "kids",
+      "gender": "boys",
+      "price": 1299.00,
+      "originalPrice": 1699.00,
+      "rating": 4.9,
+      "reviewsCount": 86,
+      "colors": [
+        { "name": "Royal Mustard", "hex": "#E5BD52", "image": "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Emerald Silk", "hex": "#1B4D3E", "image": "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["2-3Y", "4-5Y", "6-7Y", "8-9Y"],
+      "badges": ["bestseller", "sale"],
+      "discountPercent": 23,
+      "description": "Rich Jacquard silk blend kurta with comfortable elasticated cotton-lined dhoti pants. Perfect for weddings and celebrations.",
+      "fabric": "Jacquard Silk Blend with 100% Cotton Lining",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80",
+      "tags": ["ethnic", "kurta", "dhoti", "festive"]
+    },
+    {
+      "id": "prod-10",
+      "name": "Royal Anarkali Gown with Chiffon Dupatta",
+      "category": "Ethnic Wear",
+      "ageGroup": "kids",
+      "gender": "girls",
+      "price": 1499.00,
+      "originalPrice": 1999.00,
+      "rating": 5.0,
+      "reviewsCount": 112,
+      "colors": [
+        { "name": "Rani Pink", "hex": "#E75480", "image": "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Sky Blue", "hex": "#A8D8E8", "image": "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["3-4Y", "5-6Y", "7-8Y", "9-10Y"],
+      "badges": ["bestseller", "sale"],
+      "discountPercent": 25,
+      "description": "Exquisite golden foil printed tiered Anarkali with lightweight matching dupatta and soft inner lining for total comfort.",
+      "fabric": "Georgette with Breathable Cotton Lining",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=800&q=80",
+      "tags": ["ethnic", "anarkali", "gown", "traditional"]
+    },
+    {
+      "id": "prod-11",
+      "name": "Starlight Shimmer Tutu Party Frock",
+      "category": "Party Wear",
+      "ageGroup": "kids",
+      "gender": "girls",
+      "price": 1199.00,
+      "rating": 4.9,
+      "reviewsCount": 98,
+      "colors": [
+        { "name": "Glitter Lilac", "hex": "#6C63A8", "image": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Blush Coral", "hex": "#F28C82", "image": "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["2T", "3T", "4T", "5-6Y", "7-8Y"],
+      "badges": ["new"],
+      "description": "Magical multi-layered tulle party dress with hand-embellished sequins on the bodice and a satin bow at the back.",
+      "fabric": "Soft Poly Tulle & 100% Cotton Lining",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=80",
+      "tags": ["party", "tutu", "frock", "dress"]
+    },
+    {
+      "id": "prod-12",
+      "name": "Gentleman Velvet Blazer & Bowtie 3-Piece Set",
+      "category": "Party Wear",
+      "ageGroup": "kids",
+      "gender": "boys",
+      "price": 1599.00,
+      "originalPrice": 1999.00,
+      "rating": 4.8,
+      "reviewsCount": 75,
+      "colors": [
+        { "name": "Midnight Navy", "hex": "#292936", "image": "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Wine Red", "hex": "#722F37", "image": "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["2-3Y", "4-5Y", "6-7Y", "8-9Y"],
+      "badges": ["bestseller"],
+      "description": "Tailored velvet blazer with crisp white collared shirt, matching tailored trousers, and pre-tied satin bowtie.",
+      "fabric": "Micro Velvet & Cotton Shirting",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=800&q=80",
+      "tags": ["party", "blazer", "formal", "suit"]
+    },
+    {
+      "id": "prod-13",
+      "name": "Cozy Safari Animals Cotton Dungaree Set",
+      "category": "Casual Wear",
+      "ageGroup": "baby",
+      "gender": "unisex",
+      "price": 799.00,
+      "rating": 4.9,
+      "reviewsCount": 134,
+      "colors": [
+        { "name": "Olive Safari", "hex": "#A9D8B8", "image": "https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Mustard Sun", "hex": "#FFD66B", "image": "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["6-12M", "12-18M", "18-24M", "2-3Y"],
+      "badges": ["new"],
+      "description": "Everyday play dungaree printed with playful jungle animals, paired with a cloud-soft solid ribbed undershirt.",
+      "fabric": "100% Organic Combed Cotton",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=800&q=80",
+      "tags": ["casual", "dungaree", "safari", "baby"]
+    },
+    {
+      "id": "prod-14",
+      "name": "Sunshine Daisy Floral Ruffle Romper",
+      "category": "Casual Wear",
+      "ageGroup": "toddler",
+      "gender": "girls",
+      "price": 699.00,
+      "originalPrice": 899.00,
+      "rating": 4.7,
+      "reviewsCount": 54,
+      "colors": [
+        { "name": "Daisy Yellow", "hex": "#FFD66B", "image": "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Blush Pink", "hex": "#FDEEEB", "image": "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["3-6M", "6-12M", "12-18M", "18-24M"],
+      "badges": ["sale"],
+      "discountPercent": 22,
+      "description": "Breathable floral romper with flutter sleeves, cross-back straps, and matching stretchy headband.",
+      "fabric": "100% Breathable Cotton Muslin",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=800&q=80",
+      "tags": ["casual", "romper", "floral", "toddler"]
+    },
+    {
+      "id": "prod-15",
+      "name": "Handmade Teddy Ears Sun Hat & Sunglasses",
+      "category": "Accessories",
+      "ageGroup": "kids",
+      "gender": "unisex",
+      "price": 399.00,
+      "rating": 4.9,
+      "reviewsCount": 89,
+      "colors": [
+        { "name": "Natural Straw", "hex": "#E7DFCC", "image": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Soft Pink", "hex": "#FDEEEB", "image": "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["One Size (1-5Y)"],
+      "badges": ["new"],
+      "description": "UPF 50+ breathable paper straw bucket hat with playful bear ears and flexible UV400 polarized shades for little explorers.",
+      "fabric": "Natural Paper Straw & Eco-Resin",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=800&q=80",
+      "tags": ["accessories", "hat", "sunglasses", "summer"]
+    },
+    {
+      "id": "prod-16",
+      "name": "Pure Mulberry Silk Hairband & Bow Clips Set",
+      "category": "Accessories",
+      "ageGroup": "kids",
+      "gender": "girls",
+      "price": 349.00,
+      "rating": 5.0,
+      "reviewsCount": 62,
+      "colors": [
+        { "name": "Pastel Trio", "hex": "#A8D8E8", "image": "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=80" },
+        { "name": "Golden Rose", "hex": "#FFD66B", "image": "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=800&q=80" }
+      ],
+      "sizes": ["One Size"],
+      "badges": ["bestseller"],
+      "description": "Ultra-gentle mulberry silk headband with non-slip tooth grip and 4 matching handmade alligator hair bow clips.",
+      "fabric": "100% Pure Mulberry Silk & Alloy Clip",
+      "inStock": true,
+      "featuredImage": "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=80",
+      "secondaryImage": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80",
+      "tags": ["accessories", "hairband", "bows", "silk"]
+    }
+  ],
+  "reviews": [
+    {
+      "id": "rev-1",
+      "author": "Sarah Jenkins",
+      "role": "Mom of Leo (3y) & Maya (8m)",
+      "rating": 5,
+      "comment": "The quality of the organic linen romper is incredible! It survived messy spaghetti lunches, countless washing machine cycles, and still looks brand new. The snap buttons are so convenient.",
+      "date": "2 days ago",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+      "productName": "Sunny Meadow Embroidered Linen Romper",
+      "verifiedPurchase": true
+    },
+    {
+      "id": "rev-2",
+      "author": "David Chen",
+      "role": "Dad of Oliver (5y)",
+      "rating": 5,
+      "comment": "Finally clothes that my son actually wants to put on without complaints! Tagless necklines make a huge difference for sensory-sensitive kids. We ordered 4 more waffle tees.",
+      "date": "1 week ago",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+      "productName": "Dino Explorer Waffle-Knit Cotton Tee",
+      "verifiedPurchase": true
+    },
+    {
+      "id": "rev-3",
+      "author": "Elena Rostova",
+      "role": "Mom of Sophia (4y)",
+      "rating": 5,
+      "comment": "The Pastel Bloom dress is purely magical. Sophia spent the entire birthday party twirling around. The fabric feels luxurious and soft against her sensitive skin.",
+      "date": "2 weeks ago",
+      "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80",
+      "productName": "Pastel Bloom Tiered Twirl Dress",
+      "verifiedPurchase": true
+    }
+  ],
+  "bundle": {
+    "id": "bundle-1",
+    "title": "The Sunny Meadow Adventure Look",
+    "subtitle": "Hand-picked organic ensemble for endless sunny giggles & playground exploring.",
+    "badge": "Save 15% on Full Look",
+    "coverImage": "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=1000&q=80",
+    "bundlePrice": 76.50,
+    "originalPrice": 90.00,
+    "discountPercent": 15,
+    "items": [
+      { "productName": "Sunny Meadow Embroidered Linen Romper", "itemPrice": 34.00, "category": "Apparel" },
+      { "productName": "Retro Canvas Low-Top Play Sneakers", "itemPrice": 32.00, "category": "Footwear" },
+      { "productName": "Sunbeam Bucket Sunhat (Organic UV50+)", "itemPrice": 24.00, "category": "Accessories" }
+    ]
+  },
+  "instagramPosts": [
+    {
+      "id": "ig-1",
+      "kidName": "Leo",
+      "age": "2y",
+      "image": "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=600&q=80",
+      "outfit": "Linen Romper in Dijon",
+      "likes": 428,
+      "handle": "@momlife_emma"
+    },
+    {
+      "id": "ig-2",
+      "kidName": "Maya & Ava",
+      "age": "4y & 6y",
+      "image": "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=600&q=80",
+      "outfit": "Pastel Bloom Twirl Dresses",
+      "likes": 891,
+      "handle": "@claire_and_girls"
+    },
+    {
+      "id": "ig-3",
+      "kidName": "Noah",
+      "age": "3y",
+      "image": "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=600&q=80",
+      "outfit": "Dino Explorer Slub Tee",
+      "likes": 512,
+      "handle": "@adventure_little_noah"
+    },
+    {
+      "id": "ig-4",
+      "kidName": "Chloe",
+      "age": "18m",
+      "image": "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=600&q=80",
+      "outfit": "Bamboo Sleep Set in Mint",
+      "likes": 673,
+      "handle": "@chloes_nursery"
+    }
+  ]
+}
