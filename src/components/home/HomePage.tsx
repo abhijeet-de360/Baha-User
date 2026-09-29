@@ -733,12 +733,12 @@ export const HomePage: React.FC = () => {
       </main>
 
       {/* 3. FOOTER */}
-      <Footer
+      {/* <Footer
         onCategoryClick={(cat) => {
           setSelectedCategory(cat);
           scrollToFeatured();
         }}
-      />
+      /> */}
 
       {/* ========================================== */}
       {/* 4. INTERACTIVE OVERLAYS & MODALS          */}

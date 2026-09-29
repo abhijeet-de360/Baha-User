@@ -655,7 +655,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ id }) => {
                                     isWishlisted={wishlistIds.includes(rel.id)}
                                     onToggleWishlist={handleToggleWishlist}
                                     onAddToCart={handleAddToCart}
-                                    onQuickView={(p) => router.push(`/product/${p.id}`)}
+                                    onQuickView={(p) => router.push(`/products/${p.id}`)}
                                 />
                             ))}
                         </div>
@@ -665,11 +665,11 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ id }) => {
             </main>
 
             {/* 6. FOOTER */}
-            <Footer
+            {/* <Footer
                 onCategoryClick={() => {
                     router.push('/');
                 }}
-            />
+            /> */}
 
             {/* ==================================================== */}
             {/* SIZE CHART MODAL DIALOG                              */}

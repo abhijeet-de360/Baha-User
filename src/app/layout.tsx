@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { CartDrawer } from "@/components/ui/CartDrawer";
 import { ShopProvider } from "@/context/ShopContext";
 import { TopAnnouncement } from "@/components/layout/TopAnnouncement";
+import { Footer } from "@/components/layout/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <TopAnnouncement />
           <Navbar />
           {children}
+          <Footer />
           <CartDrawer />
         </ShopProvider>
       </body>

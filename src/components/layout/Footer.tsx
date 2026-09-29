@@ -1,14 +1,16 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Sparkles, Mail, Send } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-interface FooterProps {
-  onCategoryClick: (category: string) => void;
-}
+// interface FooterProps {
+//   onCategoryClick: (category: string) => void;
+// }
 
-export const Footer: React.FC<FooterProps> = ({ onCategoryClick }) => {
+export const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
