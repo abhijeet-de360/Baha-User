@@ -333,8 +333,8 @@ export const Navbar: React.FC = () => {
               variant="yellow"
               size="default"
               onClick={() => {
-                alert('Signed into Baha Fashion Club!');
                 setUserModalOpen(false);
+                router.push('/sign-in');
               }}
               className="w-full rounded-xl text-xs font-bold"
             >

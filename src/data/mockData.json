@@ -516,5 +516,70 @@
       "likes": 673,
       "handle": "@chloes_nursery"
     }
-  ]
+  ],
+  "userProfile": {
+    "id": "user-001",
+    "firstName": "Priya",
+    "lastName": "Sharma",
+    "email": "priya.sharma@gmail.com",
+    "phone": "+91 98765 43210",
+    "avatarUrl": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=200&q=80",
+    "memberSince": "2023-04-12",
+    "membershipTier": "VIP Gold",
+    "vipPoints": 2450,
+    "wishlistIds": ["prod-3", "prod-6", "prod-9"],
+    "savedAddresses": [
+      {
+        "id": "addr-1",
+        "label": "Home",
+        "name": "Priya Sharma",
+        "line1": "42, Rose Garden Apartments",
+        "line2": "Sector 18, Noida",
+        "city": "Noida",
+        "state": "Uttar Pradesh",
+        "pincode": "201301",
+        "isDefault": true
+      },
+      {
+        "id": "addr-2",
+        "label": "Office",
+        "name": "Priya Sharma",
+        "line1": "DLF Cyber City, Tower C",
+        "line2": "Phase 2",
+        "city": "Gurugram",
+        "state": "Haryana",
+        "pincode": "122002",
+        "isDefault": false
+      }
+    ],
+    "recentOrders": [
+      {
+        "orderId": "BF-20240812-001",
+        "date": "2024-08-12",
+        "status": "Delivered",
+        "total": 76.50,
+        "items": ["prod-3", "prod-7"]
+      },
+      {
+        "orderId": "BF-20240725-002",
+        "date": "2024-07-25",
+        "status": "Delivered",
+        "total": 45.00,
+        "items": ["prod-1"]
+      },
+      {
+        "orderId": "BF-20240910-003",
+        "date": "2024-09-10",
+        "status": "In Transit",
+        "total": 112.00,
+        "items": ["prod-9", "prod-12", "prod-15"]
+      }
+    ],
+    "preferences": {
+      "ageGroups": ["Baby", "Toddler"],
+      "categories": ["Organic", "Party Wear"],
+      "newsletter": true,
+      "smsAlerts": false
+    }
+  }
 }

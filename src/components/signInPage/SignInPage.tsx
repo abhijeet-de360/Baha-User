@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, Sparkles, ArrowRight, Heart, Star } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const FLOATING_ICONS = [
   { emoji: '👗', style: 'top-[8%] left-[6%] text-3xl animate-float' },
@@ -20,6 +21,8 @@ const SignInPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
+  const router = useRouter();
+
   const validate = () => {
     const newErrors: { email?: string; password?: string } = {};
     if (!email) newErrors.email = 'Email is required.';
@@ -36,7 +39,7 @@ const SignInPage = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      alert('Welcome back to Baha Fashion! 🎉');
+      router.push('/profile')
     }, 1500);
   };
 
@@ -284,4 +287,4 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default SignInPage;
