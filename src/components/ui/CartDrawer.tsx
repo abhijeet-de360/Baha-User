@@ -1,7 +1,8 @@
+'use client';
+
 import React, { useState } from 'react';
 import { X, ShoppingBag, Trash2, ArrowRight, Sparkles, Tag, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import type { CartItem } from '../../types';
 import {
   Drawer,
   DrawerContent,
@@ -11,28 +12,22 @@ import {
   DrawerClose,
 } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
+import { useShop } from "@/context/ShopContext";
 
-export interface CartDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  items: CartItem[];
-  onUpdateQuantity: (id: string, newQty: number) => void;
-  onRemoveItem: (id: string) => void;
-  onClearCart: () => void;
-  appliedPromo?: string;
-  onApplyPromo?: (code: string) => { success: boolean; message: string; discountPercent: number };
-}
+export const CartDrawer: React.FC = () => {
+  const {
+    isCartOpen: isOpen,
+    setIsCartOpen,
+    cartItems: items,
+    handleUpdateQuantity: onUpdateQuantity,
+    handleRemoveItem: onRemoveItem,
+    handleClearCart: onClearCart,
+    appliedPromo,
+    handleApplyPromo: onApplyPromo,
+  } = useShop();
 
-export const CartDrawer: React.FC<CartDrawerProps> = ({
-  isOpen,
-  onClose,
-  items,
-  onUpdateQuantity,
-  onRemoveItem,
-  onClearCart,
-  appliedPromo = 'LITTLEJOY10',
-  onApplyPromo,
-}) => {
+  const onClose = () => setIsCartOpen(false);
+
   const [promoInput, setPromoInput] = useState(appliedPromo || '');
   const [promoMessage, setPromoMessage] = useState<{ text: string; success: boolean } | null>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -60,27 +55,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
     e.preventDefault();
     if (!promoInput.trim()) return;
     
-    if (onApplyPromo) {
-      const res = onApplyPromo(promoInput.trim());
-      setPromoMessage({ text: res.message, success: res.success });
-      if (res.success) {
-        confetti({
-          particleCount: 50,
-          spread: 60,
-          origin: { y: 0.6 },
-        });
-      }
-    } else {
-      if (promoInput.trim().toUpperCase() === 'LITTLEJOY10' || promoInput.trim().toUpperCase() === 'WELCOME15') {
-        setPromoMessage({ text: 'Coupon applied successfully! 🎉', success: true });
-        confetti({
-          particleCount: 50,
-          spread: 60,
-          origin: { y: 0.6 },
-        });
-      } else {
-        setPromoMessage({ text: 'Invalid coupon code.', success: false });
-      }
+    const res = onApplyPromo(promoInput.trim());
+    setPromoMessage({ text: res.message, success: res.success });
+    if (res.success) {
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.6 },
+      });
     }
   };
 

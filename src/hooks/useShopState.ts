@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import type { Product, CartItem } from '../types';
-import mockData from '../data/mockData.json';
+import type { Product, CartItem } from '@/types';
+import mockData from '@/data/mockData.json';
 
 export interface ToastMessage {
   id: string;
@@ -42,7 +42,7 @@ export function useShopState() {
       const saved = localStorage.getItem('baha_wishlist_ids');
       return saved ? JSON.parse(saved) : ['prod-3'];
     } catch {
-      return ['prod-3'];
+      return [];
     }
   });
 

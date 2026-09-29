@@ -1,15 +1,25 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Sparkles, X, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useShop } from '@/context/ShopContext';
 
-interface TopAnnouncementProps {
-  onPromoClick?: (code: string) => void;
-}
+// interface TopAnnouncementProps {
+//   onPromoClick?: (code: string) => void;
+// }
 
-export const TopAnnouncement: React.FC<TopAnnouncementProps> = ({ onPromoClick }) => {
+export const TopAnnouncement: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
 
+  const { setAppliedPromo, setIsCartOpen } = useShop();
+
   if (!isVisible) return null;
+
+  const onPromoClick = (code: string) => {
+    setAppliedPromo(code);
+    setIsCartOpen(true);
+  };
 
   return (
     <aside aria-label="Announcement" className="bg-brand-purple text-white text-xs sm:text-sm font-medium py-2 px-4 relative z-40 transition-all">
@@ -25,7 +35,7 @@ export const TopAnnouncement: React.FC<TopAnnouncementProps> = ({ onPromoClick }
             type="button"
             variant="yellow"
             size="sm"
-            onClick={() => onPromoClick && onPromoClick('LITTLEJOY10')}
+            onClick={() => onPromoClick('LITTLEJOY10')}
             className="h-6 px-2.5 py-0 rounded-md text-xs font-bold gap-1 cursor-pointer"
             title="Click to apply promo code"
           >
