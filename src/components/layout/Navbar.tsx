@@ -1,29 +1,33 @@
-import React, { useState } from 'react';
+'use client';
+
+import React, { useEffect, useMemo, useState } from 'react';
 import { Search, ShoppingBag, Heart, User, Menu, X, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useShop } from '@/context/ShopContext';
 
 interface NavbarProps {
   cartCount: number;
   wishlistCount: number;
   onOpenCart: () => void;
-  searchQuery: string;
-  onSearchChange: (q: string) => void;
   selectedCategory: string;
   onSelectCategory: (cat: string) => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  cartCount,
-  wishlistCount,
-  onOpenCart,
-  searchQuery,
-  onSearchChange,
-  selectedCategory,
-  onSelectCategory,
-}) => {
+export const Navbar: React.FC = () => {
+  const router = useRouter();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [userModalOpen, setUserModalOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('');
+
+  const { totalCartCount: cartCount, wishlistIds, setIsCartOpen } = useShop();
+
+  const wishlistCount = useMemo(() => wishlistIds.length, [wishlistIds]);
 
   const navLinks = [
     { label: 'New Arrivals', value: 'all' },
@@ -38,11 +42,49 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const popularTags = ['Linen Romper', 'Twirl Dress', 'Dino Tee', 'Ethnic Kurta', 'Party Frock'];
 
+  useEffect(() => {
+    const syncUrlState = () => {
+      const searchParams = new URLSearchParams(window.location.search);
+      const query = searchParams.get('search') || '';
+
+      setSearchQuery(query);
+      setSearchInput(query);
+      setActiveCategory(searchParams.get('category') || '');
+    };
+
+    syncUrlState();
+    window.addEventListener('popstate', syncUrlState);
+
+    return () => window.removeEventListener('popstate', syncUrlState);
+  }, []);
+
+  const onSearchChange = (q: string) => {
+    setSearchInput(q);
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput === searchQuery) return; // No change, do nothing
+
+      const searchParams = new URLSearchParams(window.location.search);
+
+      if (searchInput) {
+        searchParams.set('search', searchInput);
+      } else {
+        searchParams.delete('search');
+      }
+
+      router.push(`/products?${searchParams.toString()}`);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchInput, searchQuery, router]);
+
   return (
     <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#EFECE6] transition-all shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container">
         <div className="flex items-center justify-between py-3.5 gap-4">
-          
+
           {/* Left Side: Hamburger Menu (mobile) & Brand Logo */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Mobile Menu Button */}
@@ -59,12 +101,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
 
             {/* Brand Logo */}
-            <button 
-              type="button"
-              onClick={() => {
-                onSelectCategory('all');
-                document.getElementById('featured-collection')?.scrollIntoView({ behavior: 'smooth' });
-              }} 
+            <Link
+              href="/"
+              // onClick={() => {
+              //   onSelectCategory('all');
+              //   document.getElementById('featured-collection')?.scrollIntoView({ behavior: 'smooth' });
+              // }} 
               className="group text-left cursor-pointer focus:outline-none transition-transform active:scale-98"
             >
               <div className="flex items-center gap-2">
@@ -72,28 +114,28 @@ export const Navbar: React.FC<NavbarProps> = ({
                   Baha <span className="text-brand-yellow">Fashion</span>
                 </span>
               </div>
-            </button>
+            </Link>
           </div>
 
           {/* Middle Desktop Navigation Menu */}
           <nav className="hidden lg:flex items-center gap-6 xl:gap-7">
             {navLinks.map((link) => {
-              const isActive = selectedCategory === link.value;
+              const isActive = activeCategory === link.value;
               return (
-                <button
+                <Link
                   key={link.label}
-                  type="button"
-                  onClick={() => {
-                    onSelectCategory(link.value);
-                    document.getElementById('featured-collection')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className={`text-sm font-semibold transition-all relative py-1.5 cursor-pointer ${
-                    isActive
-                      ? 'text-brand-purple font-bold'
-                      : link.isSale
+                  href={`/products?category=${encodeURIComponent(link.value)}`}
+                  onClick={() => setActiveCategory(link.value)}
+                  // onClick={() => {
+                  //   onSelectCategory(link.value);
+                  //   document.getElementById('featured-collection')?.scrollIntoView({ behavior: 'smooth' });
+                  // }}
+                  className={`text-sm font-semibold transition-all relative py-1.5 cursor-pointer ${isActive
+                    ? 'text-brand-purple font-bold'
+                    : link.isSale
                       ? 'text-brand-coral hover:text-brand-coral/80 font-bold'
                       : 'text-text-main hover:text-brand-purple'
-                  }`}
+                    }`}
                 >
                   <span>{link.label}</span>
                   {link.isSale && (
@@ -104,7 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   {isActive && (
                     <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-purple rounded-full animate-fade-in" />
                   )}
-                </button>
+                </Link>
               );
             })}
           </nav>
@@ -163,7 +205,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               type="button"
               variant="ghost"
               size="icon"
-              onClick={onOpenCart}
+              onClick={() => setIsCartOpen(true)}
               className="hidden sm:inline-flex relative rounded-full text-text-main hover:text-brand-purple hover:bg-brand-purple-light"
               title="Shopping Bag"
               aria-label="Shopping Bag"
@@ -189,14 +231,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                   type="text"
                   autoFocus
                   placeholder="Search boys shirts, girls dresses, newborn sets, ethnic wear..."
-                  value={searchQuery}
-                  onChange={(e) => onSearchChange(e.target.value)}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
                   className="w-full pl-10 pr-9 py-2.5 bg-background rounded-2xl border border-[#DDD8CE] text-sm text-text-main placeholder-text-light focus:outline-none focus:ring-2 focus:ring-brand-purple"
                 />
                 {searchQuery && (
                   <button
                     type="button"
-                    onClick={() => onSearchChange('')}
+                    onClick={() => setSearchInput('')}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-main p-1"
                   >
                     <X className="w-4 h-4" />
@@ -291,8 +333,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               variant="yellow"
               size="default"
               onClick={() => {
-                alert('Signed into Baha Fashion Club!');
                 setUserModalOpen(false);
+                router.push('/sign-in');
               }}
               className="w-full rounded-xl text-xs font-bold"
             >
@@ -320,30 +362,32 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <div className="space-y-1.5 pt-2">
             {navLinks.map((link) => (
-              <Button
+              <Link
                 key={link.label}
-                type="button"
-                variant={selectedCategory === link.value ? "default" : "ghost"}
+                href={`/product?category=${encodeURIComponent(link.value)}`}
                 onClick={() => {
-                  onSelectCategory(link.value);
+                  setActiveCategory(link.value);
                   setMobileMenuOpen(false);
-                  document.getElementById('featured-collection')?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className={`w-full justify-between h-10 px-3 rounded-xl text-sm font-semibold ${
-                  selectedCategory === link.value
-                    ? 'font-bold'
-                    : 'text-text-main hover:bg-brand-purple-light hover:text-brand-purple'
-                }`}
+                // variant={selectedCategory === link.value ? "default" : "ghost"}
+                // onClick={() => {
+                //   onSelectCategory(link.value);
+                //   setMobileMenuOpen(false);
+                //   document.getElementById('featured-collection')?.scrollIntoView({ behavior: 'smooth' });
+                // }}
+                className={`w-full justify-between h-10 px-3 rounded-xl text-sm font-semibold ${activeCategory === link.value
+                  ? 'font-bold'
+                  : 'text-text-main hover:bg-brand-purple-light hover:text-brand-purple'
+                  }`}
               >
                 <span>{link.label}</span>
                 {link.isSale && (
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                    selectedCategory === link.value ? 'bg-white text-brand-coral' : 'bg-brand-coral text-white'
-                  }`}>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${activeCategory === link.value ? 'bg-white text-brand-coral' : 'bg-brand-coral text-white'
+                    }`}>
                     Sale
                   </span>
                 )}
-              </Button>
+              </Link>
             ))}
           </div>
 
@@ -355,7 +399,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               size="sm"
               onClick={() => {
                 setMobileMenuOpen(false);
-                onOpenCart();
+                setIsCartOpen(true);
               }}
               className="rounded-xl font-bold justify-center gap-2 h-10 border-[#DDD8CE]"
             >

@@ -1,13 +1,16 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Sparkles, Mail, Send } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
-interface FooterProps {
-  onCategoryClick: (category: string) => void;
-}
+// interface FooterProps {
+//   onCategoryClick: (category: string) => void;
+// }
 
-export const Footer: React.FC<FooterProps> = ({ onCategoryClick }) => {
+export const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -26,7 +29,7 @@ export const Footer: React.FC<FooterProps> = ({ onCategoryClick }) => {
 
   return (
     <footer className="bg-white border-t border-[#EFECE6] text-text-main pt-16 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container">
         
         {/* Newsletter Box */}
         <div className="bg-gradient-to-r from-brand-purple-light via-[#FFF8E7] to-brand-blue-light rounded-4xl p-8 sm:p-12 border border-[#EBE7DF] mb-16 shadow-card text-center max-w-4xl mx-auto">
@@ -111,29 +114,29 @@ export const Footer: React.FC<FooterProps> = ({ onCategoryClick }) => {
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm text-text-muted">
               <li>
-                <button type="button" onClick={() => onCategoryClick('Boys')} className="hover:text-brand-purple transition-colors cursor-pointer">
+                <Link href={`/products?category=${encodeURIComponent('Boys')}`} className="hover:text-brand-purple transition-colors cursor-pointer">
                   Boys Wear
-                </button>
+                </Link>
               </li>
               <li>
-                <button type="button" onClick={() => onCategoryClick('Girls')} className="hover:text-brand-purple transition-colors cursor-pointer">
+                <Link href={`/products?category=${encodeURIComponent('Girls')}`} className="hover:text-brand-purple transition-colors cursor-pointer">
                   Girls Dresses
-                </button>
+                </Link>
               </li>
               <li>
-                <button type="button" onClick={() => onCategoryClick('Baby')} className="hover:text-brand-purple transition-colors cursor-pointer">
+                <Link href={`/products?category=${encodeURIComponent('Baby')}`} className="hover:text-brand-purple transition-colors cursor-pointer">
                   Baby & Newborn
-                </button>
+                </Link>
               </li>
               <li>
-                <button type="button" onClick={() => onCategoryClick('Ethnic Wear')} className="hover:text-brand-purple transition-colors cursor-pointer">
+                <Link href={`/products?category=${encodeURIComponent('Ethnic Wear')}`} className="hover:text-brand-purple transition-colors cursor-pointer">
                   Festive Ethnic Wear
-                </button>
+                </Link>
               </li>
               <li>
-                <button type="button" onClick={() => onCategoryClick('Party Wear')} className="hover:text-brand-purple transition-colors cursor-pointer">
+                <Link href={`/products?category=${encodeURIComponent('Party Wear')}`} className="hover:text-brand-purple transition-colors cursor-pointer">
                   Party Outfits
-                </button>
+                </Link>
               </li>
             </ul>
           </div>

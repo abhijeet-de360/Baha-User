@@ -1,26 +1,26 @@
+'use client';
+
 import React, { useState, useMemo } from 'react';
 import { Sparkles, ArrowRight, Heart, Leaf, Star, ShoppingBag, Smile, RefreshCw, PackageCheck, Quote, CheckCircle, Camera, X } from 'lucide-react';
 
 // Layout & UI Components
-import { TopAnnouncement } from '../components/layout/TopAnnouncement';
-import { Navbar } from '../components/layout/Navbar';
-import { Footer } from '../components/layout/Footer';
-import { HeroBannerSlider } from '../components/home/HeroBannerSlider';
-import { ProductCard } from '../components/ui/ProductCard';
-import { CartDrawer } from '../components/ui/CartDrawer';
-import { QuickViewModal } from '../components/ui/QuickViewModal';
+import { TopAnnouncement } from '@/components/layout/TopAnnouncement';
+import { Footer } from '@/components/layout/Footer';
+import { HeroBannerSlider } from '@/components/home/HeroBannerSlider';
+import { ProductCard } from '@/components/ui/ProductCard';
+import { QuickViewModal } from '@/components/ui/QuickViewModal';
 import { Button } from '@/components/ui/button';
 
 // JSON Mock Data & Types
-import mockData from '../data/mockData.json';
+import mockData from '@/data/mockData.json';
 import type { 
   Product, 
   CategoryCard, 
   ParentReview, 
   OutfitLook, 
   InstagramStory 
-} from '../types';
-import { useShopState } from '../hooks/useShopState';
+} from '@/types';
+import { useShop } from '@/context/ShopContext';
 
 // Extract datasets from JSON
 const MOCK_CATEGORIES = mockData.categories as CategoryCard[];
@@ -47,7 +47,7 @@ export const HomePage: React.FC = () => {
     handleClearCart,
     handleToggleWishlist,
     handleApplyPromo,
-  } = useShopState();
+  } = useShop();
 
   // Local State: Quick View & Filters
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
@@ -132,26 +132,12 @@ export const HomePage: React.FC = () => {
     <div className="min-h-screen bg-background text-text-main flex flex-col selection:bg-brand-yellow">
       
       {/* 1. TOP ANNOUNCEMENT BAR */}
-      <TopAnnouncement 
+      {/* <TopAnnouncement 
         onPromoClick={(code) => {
           setAppliedPromo(code);
           setIsCartOpen(true);
         }} 
-      />
-
-      {/* 2. NAVBAR */}
-      <Navbar
-        cartCount={totalCartCount}
-        wishlistCount={wishlistIds.length}
-        onOpenCart={() => setIsCartOpen(true)}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        selectedCategory={selectedCategory}
-        onSelectCategory={(cat) => {
-          setSelectedCategory(cat);
-          scrollToFeatured();
-        }}
-      />
+      /> */}
 
       {/* MAIN HOMEPAGE CONTENT */}
       <main className="flex-1">
@@ -174,7 +160,7 @@ export const HomePage: React.FC = () => {
         {/* B. CATEGORY & DEPARTMENT SECTION                     */}
         {/* ---------------------------------------------------- */}
         <section className="py-5 sm:py-12 border-[#F3EFE8]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-3 gap-4">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-purple/10 text-brand-purple text-xs font-bold uppercase tracking-wider mb-1.5">
@@ -229,7 +215,7 @@ export const HomePage: React.FC = () => {
         {/* C1. NEW ARRIVALS PRODUCTS SECTION                    */}
         {/* ---------------------------------------------------- */}
         <section id="featured-collection" className="py-0 bg-background">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container">
             
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4 border-[#EAE5DC]">
@@ -307,7 +293,7 @@ export const HomePage: React.FC = () => {
         {/* C2. TRENDING PRODUCTS SECTION                        */}
         {/* ---------------------------------------------------- */}
         <section id="trending-products" className="py-14 bg-white border-t border-[#F3EFE8]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-4 border-b border-[#EAE5DC]">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-coral/10 text-brand-coral text-xs font-bold uppercase tracking-wider mb-2">
@@ -355,7 +341,7 @@ export const HomePage: React.FC = () => {
         {/* C3. FEATURED PRODUCTS SECTION                        */}
         {/* ---------------------------------------------------- */}
         <section id="featured-products" className="py-14 bg-background border-t border-[#F3EFE8]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-4 border-b border-[#EAE5DC]">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-yellow/30 text-amber-900 text-xs font-bold uppercase tracking-wider mb-2">
@@ -402,7 +388,7 @@ export const HomePage: React.FC = () => {
         {/* ---------------------------------------------------- */}
         {/* C4. FULL-WIDTH SPECIAL OFFER BANNER                  */}
         {/* ---------------------------------------------------- */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="container">
           <div 
             onClick={scrollToFeatured}
             className="w-full relative cursor-pointer group select-none overflow-hidden"
@@ -420,7 +406,7 @@ export const HomePage: React.FC = () => {
         {/* D. MIX & MATCH LOOKBOOK BUNDLE SECTION               */}
         {/* ---------------------------------------------------- */}
         <section id="outfit-builder" className="py-16  border-[#F3EFE8]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <div className="inline-flex items-center gap-2 bg-brand-yellow px-3.5 py-1 rounded-full text-xs font-bold text-text-main uppercase tracking-wider mb-2 shadow-xs">
                 <Sparkles className="w-3.5 h-3.5" />
@@ -539,7 +525,7 @@ export const HomePage: React.FC = () => {
         {/* E. VALUE PROPOSITIONS SECTION                        */}
         {/* ---------------------------------------------------- */}
         <section className="py-16 bg-background border-t border-[#F3EFE8]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container">
             <div className="text-center max-w-xl mx-auto mb-12">
               <div className="inline-flex items-center gap-2 text-brand-purple font-semibold text-xs tracking-wider uppercase mb-1">
                 <Sparkles className="w-3.5 h-3.5 text-brand-yellow fill-brand-yellow" />
@@ -627,7 +613,7 @@ export const HomePage: React.FC = () => {
         {/* F. PARENT REVIEWS & TESTIMONIALS SECTION            */}
         {/* ---------------------------------------------------- */}
         <section className="py-16 bg-white border-y border-[#EFECE6]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container">
             <div className="mb-12">
               <div className="flex items-center gap-2 text-brand-purple font-semibold text-xs tracking-wider uppercase mb-1">
                 <Sparkles className="w-3.5 h-3.5 text-brand-yellow fill-brand-yellow" />
@@ -690,7 +676,7 @@ export const HomePage: React.FC = () => {
         {/* G. INSTAGRAM COMMUNITY FEED SECTION                 */}
         {/* ---------------------------------------------------- */}
         <section className="py-16 bg-background">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container">
             <div className="text-center max-w-xl mx-auto mb-10">
               <div className="inline-flex items-center gap-2 text-brand-purple font-semibold text-xs tracking-wider uppercase mb-1">
                 <Camera className="w-3.5 h-3.5 text-brand-coral" />
@@ -747,12 +733,12 @@ export const HomePage: React.FC = () => {
       </main>
 
       {/* 3. FOOTER */}
-      <Footer
+      {/* <Footer
         onCategoryClick={(cat) => {
           setSelectedCategory(cat);
           scrollToFeatured();
         }}
-      />
+      /> */}
 
       {/* ========================================== */}
       {/* 4. INTERACTIVE OVERLAYS & MODALS          */}
@@ -765,18 +751,6 @@ export const HomePage: React.FC = () => {
         isWishlisted={quickViewProduct ? wishlistIds.includes(quickViewProduct.id) : false}
         onToggleWishlist={handleToggleWishlist}
         onAddToCart={handleAddToCart}
-      />
-
-      {/* SHADCN UI CART DRAWER */}
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        items={cartItems}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveItem={handleRemoveItem}
-        onClearCart={handleClearCart}
-        appliedPromo={appliedPromo}
-        onApplyPromo={handleApplyPromo}
       />
 
       {/* TOAST ALERT NOTIFICATION */}
@@ -822,3 +796,5 @@ export const HomePage: React.FC = () => {
     </div>
   );
 };
+
+export default HomePage;

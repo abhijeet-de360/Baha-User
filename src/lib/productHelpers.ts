@@ -1,4 +1,5 @@
-import type { Product } from '../types';
+import { Product } from "@/types";
+
 
 export interface SizeChartEntry {
   size: string;

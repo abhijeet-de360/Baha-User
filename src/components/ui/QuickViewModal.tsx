@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Star, ShoppingBag, Heart, Sparkles, Check, Minus, Plus } from 'lucide-react';
-import type { Product } from '../../types';
+import type { Product } from '@/types';
 import { Button } from '@/components/ui/button';
 
 interface QuickViewModalProps {
