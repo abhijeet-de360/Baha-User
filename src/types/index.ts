@@ -13,7 +13,7 @@ export interface Product {
   id: string;
   name: string;
   category: string;
-  ageGroup: 'baby' | 'toddler' | 'kids' | 'junior' | 'all';
+  ageGroup: 'baby' | 'toddler' | 'kids' | 'junior' | 'all' | 'newborn';
   gender: 'boys' | 'girls' | 'unisex';
   price: number;
   originalPrice?: number;

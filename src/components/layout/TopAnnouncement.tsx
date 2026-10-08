@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Sparkles, X, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useShop } from '@/context/ShopContext';
+import { useShopState } from '@/hooks/useShopState';
 
 // interface TopAnnouncementProps {
 //   onPromoClick?: (code: string) => void;
@@ -12,7 +12,7 @@ import { useShop } from '@/context/ShopContext';
 export const TopAnnouncement: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
 
-  const { setAppliedPromo, setIsCartOpen } = useShop();
+  const { setAppliedPromo, setIsCartOpen } = useShopState();
 
   if (!isVisible) return null;
 

@@ -12,7 +12,7 @@ import {
   DrawerClose,
 } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
-import { useShop } from "@/context/ShopContext";
+import { useShopState } from "@/hooks/useShopState";
 
 export const CartDrawer: React.FC = () => {
   const {
@@ -24,7 +24,7 @@ export const CartDrawer: React.FC = () => {
     handleClearCart: onClearCart,
     appliedPromo,
     handleApplyPromo: onApplyPromo,
-  } = useShop();
+  } = useShopState();
 
   const onClose = () => setIsCartOpen(false);
 

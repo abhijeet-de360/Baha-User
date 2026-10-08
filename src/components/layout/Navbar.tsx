@@ -5,7 +5,7 @@ import { Search, ShoppingBag, Heart, User, Menu, X, Sparkles } from 'lucide-reac
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useShop } from '@/context/ShopContext';
+import { useShopState } from '@/hooks/useShopState';
 
 interface NavbarProps {
   cartCount: number;
@@ -25,18 +25,18 @@ export const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
 
-  const { totalCartCount: cartCount, wishlistIds, setIsCartOpen } = useShop();
+  const { totalCartCount: cartCount, wishlistIds, setIsCartOpen } = useShopState();
 
   const wishlistCount = useMemo(() => wishlistIds.length, [wishlistIds]);
 
   const navLinks = [
     { label: 'New Arrivals', value: 'all' },
-    { label: 'Boys', value: 'Boys' },
-    { label: 'Girls', value: 'Girls' },
-    { label: 'Baby', value: 'Baby' },
-    { label: 'Ethnic Wear', value: 'Ethnic Wear' },
-    { label: 'Party Wear', value: 'Party Wear' },
-    { label: 'Casual Wear', value: 'Casual Wear' },
+    { label: 'Boys', value: 'boys' },
+    { label: 'Girls', value: 'girls' },
+    { label: 'Baby', value: 'baby' },
+    { label: 'Ethnic Wear', value: 'ethnic' },
+    { label: 'Party Wear', value: 'party' },
+    { label: 'Casual Wear', value: 'casual' },
     { label: 'Sale', value: 'sale', isSale: true },
   ];
 
@@ -124,7 +124,7 @@ export const Navbar: React.FC = () => {
               return (
                 <Link
                   key={link.label}
-                  href={`/products?category=${encodeURIComponent(link.value)}`}
+                  href={`/products/category/${encodeURIComponent(link.value)}`}
                   onClick={() => setActiveCategory(link.value)}
                   // onClick={() => {
                   //   onSelectCategory(link.value);
