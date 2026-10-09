@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import mockData from '@/data/mockData.json';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   User, Mail, Phone, MapPin, Star, Sparkles, Heart,
   Package, ChevronRight, CheckCircle2, Clock, Truck,
@@ -30,6 +31,7 @@ const STATUS_CONFIG: Record<string, { color: string; bg: string; icon: React.Rea
 type Tab = 'orders' | 'addresses' | 'wishlist' | 'preferences';
 
 const Profile = () => {
+  const router = useRouter();
   const profile = mockData.userProfile;
   const products = mockData.products;
   const [activeTab, setActiveTab] = useState<Tab>('orders');
@@ -102,7 +104,16 @@ const Profile = () => {
               <button className="flex items-center gap-1.5 text-xs font-bold text-brand-purple bg-brand-purple-light px-4 py-2 rounded-xl hover:bg-brand-purple hover:text-white transition-all">
                 <Edit3 className="w-3.5 h-3.5" /> Edit Profile
               </button>
-              <button className="flex items-center gap-1.5 text-xs font-bold text-text-muted bg-background px-3 py-2 rounded-xl border border-[#E2DDD5] hover:border-brand-coral hover:text-brand-coral transition-all">
+              <button
+                onClick={() => {
+                  try {
+                    localStorage.setItem('isAuthenticated', 'false');
+                  } catch {}
+                  router.push('/sign-in');
+                }}
+                className="flex items-center gap-1.5 text-xs font-bold text-text-muted bg-background px-3 py-2 rounded-xl border border-[#E2DDD5] hover:border-brand-coral hover:text-brand-coral transition-all cursor-pointer"
+                title="Sign Out"
+              >
                 <LogOut className="w-3.5 h-3.5" />
               </button>
             </div>

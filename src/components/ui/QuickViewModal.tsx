@@ -37,6 +37,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
 
   if (!product) return null;
 
+  const currentMainImage = activeImage || product.colors[0]?.image || product.featuredImage;
+
   const handleColorChange = (colorName: string) => {
     setSelectedColor(colorName);
     const found = product.colors.find((c) => c.name === colorName);
@@ -81,7 +83,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
           <div className="md:col-span-6 space-y-3">
             <div className="relative aspect-square rounded-3xl overflow-hidden bg-background border border-[#EFECE6]">
               <img
-                src={activeImage}
+                src={currentMainImage}
                 alt={product.name}
                 className="w-full h-full object-cover object-center"
               />
@@ -94,43 +96,49 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
 
             {/* Thumbnails */}
             <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              <button
-                type="button"
-                onClick={() => setActiveImage(product.featuredImage)}
-                className={`w-14 h-14 rounded-xl overflow-hidden border-2 flex-shrink-0 cursor-pointer transition-all ${
-                  activeImage === product.featuredImage ? 'border-brand-purple shadow-xs scale-105' : 'border-[#EFECE6] hover:border-brand-purple/50'
-                }`}
-              >
-                <img src={product.featuredImage} alt="Thumb 1" className="w-full h-full object-cover" />
-              </button>
+              {product.featuredImage && (
+                <button
+                  type="button"
+                  onClick={() => setActiveImage(product.featuredImage)}
+                  className={`w-14 h-14 rounded-xl overflow-hidden border-2 flex-shrink-0 cursor-pointer transition-all ${
+                    currentMainImage === product.featuredImage ? 'border-brand-purple shadow-xs scale-105' : 'border-[#EFECE6] hover:border-brand-purple/50'
+                  }`}
+                >
+                  <img src={product.featuredImage} alt="Thumb 1" className="w-full h-full object-cover" />
+                </button>
+              )}
 
               {product.secondaryImage && (
                 <button
                   type="button"
                   onClick={() => setActiveImage(product.secondaryImage!)}
                   className={`w-14 h-14 rounded-xl overflow-hidden border-2 flex-shrink-0 cursor-pointer transition-all ${
-                    activeImage === product.secondaryImage ? 'border-brand-purple shadow-xs scale-105' : 'border-[#EFECE6] hover:border-brand-purple/50'
+                    currentMainImage === product.secondaryImage ? 'border-brand-purple shadow-xs scale-105' : 'border-[#EFECE6] hover:border-brand-purple/50'
                   }`}
                 >
                   <img src={product.secondaryImage} alt="Thumb 2" className="w-full h-full object-cover" />
                 </button>
               )}
 
-              {product.colors.map((c) => (
-                <button
-                  type="button"
-                  key={c.name}
-                  onClick={() => {
-                    setSelectedColor(c.name);
-                    setActiveImage(c.image);
-                  }}
-                  className={`w-14 h-14 rounded-xl overflow-hidden border-2 flex-shrink-0 cursor-pointer transition-all ${
-                    activeImage === c.image ? 'border-brand-purple shadow-xs scale-105' : 'border-[#EFECE6] hover:border-brand-purple/50'
-                  }`}
-                >
-                  <img src={c.image} alt={c.name} className="w-full h-full object-cover" />
-                </button>
-              ))}
+              {product.colors.map((c) => {
+                const colorImg = c.image || product.featuredImage;
+                if (!colorImg) return null;
+                return (
+                  <button
+                    type="button"
+                    key={c.name}
+                    onClick={() => {
+                      setSelectedColor(c.name);
+                      setActiveImage(colorImg);
+                    }}
+                    className={`w-14 h-14 rounded-xl overflow-hidden border-2 flex-shrink-0 cursor-pointer transition-all ${
+                      currentMainImage === colorImg ? 'border-brand-purple shadow-xs scale-105' : 'border-[#EFECE6] hover:border-brand-purple/50'
+                    }`}
+                  >
+                    <img src={colorImg} alt={c.name} className="w-full h-full object-cover" />
+                  </button>
+                );
+              })}
             </div>
           </div>
 

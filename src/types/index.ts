@@ -97,4 +97,17 @@ export interface InstagramStory {
   handle: string;
 }
 
+export interface ProductReel {
+  id: string;
+  title: string;
+  handle: string;
+  videoUrl: string;
+  poster: string;
+  likes: string;
+  views: string;
+  productId: string;
+  kidName?: string;
+  age?: string;
+}
+
 export type ActiveFilterTab = 'all' | 'bestsellers' | 'organic' | 'party' | 'sale';

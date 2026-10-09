@@ -80,6 +80,9 @@ const SignUp = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
+      try {
+        localStorage.setItem('isAuthenticated', 'true');
+      } catch {}
       router.push("/profile");
     }, 1500);
   };

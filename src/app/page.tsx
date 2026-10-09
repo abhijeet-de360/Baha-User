@@ -1,23 +1,26 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Sparkles, ArrowRight, Heart, Leaf, Star, ShoppingBag, Smile, RefreshCw, PackageCheck, Quote, CheckCircle, Camera, X } from 'lucide-react';
+import Link from 'next/link';
+import { Sparkles, ArrowRight, Heart, Leaf, Star, ShoppingBag, Smile, RefreshCw, PackageCheck, Quote, CheckCircle, Camera, X, ChevronLeft, ChevronRight, PlayCircle, Mail, Send, Gift } from 'lucide-react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination, Navigation } from 'swiper/modules';
+
+// Swiper CSS
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
 // Layout & UI Components
 import { HeroBannerSlider } from '@/components/home/HeroBannerSlider';
 import { ProductCard } from '@/components/ui/ProductCard';
 import { QuickViewModal } from '@/components/ui/QuickViewModal';
 import { Button } from '@/components/ui/button';
+import { ReelCard } from '@/components/home/ReelCard';
 
 // JSON Mock Data & Types
 import mockData from '@/data/mockData.json';
-import type { 
-  Product, 
-  CategoryCard, 
-  ParentReview, 
-  OutfitLook, 
-  InstagramStory 
-} from '@/types';
+import type { Product, CategoryCard, ParentReview, OutfitLook, InstagramStory, ProductReel } from '@/types';
 import { useShopState } from '@/hooks/useShopState';
 
 // Extract datasets from JSON
@@ -26,6 +29,7 @@ const MOCK_PRODUCTS = mockData.products as Product[];
 const MOCK_REVIEWS = mockData.reviews as ParentReview[];
 const MOCK_BUNDLE = mockData.bundle as OutfitLook;
 const MOCK_INSTAGRAM_POSTS = mockData.instagramPosts as InstagramStory[];
+const MOCK_REELS = (mockData.reels || []) as ProductReel[];
 
 export const Home: React.FC = () => {
   // Shared Shop State (Cart, Drawer, Wishlist, Toast, Promo)
@@ -57,6 +61,23 @@ export const Home: React.FC = () => {
   const [cardSelectedColors, setCardSelectedColors] = useState<Record<string, string>>({});
   const [addedItemAnimationId, setAddedItemAnimationId] = useState<string | null>(null);
   const [bundleAdded, setBundleAdded] = useState(false);
+
+  // Local State: Newsletter
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsletterEmail || !newsletterEmail.includes('@')) return;
+    setNewsletterSubscribed(true);
+    setToast({
+      id: `toast-${Date.now()}`,
+      type: 'promo',
+      title: 'Welcome to Baha Family! 🎉',
+      message: 'Thank you for subscribing to Baha Fashion Club updates.',
+    });
+    setNewsletterEmail('');
+  };
 
   const onAddToCart = (product: Product, color: string, size: string, qty: number = 1) => {
     handleAddToCart(product, color, size, qty);
@@ -109,14 +130,14 @@ export const Home: React.FC = () => {
 
   // Trending Products (Best sellers & popular picks)
   const trendingProducts = useMemo(() => {
-    return MOCK_PRODUCTS.filter((p) => 
+    return MOCK_PRODUCTS.filter((p) =>
       p.badges?.includes('bestseller') || ['prod-2', 'prod-3', 'prod-6', 'prod-8', 'prod-9', 'prod-10', 'prod-12', 'prod-16'].includes(p.id)
     ).slice(0, 8);
   }, []);
 
   // Featured Products (Curated selection & essentials)
   const featuredProducts = useMemo(() => {
-    return MOCK_PRODUCTS.filter((p) => 
+    return MOCK_PRODUCTS.filter((p) =>
       p.badges?.includes('organic') || p.badges?.includes('sale') || ['prod-1', 'prod-4', 'prod-5', 'prod-7', 'prod-11', 'prod-13', 'prod-14', 'prod-15'].includes(p.id)
     ).slice(0, 8);
   }, []);
@@ -131,9 +152,7 @@ export const Home: React.FC = () => {
       {/* MAIN HOMEPAGE CONTENT */}
       <main className="flex-1">
 
-        {/* ---------------------------------------------------- */}
-        {/* A. FULL-WIDTH SWIPER HERO BANNER SLIDER              */}
-        {/* ---------------------------------------------------- */}
+        {/*============================ FULL-WIDTH SWIPER HERO BANNER SLIDER ========================        */}
         <HeroBannerSlider
           onSelectCategory={(cat) => {
             setSelectedCategory(cat);
@@ -145,11 +164,12 @@ export const Home: React.FC = () => {
           }}
         />
 
-        {/* ---------------------------------------------------- */}
-        {/* B. CATEGORY & DEPARTMENT SECTION                     */}
-        {/* ---------------------------------------------------- */}
-        <section className="py-5 sm:py-12 border-[#F3EFE8]">
-          <div className="container">
+        {/*============================ CATEGORY & DEPARTMENT SECTION ========================        */}
+        <section className="py-5 sm:py-12 border-[#F3EFE8] relative overflow-hidden">
+          {/* Ambient Background Splashes */}
+          <div className="absolute top-0 left-[-5%] w-72 h-72 sm:w-96 sm:h-96 bg-purple-200/40 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="absolute bottom-0 right-[-5%] w-80 h-80 sm:w-[28rem] sm:h-[28rem] bg-amber-200/40 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="container relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-3 gap-4">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-purple/10 text-brand-purple text-xs font-bold uppercase tracking-wider mb-1.5">
@@ -175,11 +195,10 @@ export const Home: React.FC = () => {
                     }}
                     className="group text-center transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col items-center focus:outline-none shrink-0 w-24 sm:w-auto"
                   >
-                    <div className={`relative aspect-square w-24 sm:w-full rounded-full overflow-hidden mb-2 sm:mb-3 bg-gradient-to-br ${cat.bgGradient} transition-all duration-300 ${
-                      isSelected 
-                        ? 'ring-3 ring-brand-purple ring-offset-2 shadow-md scale-105' 
-                        : 'border border-[#EFECE6] group-hover:shadow-soft group-hover:border-brand-purple/40'
-                    }`}>
+                    <div className={`relative aspect-square w-24 sm:w-full rounded-full overflow-hidden mb-2 sm:mb-3 bg-gradient-to-br ${cat.bgGradient} transition-all duration-300 ${isSelected
+                      ? 'ring-3 ring-brand-purple ring-offset-2 shadow-md scale-105'
+                      : 'border border-[#EFECE6] group-hover:shadow-soft group-hover:border-brand-purple/40'
+                      }`}>
                       <img
                         src={cat.image}
                         alt={cat.title}
@@ -188,9 +207,8 @@ export const Home: React.FC = () => {
                       />
                     </div>
 
-                    <h3 className={`font-heading text-xs sm:text-sm lg:text-base font-bold transition-colors whitespace-nowrap sm:whitespace-normal ${
-                      isSelected ? 'text-brand-purple font-extrabold' : 'text-text-main group-hover:text-brand-purple'
-                    }`}>
+                    <h3 className={`font-heading text-xs sm:text-sm lg:text-base font-bold transition-colors whitespace-nowrap sm:whitespace-normal ${isSelected ? 'text-brand-purple font-extrabold' : 'text-text-main group-hover:text-brand-purple'
+                      }`}>
                       {cat.title}
                     </h3>
                   </button>
@@ -200,12 +218,13 @@ export const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* ---------------------------------------------------- */}
-        {/* C1. NEW ARRIVALS PRODUCTS SECTION                    */}
-        {/* ---------------------------------------------------- */}
-        <section id="featured-collection" className="py-0 bg-background">
-          <div className="container">
-            
+        {/*============================ NEW ARRIVALS PRODUCTS SECTION ========================        */}
+        <section id="featured-collection" className="py-0 bg-background relative overflow-hidden">
+          {/* Ambient Background Splashes */}
+          <div className="absolute top-1/4 right-[-8%] w-80 h-80 sm:w-96 sm:h-96 bg-sky-200/35 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="absolute bottom-0 left-[-8%] w-96 h-96 bg-emerald-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="container relative z-10">
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4 border-[#EAE5DC]">
               <div>
@@ -278,11 +297,12 @@ export const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* ---------------------------------------------------- */}
-        {/* C2. TRENDING PRODUCTS SECTION                        */}
-        {/* ---------------------------------------------------- */}
-        <section id="trending-products" className="py-14 bg-white border-t border-[#F3EFE8]">
-          <div className="container">
+        {/*============================ TRENDING PRODUCTS SECTION ========================        */}
+        <section id="trending-products" className="py-14 bg-white border-t border-[#F3EFE8] relative overflow-hidden">
+          {/* Ambient Background Splashes */}
+          <div className="absolute top-0 left-[15%] w-96 h-96 bg-rose-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="absolute bottom-0 right-[10%] w-96 h-96 bg-purple-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="container relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-4 border-b border-[#EAE5DC]">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-coral/10 text-brand-coral text-xs font-bold uppercase tracking-wider mb-2">
@@ -326,11 +346,12 @@ export const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* ---------------------------------------------------- */}
-        {/* C3. FEATURED PRODUCTS SECTION                        */}
-        {/* ---------------------------------------------------- */}
-        <section id="featured-products" className="py-14 bg-background border-t border-[#F3EFE8]">
-          <div className="container">
+        {/*============================ FEATURED PRODUCTS SECTION ========================        */}
+        <section id="featured-products" className="py-14 bg-background border-t border-[#F3EFE8] relative overflow-hidden">
+          {/* Ambient Background Splashes */}
+          <div className="absolute top-1/3 left-[-5%] w-96 h-96 bg-amber-200/35 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="absolute bottom-0 right-[-5%] w-96 h-96 bg-sky-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="container relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-4 border-b border-[#EAE5DC]">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-yellow/30 text-amber-900 text-xs font-bold uppercase tracking-wider mb-2">
@@ -374,11 +395,9 @@ export const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* ---------------------------------------------------- */}
-        {/* C4. FULL-WIDTH SPECIAL OFFER BANNER                  */}
-        {/* ---------------------------------------------------- */}
+        {/*============================ FULL-WIDTH SPECIAL OFFER BANNER ========================        */}
         <section className="container">
-          <div 
+          <div
             onClick={scrollToFeatured}
             className="w-full relative cursor-pointer group select-none overflow-hidden"
           >
@@ -394,11 +413,10 @@ export const Home: React.FC = () => {
         {/* ---------------------------------------------------- */}
         {/* D. MIX & MATCH LOOKBOOK BUNDLE SECTION               */}
         {/* ---------------------------------------------------- */}
-        <section id="outfit-builder" className="py-16  border-[#F3EFE8]">
+        {/* <section id="outfit-builder" className="py-16  border-[#F3EFE8]">
           <div className="container">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <div className="inline-flex items-center gap-2 bg-brand-yellow px-3.5 py-1 rounded-full text-xs font-bold text-text-main uppercase tracking-wider mb-2 shadow-xs">
-                <Sparkles className="w-3.5 h-3.5" />
                 <span>Mix & Match Stylist Pick</span>
               </div>
               <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-text-main mb-3">
@@ -411,7 +429,7 @@ export const Home: React.FC = () => {
 
             <div className="bg-white rounded-4xl p-6 sm:p-10 border border-[#EBE7DF] shadow-soft">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                
+
                 <div className="lg:col-span-6 relative">
                   <div className="relative aspect-[4/3] sm:aspect-[16/11] rounded-3xl overflow-hidden bg-[#FAF8F3]">
                     <img
@@ -487,9 +505,8 @@ export const Home: React.FC = () => {
                     variant={bundleAdded ? "default" : "yellow"}
                     size="xl"
                     onClick={handleAddBundleToCart}
-                    className={`w-full rounded-2xl font-bold font-body text-sm sm:text-base flex items-center justify-center gap-2 transition-all cursor-pointer shadow-card ${
-                      bundleAdded ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''
-                    }`}
+                    className={`w-full rounded-2xl font-bold font-body text-sm sm:text-base flex items-center justify-center gap-2 transition-all cursor-pointer shadow-card ${bundleAdded ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''
+                      }`}
                   >
                     {bundleAdded ? (
                       <>
@@ -508,16 +525,16 @@ export const Home: React.FC = () => {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
 
-        {/* ---------------------------------------------------- */}
-        {/* E. VALUE PROPOSITIONS SECTION                        */}
-        {/* ---------------------------------------------------- */}
-        <section className="py-16 bg-background border-t border-[#F3EFE8]">
-          <div className="container">
+        {/*============================ VALUE PROPOSITIONS SECTION ========================        */}
+        <section className="py-16 bg-background border-t border-[#F3EFE8] relative overflow-hidden">
+          {/* Ambient Background Splashes */}
+          <div className="absolute top-0 left-1/4 w-[30rem] h-[30rem] bg-gradient-to-r from-emerald-200/30 via-sky-200/30 to-purple-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="absolute bottom-0 right-1/4 w-[30rem] h-[30rem] bg-gradient-to-l from-amber-200/35 via-rose-200/25 to-transparent rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="container relative z-10">
             <div className="text-center max-w-xl mx-auto mb-12">
               <div className="inline-flex items-center gap-2 text-brand-purple font-semibold text-xs tracking-wider uppercase mb-1">
-                <Sparkles className="w-3.5 h-3.5 text-brand-yellow fill-brand-yellow" />
                 <span>Why Parents Choose Us</span>
               </div>
               <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-text-main">
@@ -588,8 +605,7 @@ export const Home: React.FC = () => {
                     </div>
 
                     <div className="pt-4 mt-4 border-t border-black/5 text-[11px] font-bold text-text-main flex items-center gap-1">
-                      <span>Parent Tested</span>
-                      <span>✨</span>
+                      <span>Baha Quality Guarantee</span>
                     </div>
                   </div>
                 );
@@ -598,123 +614,268 @@ export const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* ---------------------------------------------------- */}
-        {/* F. PARENT REVIEWS & TESTIMONIALS SECTION            */}
-        {/* ---------------------------------------------------- */}
-        <section className="py-16 bg-white border-y border-[#EFECE6]">
-          <div className="container">
-            <div className="mb-12">
-              <div className="flex items-center gap-2 text-brand-purple font-semibold text-xs tracking-wider uppercase mb-1">
-                <Sparkles className="w-3.5 h-3.5 text-brand-yellow fill-brand-yellow" />
-                <span>Real Parent Stories</span>
-              </div>
-              <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-text-main">
-                Loved by Little Ones, <br />
-                Approved by Parents
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {MOCK_REVIEWS.map((rev) => (
-                <div
-                  key={rev.id}
-                  className="bg-background p-6 rounded-3xl border border-[#EFECE6] shadow-card flex flex-col justify-between relative hover:border-brand-purple/40 transition-colors"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-1 text-amber-400">
-                        {[...Array(rev.rating)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-amber-400" />
-                        ))}
-                      </div>
-                      <Quote className="w-5 h-5 text-brand-purple/20" />
-                    </div>
-
-                    <p className="text-text-main text-sm leading-relaxed mb-4 italic">
-                      "{rev.comment}"
-                    </p>
-
-                    <div className="text-[11px] font-semibold text-brand-purple bg-brand-purple-light/50 px-2.5 py-1 rounded-lg inline-block mb-4">
-                      Purchased: {rev.productName}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 pt-3 border-t border-[#EAE5DC]">
-                    <img
-                      src={rev.avatar}
-                      alt={rev.author}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-xs"
-                    />
-                    <div>
-                      <div className="flex items-center gap-1">
-                        <h4 className="font-bold text-text-main text-xs">{rev.author}</h4>
-                        {rev.verifiedPurchase && (
-                          <CheckCircle className="w-3.5 h-3.5 text-emerald-600 fill-emerald-100" />
-                        )}
-                      </div>
-                      <p className="text-[11px] text-text-muted">{rev.role}</p>
-                    </div>
-                  </div>
+        {/*============================ PARENT REVIEWS & TESTIMONIALS SECTION ========================        */}
+        <section className="py-16 bg-white border-y border-[#EFECE6] relative overflow-hidden">
+          {/* Ambient Background Splashes */}
+          <div className="absolute -top-12 -right-10 w-96 h-96 bg-purple-200/35 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="absolute -bottom-10 -left-10 w-96 h-96 bg-amber-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="container relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+              <div>
+                <div className="flex items-center gap-2 text-brand-purple font-semibold text-xs tracking-wider uppercase mb-1">
+                  <span>Real Parent Stories</span>
                 </div>
-              ))}
+                <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-text-main">
+                  Loved by Little Ones, <br className="hidden sm:inline" />
+                  Approved by Parents
+                </h2>
+              </div>
+
+              {/* Slider Navigation Buttons */}
+              <div className="flex items-center gap-2.5 self-start sm:self-auto">
+                <button
+                  type="button"
+                  className="reviews-prev-btn w-10 h-10 rounded-full border border-[#DDD8CE] bg-white text-text-main hover:bg-brand-purple hover:text-white hover:border-brand-purple transition-all duration-300 flex items-center justify-center shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  aria-label="Previous review"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  type="button"
+                  className="reviews-next-btn w-10 h-10 rounded-full border border-[#DDD8CE] bg-white text-text-main hover:bg-brand-purple hover:text-white hover:border-brand-purple transition-all duration-300 flex items-center justify-center shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  aria-label="Next review"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
             </div>
+
+            <Swiper
+              modules={[Autoplay, Pagination, Navigation]}
+              spaceBetween={24}
+              slidesPerView={1}
+              speed={1500}
+              loop={true}
+              autoplay={{
+                delay: 4000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              pagination={false}
+              navigation={{
+                prevEl: '.reviews-prev-btn',
+                nextEl: '.reviews-next-btn',
+              }}
+              breakpoints={{
+                640: {
+                  slidesPerView: 1.5,
+                  spaceBetween: 20,
+                },
+                768: {
+                  slidesPerView: 2,
+                  spaceBetween: 24,
+                },
+                1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 24,
+                },
+              }}
+              className="py-2!"
+            >
+              {MOCK_REVIEWS.map((rev) => (
+                <SwiperSlide key={rev.id} className="h-auto">
+                  <div className="bg-background p-6 rounded-3xl border border-[#EFECE6] shadow-card flex flex-col justify-between h-full relative hover:border-brand-purple/40 transition-colors">
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-1 text-amber-400">
+                          {[...Array(rev.rating)].map((_, i) => (
+                            <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                          ))}
+                        </div>
+                        <Quote className="w-5 h-5 text-brand-purple/20" />
+                      </div>
+
+                      <p className="text-text-main text-sm leading-relaxed mb-4 italic">
+                        "{rev.comment}"
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-3 border-t border-[#EAE5DC]">
+                      <img
+                        src={rev.avatar}
+                        alt={rev.author}
+                        className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-xs"
+                      />
+                      <div>
+                        <div className="flex items-center gap-1">
+                          <h4 className="font-bold text-text-main text-xs">{rev.author}</h4>
+                          {rev.verifiedPurchase && (
+                            <CheckCircle className="w-3.5 h-3.5 text-emerald-600 fill-emerald-100" />
+                          )}
+                        </div>
+                        <p className="text-[11px] text-text-muted">Verified Customer • {rev.date}</p>
+                      </div>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         </section>
 
-        {/* ---------------------------------------------------- */}
-        {/* G. INSTAGRAM COMMUNITY FEED SECTION                 */}
-        {/* ---------------------------------------------------- */}
-        <section className="py-16 bg-background">
-          <div className="container">
-            <div className="text-center max-w-xl mx-auto mb-10">
-              <div className="inline-flex items-center gap-2 text-brand-purple font-semibold text-xs tracking-wider uppercase mb-1">
-                <Camera className="w-3.5 h-3.5 text-brand-coral" />
-                <span>#BahaKids on Instagram</span>
+        {/*============================ PRODUCT REELS & VIDEO SHOPPING SECTION ========================        */}
+        <section className="py-16 bg-background border-t border-[#EFECE6] relative overflow-hidden">
+          {/* Ambient Background Splashes */}
+          <div className="absolute top-10 left-10 w-[28rem] h-[28rem] bg-purple-500/10 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="absolute bottom-10 right-10 w-[28rem] h-[28rem] bg-amber-400/15 rounded-full blur-3xl pointer-events-none -z-0" />
+          <div className="container relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+              <div>
+                <div className="inline-flex items-center gap-2 text-brand-purple font-semibold text-xs tracking-wider uppercase mb-1">
+                  <span>#BahaKids in Motion</span>
+                </div>
+                <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-text-main">
+                  Watch, Play & Shop the Look
+                </h2>
+                <p className="text-text-muted text-sm mt-1 max-w-xl">
+                  Real kids wearing our softest organic collections. Tap any reel to play video and buy the product instantly!
+                </p>
               </div>
-              <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-text-main mb-2">
-                Spotted in the Wild!
-              </h2>
-              <p className="text-text-muted text-sm">
-                Tag <strong>@BahaFashion</strong> on Instagram for a chance to win a ₹5,000 play wardrobe every month!
-              </p>
+
+              {/* Right Side: View All & Reel Slider Navigation Buttons */}
+              <div className="flex items-center gap-3 self-start sm:self-auto">
+                <Link
+                  href="/products"
+                  className="group inline-flex items-center gap-1.5 px-4 py-2 sm:py-2.5 rounded-full border border-[#DDD8CE] bg-white text-text-main text-xs font-bold hover:bg-brand-purple hover:text-white hover:border-brand-purple transition-all duration-300 shadow-xs"
+                >
+                  <span>View All</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="reels-prev-btn w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-[#DDD8CE] bg-white text-text-main hover:bg-brand-purple hover:text-white hover:border-brand-purple transition-all duration-300 flex items-center justify-center shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    aria-label="Previous reel"
+                  >
+                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                  <button
+                    type="button"
+                    className="reels-next-btn w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-[#DDD8CE] bg-white text-text-main hover:bg-brand-purple hover:text-white hover:border-brand-purple transition-all duration-300 flex items-center justify-center shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    aria-label="Next reel"
+                  >
+                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-              {MOCK_INSTAGRAM_POSTS.map((story) => (
-                <div
-                  key={story.id}
-                  className="group relative aspect-square rounded-3xl overflow-hidden bg-white shadow-card border border-[#EFECE6] cursor-pointer"
-                  onClick={scrollToFeatured}
-                >
-                  <img
-                    src={story.image}
-                    alt={story.kidName}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
+            <Swiper
+              modules={[Autoplay, Pagination, Navigation]}
+              spaceBetween={20}
+              slidesPerView={1}
+              speed={1200}
+              loop={true}
+              navigation={{
+                prevEl: '.reels-prev-btn',
+                nextEl: '.reels-next-btn',
+              }}
+              breakpoints={{
+                480: {
+                  slidesPerView: 1.5,
+                  spaceBetween: 16,
+                },
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                768: {
+                  slidesPerView: 3,
+                  spaceBetween: 24,
+                },
+                1024: {
+                  slidesPerView: 4,
+                  spaceBetween: 24,
+                },
+              }}
+              className="py-2!"
+            >
+              {MOCK_REELS.map((reel) => {
+                const linkedProduct = MOCK_PRODUCTS.find((p) => p.id === reel.productId);
+                return (
+                  <SwiperSlide key={reel.id}>
+                    <ReelCard
+                      reel={reel}
+                      product={linkedProduct}
+                      onQuickView={(prod) => setQuickViewProduct(prod)}
+                      onAddToCart={(prod, color, size) => handleAddToCart(prod, color, size)}
+                    />
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          </div>
+        </section>
 
-                  <div className="absolute inset-0 bg-brand-purple/75 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 p-4 flex flex-col justify-between text-white">
-                    <div className="flex items-center justify-between text-xs font-semibold">
-                      <span>{story.handle}</span>
-                      <div className="flex items-center gap-1">
-                        <Heart className="w-3.5 h-3.5 fill-brand-coral text-brand-coral" />
-                        <span>{story.likes}</span>
-                      </div>
-                    </div>
+        {/*============================ VIP NEWSLETTER DUAL-COLUMN CARD SECTION  ========================        */}
+        <section className=" bg-background py-16">
+          <div className="container">
+            <div className="relative overflow-hidden rounded-3xl sm:rounded-4xl bg-gradient-to-br from-[#FFFBF5] via-white to-[#F5F2FF] border border-[#EBE6DC] shadow-card p-6 sm:p-12">
+              {/* Subtle Decorative Ambient Background Blobs */}
+              <div className="absolute -top-16 -right-16 w-80 h-80 bg-brand-yellow/20 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-16 -left-16 w-80 h-80 bg-brand-purple/10 rounded-full blur-3xl pointer-events-none" />
 
-                    <div>
-                      <span className="text-[10px] uppercase font-bold text-brand-yellow block">
-                        {story.kidName} ({story.age})
-                      </span>
-                      <p className="text-xs font-bold line-clamp-1">{story.outfit}</p>
-                      
-                      <div className="mt-2 inline-flex items-center gap-1.5 bg-white text-text-main text-[10px] font-bold px-3 py-1 rounded-full shadow-xs">
-                        <ShoppingBag className="w-3 h-3" />
-                        <span>Shop Look</span>
+              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                {/* Left Column: Heading & Value Proposition */}
+                <div className="lg:col-span-7 space-y-4 text-left">
+                  <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-text-main tracking-tight leading-tight">
+                    Join the <span className="text-brand-purple underline decoration-brand-yellow decoration-4 underline-offset-4">Baha Fashion</span> Club!
+                  </h2>
+
+                  <p className="text-text-muted text-sm sm:text-base leading-relaxed max-w-xl">
+                    Subscribe to receive new collection updates, secret flash sale alerts & exclusive style stories delivered straight to your inbox.
+                  </p>
+                </div>
+
+                {/* Right Column: Form Container Box */}
+                <div className="lg:col-span-5">
+                  <div className="">
+                    <form onSubmit={handleNewsletterSubmit} className="space-y-4 ">
+                      <div className="flex gap-2 items-end">
+                        <div className="space-y-1.5 text-left flex-1">
+                          <label className="text-xs font-bold text-text-main uppercase tracking-wider block ml-1">
+                            Email Address
+                          </label>
+                          <div className="relative flex items-center">
+                            <Mail className="w-4 h-4 text-text-muted absolute left-3.5 pointer-events-none" />
+                            <input
+                              type="email"
+                              required
+                              placeholder="e.g. parent@gmail.com"
+                              value={newsletterEmail}
+                              onChange={(e) => setNewsletterEmail(e.target.value)}
+                              className="w-full bg-background border border-[#EAE5DC] focus:border-brand-purple text-text-main text-sm font-medium pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all"
+                            />
+                          </div>
+                        </div>
+
+                        <button
+                          type="submit"
+                          className=" bg-brand-purple hover:bg-brand-purple/90 text-white font-extrabold text-sm py-3.5 px-6 rounded-2xl shadow-md flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-98 transition-all cursor-pointer"
+                        >
+                          <span>Join Now</span>
+                          <Send className="w-4 h-4" />
+                        </button>
                       </div>
-                    </div>
+
+                      <p className="text-[11px] text-text-muted text-left leading-tight ml-1">
+                        By joining, you agree to receive Baha Fashion updates & offers. Unsubscribe at any time.
+                      </p>
+                    </form>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </section>

@@ -171,10 +171,7 @@ export const Navbar: React.FC = () => {
               type="button"
               variant="ghost"
               size="icon"
-              onClick={() => {
-                const el = document.getElementById('featured-collection');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
+              onClick={() => router.push('/wishlist')}
               className="hidden sm:inline-flex relative rounded-full text-text-main hover:text-brand-coral hover:bg-red-50"
               title="Saved Wishlist"
               aria-label="Wishlist"
@@ -192,9 +189,20 @@ export const Navbar: React.FC = () => {
               type="button"
               variant="ghost"
               size="icon"
-              onClick={() => setUserModalOpen(!userModalOpen)}
-              className="hidden sm:inline-flex rounded-full text-text-main hover:text-brand-purple hover:bg-brand-purple-light"
-              title="Account / Parents Club"
+              onClick={() => {
+                try {
+                  const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+                  if (isAuth) {
+                    router.push('/profile');
+                  } else {
+                    router.push('/sign-in');
+                  }
+                } catch {
+                  router.push('/sign-in');
+                }
+              }}
+              className="hidden sm:inline-flex rounded-full text-text-main hover:text-brand-purple hover:bg-brand-purple-light cursor-pointer"
+              title="Account / Sign In"
               aria-label="Account"
             >
               <User className="w-5 h-5 stroke-[1.8]" />
@@ -321,7 +329,7 @@ export const Navbar: React.FC = () => {
                 type="button"
                 onClick={() => {
                   setUserModalOpen(false);
-                  document.getElementById('featured-collection')?.scrollIntoView({ behavior: 'smooth' });
+                  router.push('/wishlist');
                 }}
                 className="w-full text-left p-2 rounded-xl hover:bg-brand-purple-light hover:text-brand-purple font-medium transition-colors cursor-pointer"
               >
@@ -391,8 +399,8 @@ export const Navbar: React.FC = () => {
             ))}
           </div>
 
-          {/* Quick Mobile Action Links for Cart & Wishlist */}
-          <div className="pt-3 border-t border-[#EFECE6] grid grid-cols-2 gap-2">
+          {/* Quick Mobile Action Links for Cart, Wishlist & Account */}
+          <div className="pt-3 border-t border-[#EFECE6] grid grid-cols-3 gap-2">
             <Button
               type="button"
               variant="outline"
@@ -401,7 +409,7 @@ export const Navbar: React.FC = () => {
                 setMobileMenuOpen(false);
                 setIsCartOpen(true);
               }}
-              className="rounded-xl font-bold justify-center gap-2 h-10 border-[#DDD8CE]"
+              className="rounded-xl font-bold justify-center gap-1.5 h-10 border-[#DDD8CE] text-xs px-1"
             >
               <ShoppingBag className="w-4 h-4 text-brand-purple" />
               <span>Bag ({cartCount})</span>
@@ -413,13 +421,35 @@ export const Navbar: React.FC = () => {
               size="sm"
               onClick={() => {
                 setMobileMenuOpen(false);
-                const el = document.getElementById('featured-collection');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                router.push('/wishlist');
               }}
-              className="rounded-xl font-bold justify-center gap-2 h-10 border-[#DDD8CE]"
+              className="rounded-xl font-bold justify-center gap-1.5 h-10 border-[#DDD8CE] text-xs px-1"
             >
               <Heart className="w-4 h-4 text-brand-coral" />
               <span>Saved ({wishlistCount})</span>
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                try {
+                  const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+                  if (isAuth) {
+                    router.push('/profile');
+                  } else {
+                    router.push('/sign-in');
+                  }
+                } catch {
+                  router.push('/sign-in');
+                }
+              }}
+              className="rounded-xl font-bold justify-center gap-1.5 h-10 border-[#DDD8CE] text-xs px-1"
+            >
+              <User className="w-4 h-4 text-brand-purple" />
+              <span>Account</span>
             </Button>
           </div>
         </div>

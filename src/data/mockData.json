@@ -462,6 +462,28 @@
       "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80",
       "productName": "Pastel Bloom Tiered Twirl Dress",
       "verifiedPurchase": true
+    },
+    {
+      "id": "rev-4",
+      "author": "Priya Sharma",
+      "role": "Mom of Aarav (2y)",
+      "rating": 5,
+      "comment": "The festive ethnic set fit Aarav perfectly for Diwali! Super breathable silk blend that didn't itch at all. Loved the vibrant colors and detailed embroidery.",
+      "date": "3 weeks ago",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80",
+      "productName": "Royal Silk Blend Kurta & Dhoti Set",
+      "verifiedPurchase": true
+    },
+    {
+      "id": "rev-5",
+      "author": "Ananya Patel",
+      "role": "Mom of Myra (6y)",
+      "rating": 5,
+      "comment": "Baha Fashion is our go-to for kids clothing. The organic cotton washes so well without fading or shrinking. Customer support is also super helpful!",
+      "date": "1 month ago",
+      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80",
+      "productName": "Pastel Twirl Frock",
+      "verifiedPurchase": true
     }
   ],
   "bundle": {
@@ -515,6 +537,52 @@
       "outfit": "Bamboo Sleep Set in Mint",
       "likes": 673,
       "handle": "@chloes_nursery"
+    }
+  ],
+  "reels": [
+    {
+      "id": "reel-1",
+      "title": "Golden Sunshine Twirl Frock",
+      "handle": "@momlife_emma",
+      "kidName": "Maya",
+      "age": "3y",
+      "videoUrl": "https://ik.imagekit.io/fhocinhtx/baha/8901325-hd_1080_1920_25fps.mp4",
+      "likes": "1.4k",
+      "views": "18.2k",
+      "productId": "prod-2"
+    },
+    {
+      "id": "reel-2",
+      "title": "Royal Silk Kurta & Dhoti Set",
+      "handle": "@priya_sharma",
+      "kidName": "Aarav",
+      "age": "2y",
+      "videoUrl": "https://ik.imagekit.io/fhocinhtx/baha/4711963-uhd_2160_4096_25fps.mp4",
+      "likes": "2.8k",
+      "views": "34.1k",
+      "productId": "prod-4"
+    },
+    {
+      "id": "reel-3",
+      "title": "Organic Linen Romper Outdoor Play",
+      "handle": "@adventure_little_leo",
+      "kidName": "Leo",
+      "age": "2y",
+      "videoUrl": "https://ik.imagekit.io/fhocinhtx/baha/6183267-hd_1080_1920_30fps.mp4",
+      "likes": "980",
+      "views": "12.4k",
+      "productId": "prod-1"
+    },
+    {
+      "id": "reel-4",
+      "title": "Tagless Dino Explorer Slub Tee",
+      "handle": "@david_chen",
+      "kidName": "Oliver",
+      "age": "5y",
+      "videoUrl": "https://ik.imagekit.io/fhocinhtx/baha/8384711-hd_1080_1920_24fps.mp4",
+      "likes": "1.9k",
+      "views": "24.7k",
+      "productId": "prod-3"
     }
   ],
   "userProfile": {

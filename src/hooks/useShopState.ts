@@ -22,49 +22,51 @@ const INITIAL_CART: CartItem[] = [
   }
 ];
 
-export function useShopState() {
-  // Cart Items with LocalStorage fallback
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-    try {
-      const saved = localStorage.getItem('baha_cart_items');
-      return saved ? JSON.parse(saved) : INITIAL_CART;
-    } catch {
-      return INITIAL_CART;
-    }
-  });
+const INITIAL_WISHLIST: string[] = ['prod-3'];
 
+export function useShopState() {
+  const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [appliedPromo, setAppliedPromo] = useState<string>('LITTLEJOY10');
-
-  // Wishlist with LocalStorage fallback
-  const [wishlistIds, setWishlistIds] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('baha_wishlist_ids');
-      return saved ? JSON.parse(saved) : ['prod-3'];
-    } catch {
-      return [];
-    }
-  });
-
-  // Toast Notifications
+  const [wishlistIds, setWishlistIds] = useState<string[]>(INITIAL_WISHLIST);
   const [toast, setToast] = useState<ToastMessage | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Sync with LocalStorage
+  // Load state from LocalStorage after hydration
   useEffect(() => {
+    try {
+      const savedCart = localStorage.getItem('baha_cart_items');
+      if (savedCart) {
+        setCartItems(JSON.parse(savedCart));
+      }
+      const savedWishlist = localStorage.getItem('baha_wishlist_ids');
+      if (savedWishlist) {
+        setWishlistIds(JSON.parse(savedWishlist));
+      }
+    } catch {
+      // Ignore storage read errors
+    }
+    setIsMounted(true);
+  }, []);
+
+  // Sync with LocalStorage after mount
+  useEffect(() => {
+    if (!isMounted) return;
     try {
       localStorage.setItem('baha_cart_items', JSON.stringify(cartItems));
     } catch {
       // Ignore storage errors
     }
-  }, [cartItems]);
+  }, [cartItems, isMounted]);
 
   useEffect(() => {
+    if (!isMounted) return;
     try {
       localStorage.setItem('baha_wishlist_ids', JSON.stringify(wishlistIds));
     } catch {
       // Ignore storage errors
     }
-  }, [wishlistIds]);
+  }, [wishlistIds, isMounted]);
 
   // Auto-dismiss toast
   useEffect(() => {
@@ -123,25 +125,29 @@ export function useShopState() {
     setCartItems([]);
   };
 
-  const handleToggleWishlist = (product: Product) => {
+  const handleToggleWishlist = (product: Product, showToast: boolean = true) => {
     setWishlistIds((prev) => {
       const exists = prev.includes(product.id);
       if (exists) {
-        setToast({
-          id: Date.now().toString(),
-          type: 'wishlist',
-          title: 'Removed from Saved',
-          message: `${product.name} removed from wishlist.`,
-        });
+        if (showToast) {
+          setToast({
+            id: Date.now().toString(),
+            type: 'wishlist',
+            title: 'Removed from Saved',
+            message: `${product.name} removed from wishlist.`,
+          });
+        }
         return prev.filter((id) => id !== product.id);
       } else {
-        setToast({
-          id: Date.now().toString(),
-          type: 'wishlist',
-          title: 'Saved to Wishlist! ♥',
-          message: `${product.name} saved for later.`,
-          image: product.featuredImage,
-        });
+        if (showToast) {
+          setToast({
+            id: Date.now().toString(),
+            type: 'wishlist',
+            title: 'Saved to Wishlist! ♥',
+            message: `${product.name} saved for later.`,
+            image: product.featuredImage,
+          });
+        }
         return [...prev, product.id];
       }
     });
