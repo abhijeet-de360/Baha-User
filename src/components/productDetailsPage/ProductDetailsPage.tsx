@@ -32,22 +32,22 @@ import { Button } from '@/components/ui/button';
 import mockData from '@/data/mockData.json';
 import type { Product } from '@/types';
 import { getEnhancedProduct, BABY_SIZE_CHART, KIDS_SIZE_CHART } from '@/lib/productHelpers';
-import { useShop } from '@/context/ShopContext';
+import { useShopState } from '@/hooks/useShopState';
 import { useRouter } from 'next/navigation';
 
 const MOCK_PRODUCTS = mockData.products as Product[];
 
 export interface ProductDetailsPageProps {
-    id: string;
+    slug: string;
 }
 
-const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ id }) => {
+const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ slug }) => {
     const router = useRouter();
 
     // Find product by id or fallback to first product
     const rawProduct = useMemo(() => {
-        return MOCK_PRODUCTS.find((p) => p.id === id) || MOCK_PRODUCTS[0];
-    }, [id]);
+        return MOCK_PRODUCTS.find((p) => p.id === slug) || MOCK_PRODUCTS[0];
+    }, [slug]);
 
     const product = useMemo(() => {
         return getEnhancedProduct(rawProduct);
@@ -69,7 +69,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ id }) => {
         handleClearCart,
         handleToggleWishlist,
         handleApplyPromo,
-    } = useShop();
+    } = useShopState();
 
     // Local Page State
     const [selectedColor, setSelectedColor] = useState<string>(product.colors[0]?.name || '');
@@ -655,7 +655,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ id }) => {
                                     isWishlisted={wishlistIds.includes(rel.id)}
                                     onToggleWishlist={handleToggleWishlist}
                                     onAddToCart={handleAddToCart}
-                                    onQuickView={(p) => router.push(`/products/${p.id}`)}
+                                    onQuickView={(p) => router.push(`/product/${p.id}`)}
                                 />
                             ))}
                         </div>

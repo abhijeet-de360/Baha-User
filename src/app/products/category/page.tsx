@@ -1,5 +1,5 @@
 import ProductListingView from "@/components/products/ProductListingView";
 
-export default function ProductsPage() {
+export default function ProductCategoryRootPage() {
   return <ProductListingView segments={[]} />;
 }
