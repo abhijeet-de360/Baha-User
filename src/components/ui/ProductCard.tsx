@@ -41,7 +41,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     <div className="group bg-card rounded-xl border border-[#EFECE6] hover:border-brand-purple/30 hover:shadow-soft transition-all duration-300 flex flex-col justify-between relative">
       {/* Image Frame with Link to Product Details */}
       <div className="relative aspect-[4/5] rounded-xl overflow-hidden bg-[#FAF8F3] mb-3.5">
-        <Link href={`/products/${product.id}`} className="block w-full h-full">
+        <Link href={`/product/${product.id}`} className="block w-full h-full">
           <img
             src={activeColorObj?.image || product.featuredImage}
             alt={product.name}
@@ -135,7 +135,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         <Link 
-          href={`/products/${product.id}`}
+          href={`/product/${product.id}`}
           className="font-body text-sm sm:text-base font-semibold text-text-main hover:text-brand-purple line-clamp-1 cursor-pointer transition-colors block"
         >
           {product.name}
