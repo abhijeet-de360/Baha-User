@@ -162,7 +162,11 @@ export function useShopState() {
       setAppliedPromo('WELCOME15');
       return { success: true, message: '🎉 Code WELCOME15 applied (15% OFF)!', discountPercent: 15 };
     }
-    return { success: false, message: '❌ Invalid coupon code. Try LITTLEJOY10 or WELCOME15', discountPercent: 0 };
+    if (code.toUpperCase() === 'FESTIVE20') {
+      setAppliedPromo('FESTIVE20');
+      return { success: true, message: '🎉 Code FESTIVE20 applied (20% OFF)!', discountPercent: 20 };
+    }
+    return { success: false, message: '❌ Invalid coupon code. Try WELCOME15, LITTLEJOY10 or FESTIVE20', discountPercent: 0 };
   };
 
   const totalCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);

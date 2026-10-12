@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Sparkles, ArrowRight, Heart, Leaf, Star, ShoppingBag, Smile, RefreshCw, PackageCheck, Quote, CheckCircle, Camera, X, ChevronLeft, ChevronRight, PlayCircle, Mail, Send, Gift } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
@@ -32,11 +33,10 @@ const MOCK_INSTAGRAM_POSTS = mockData.instagramPosts as InstagramStory[];
 const MOCK_REELS = (mockData.reels || []) as ProductReel[];
 
 export const Home: React.FC = () => {
-  // Shared Shop State (Cart, Drawer, Wishlist, Toast, Promo)
+  const router = useRouter();
+  // Shared Shop State (Cart, Wishlist, Toast, Promo)
   const {
     cartItems,
-    isCartOpen,
-    setIsCartOpen,
     appliedPromo,
     setAppliedPromo,
     wishlistIds,
@@ -160,7 +160,7 @@ export const Home: React.FC = () => {
           }}
           onPromoClick={(code) => {
             setAppliedPromo(code);
-            setIsCartOpen(true);
+            router.push('/cart');
           }}
         />
 
@@ -172,9 +172,6 @@ export const Home: React.FC = () => {
           <div className="container relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-3 gap-4">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-purple/10 text-brand-purple text-xs font-bold uppercase tracking-wider mb-1.5">
-                  <span>Explore by Department</span>
-                </div>
                 <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight">
                   Shop by Age & Category
                 </h2>
@@ -219,7 +216,7 @@ export const Home: React.FC = () => {
         </section>
 
         {/*============================ NEW ARRIVALS PRODUCTS SECTION ========================        */}
-        <section id="featured-collection" className="py-0 bg-background relative overflow-hidden">
+        <section id="featured-collection" className="py-12 bg-background relative overflow-hidden">
           {/* Ambient Background Splashes */}
           <div className="absolute top-1/4 right-[-8%] w-80 h-80 sm:w-96 sm:h-96 bg-sky-200/35 rounded-full blur-3xl pointer-events-none -z-0" />
           <div className="absolute bottom-0 left-[-8%] w-96 h-96 bg-emerald-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
@@ -228,9 +225,6 @@ export const Home: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4 border-[#EAE5DC]">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-purple/10 text-brand-purple text-xs font-bold uppercase tracking-wider mb-2">
-                  <span>Handpicked Wardrobe Essentials</span>
-                </div>
                 <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight">
                   New Arrivals
                 </h2>
@@ -305,9 +299,6 @@ export const Home: React.FC = () => {
           <div className="container relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-4 border-b border-[#EAE5DC]">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-coral/10 text-brand-coral text-xs font-bold uppercase tracking-wider mb-2">
-                  <span>Most Loved by Parents</span>
-                </div>
                 <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight">
                   Trending Products
                 </h2>
@@ -354,9 +345,6 @@ export const Home: React.FC = () => {
           <div className="container relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-4 border-b border-[#EAE5DC]">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-yellow/30 text-amber-900 text-xs font-bold uppercase tracking-wider mb-2">
-                  <span>Curated Collection</span>
-                </div>
                 <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight">
                   Featured Products
                 </h2>

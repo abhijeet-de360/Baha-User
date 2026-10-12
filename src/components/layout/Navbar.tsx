@@ -25,7 +25,7 @@ export const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
 
-  const { totalCartCount: cartCount, wishlistIds, setIsCartOpen } = useShopState();
+  const { totalCartCount: cartCount, wishlistIds } = useShopState();
 
   const wishlistCount = useMemo(() => wishlistIds.length, [wishlistIds]);
 
@@ -208,23 +208,20 @@ export const Navbar: React.FC = () => {
               <User className="w-5 h-5 stroke-[1.8]" />
             </Button>
 
-            {/* 4. Cart Bag Icon with Badge (Hidden on mobile) */}
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsCartOpen(true)}
-              className="hidden sm:inline-flex relative rounded-full text-text-main hover:text-brand-purple hover:bg-brand-purple-light"
+            {/* 4. Cart Bag Icon with Badge (Direct link to /cart) */}
+            <Link
+              href="/cart"
+              className="relative inline-flex items-center justify-center p-2 rounded-full text-text-main hover:text-brand-purple hover:bg-brand-purple-light transition-colors cursor-pointer"
               title="Shopping Bag"
               aria-label="Shopping Bag"
             >
               <ShoppingBag className="w-5 h-5 stroke-[1.8]" />
               {cartCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 bg-brand-purple text-white text-[10px] font-extrabold size-4 rounded-full flex items-center justify-center shadow-xs">
+                <span className="absolute top-1 right-1 bg-brand-purple text-white text-[10px] font-extrabold size-4 rounded-full flex items-center justify-center shadow-xs">
                   {cartCount}
                 </span>
               )}
-            </Button>
+            </Link>
           </div>
 
         </div>
@@ -407,9 +404,9 @@ export const Navbar: React.FC = () => {
               size="sm"
               onClick={() => {
                 setMobileMenuOpen(false);
-                setIsCartOpen(true);
+                router.push('/cart');
               }}
-              className="rounded-xl font-bold justify-center gap-1.5 h-10 border-[#DDD8CE] text-xs px-1"
+              className="rounded-xl font-bold justify-center gap-1.5 h-10 border-[#DDD8CE] text-xs px-1 cursor-pointer"
             >
               <ShoppingBag className="w-4 h-4 text-brand-purple" />
               <span>Bag ({cartCount})</span>
