@@ -223,9 +223,9 @@ export const Home: React.FC = () => {
           <div className="container relative z-10">
 
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4 border-[#EAE5DC]">
-              <div>
-                <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight">
+            <div className="flex items-center justify-between gap-3 mb-4 sm:mb-6">
+              <div className="min-w-0 flex-1">
+                <h2 className="font-heading text-xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight truncate">
                   New Arrivals
                 </h2>
               </div>
@@ -238,10 +238,10 @@ export const Home: React.FC = () => {
                   setSelectedCategory('all');
                   scrollToFeatured();
                 }}
-                className="group rounded-full px-5 py-2 h-10 border-[#DDD8CE] bg-white hover:bg-brand-purple hover:text-white hover:border-brand-purple text-text-main font-bold text-xs sm:text-sm shadow-xs transition-all duration-300 self-start sm:self-auto cursor-pointer"
+                className="group shrink-0 whitespace-nowrap rounded-full px-3.5 sm:px-5 py-1.5 sm:py-2 h-8 sm:h-10 border-[#DDD8CE] bg-white hover:bg-brand-purple hover:text-white hover:border-brand-purple text-text-main font-bold text-xs sm:text-sm shadow-xs transition-all duration-300 cursor-pointer active:scale-95"
               >
                 <span>View All</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Button>
             </div>
 
@@ -297,9 +297,9 @@ export const Home: React.FC = () => {
           <div className="absolute top-0 left-[15%] w-96 h-96 bg-rose-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
           <div className="absolute bottom-0 right-[10%] w-96 h-96 bg-purple-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
           <div className="container relative z-10">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-4 border-b border-[#EAE5DC]">
-              <div>
-                <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight">
+            <div className="flex items-center justify-between gap-3 mb-6 sm:mb-8 pb-4 border-b border-[#EAE5DC]">
+              <div className="min-w-0 flex-1">
+                <h2 className="font-heading text-xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight truncate">
                   Trending Products
                 </h2>
               </div>
@@ -312,10 +312,10 @@ export const Home: React.FC = () => {
                   setSelectedCategory('all');
                   scrollToFeatured();
                 }}
-                className="group rounded-full px-5 py-2 h-10 border-[#DDD8CE] bg-white hover:bg-brand-purple hover:text-white hover:border-brand-purple text-text-main font-bold text-xs sm:text-sm shadow-xs transition-all duration-300 self-start sm:self-auto cursor-pointer"
+                className="group shrink-0 whitespace-nowrap rounded-full px-3.5 sm:px-5 py-1.5 sm:py-2 h-8 sm:h-10 border-[#DDD8CE] bg-white hover:bg-brand-purple hover:text-white hover:border-brand-purple text-text-main font-bold text-xs sm:text-sm shadow-xs transition-all duration-300 cursor-pointer active:scale-95"
               >
                 <span>View All</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Button>
             </div>
 
@@ -343,9 +343,9 @@ export const Home: React.FC = () => {
           <div className="absolute top-1/3 left-[-5%] w-96 h-96 bg-amber-200/35 rounded-full blur-3xl pointer-events-none -z-0" />
           <div className="absolute bottom-0 right-[-5%] w-96 h-96 bg-sky-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
           <div className="container relative z-10">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-4 border-b border-[#EAE5DC]">
-              <div>
-                <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight">
+            <div className="flex items-center justify-between gap-3 mb-6 sm:mb-8 pb-4 border-b border-[#EAE5DC]">
+              <div className="min-w-0 flex-1">
+                <h2 className="font-heading text-xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight truncate">
                   Featured Products
                 </h2>
               </div>
@@ -358,10 +358,10 @@ export const Home: React.FC = () => {
                   setSelectedCategory('all');
                   scrollToFeatured();
                 }}
-                className="group rounded-full px-5 py-2 h-10 border-[#DDD8CE] bg-white hover:bg-brand-purple hover:text-white hover:border-brand-purple text-text-main font-bold text-xs sm:text-sm shadow-xs transition-all duration-300 self-start sm:self-auto cursor-pointer"
+                className="group shrink-0 whitespace-nowrap rounded-full px-3.5 sm:px-5 py-1.5 sm:py-2 h-8 sm:h-10 border-[#DDD8CE] bg-white hover:bg-brand-purple hover:text-white hover:border-brand-purple text-text-main font-bold text-xs sm:text-sm shadow-xs transition-all duration-300 cursor-pointer active:scale-95"
               >
                 <span>View All</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Button>
             </div>
 

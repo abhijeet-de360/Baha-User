@@ -344,18 +344,49 @@ export default function CheckoutPage() {
     const newOrderId = `BF-${Date.now().toString().slice(-8)}`;
 
     setTimeout(() => {
+      const orderDateStr = new Date().toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
+
       setConfirmedOrder({
         orderId: newOrderId,
         total,
         itemsCount: totalItemCount,
         address: selectedAddress,
         paymentMethod,
-        date: new Date().toLocaleDateString('en-IN', {
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric',
-        }),
+        date: orderDateStr,
       });
+
+      // Save order to localStorage so it immediately appears in My Orders page
+      if (typeof window !== 'undefined') {
+        try {
+          const stored = localStorage.getItem('baha_placed_orders');
+          const existing = stored ? JSON.parse(stored) : [];
+          const newPlacedOrder = {
+            orderId: newOrderId,
+            date: new Date().toISOString().split('T')[0],
+            status: 'Processing',
+            total,
+            items: cartItems.map((item) => item.product.id),
+            cartItemsSnapshot: cartItems.map((item) => ({
+              id: item.product.id,
+              name: item.product.name,
+              price: item.product.price,
+              featuredImage: item.product.featuredImage,
+              selectedColor: item.selectedColor,
+              selectedSize: item.selectedSize,
+              quantity: item.quantity,
+            })),
+            address: selectedAddress,
+            paymentMethod,
+          };
+          localStorage.setItem('baha_placed_orders', JSON.stringify([newPlacedOrder, ...existing]));
+        } catch (err) {
+          console.error('Failed to save order to localStorage:', err);
+        }
+      }
 
       handleClearCart();
       setIsPlacingOrder(false);

@@ -323,17 +323,17 @@ const Profile = () => {
   type NavTabItem = {
     key: string;
     label: string;
+    mobileLabel?: string;
     icon: React.ReactNode;
-    count?: number;
     href?: string;
   };
 
   const navTabs: NavTabItem[] = [
-    { key: 'settings', label: 'Profile Setting', icon: <User className="w-4 h-4" /> },
-    { key: 'addresses', label: 'Addresses', icon: <MapPin className="w-4 h-4" />, count: addresses.length },
-    { key: 'rewards', label: 'VIP Rewards', icon: <Crown className="w-4 h-4" /> },
-    { key: 'orders', label: 'My Orders', icon: <Package className="w-4 h-4" />, count: mockData.userProfile.recentOrders.length, href: '/orders' },
-    { key: 'wishlist', label: 'Wishlist', icon: <Heart className="w-4 h-4" />, count: wishlistIds.length, href: '/wishlist' },
+    { key: 'settings', label: 'Profile Setting', mobileLabel: 'Profile', icon: <User className="w-4 h-4" /> },
+    { key: 'addresses', label: 'Addresses', mobileLabel: 'Addresses', icon: <MapPin className="w-4 h-4" /> },
+    { key: 'rewards', label: 'VIP Rewards', mobileLabel: 'Rewards', icon: <Crown className="w-4 h-4" /> },
+    { key: 'orders', label: 'My Orders', mobileLabel: 'Orders', icon: <Package className="w-4 h-4" />, href: '/orders' },
+    { key: 'wishlist', label: 'Wishlist', mobileLabel: 'Wishlist', icon: <Heart className="w-4 h-4" />, href: '/wishlist' },
   ];
 
   return (
@@ -355,20 +355,20 @@ const Profile = () => {
       <div className="container max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
 
         {/* ── Page Header / Title ── */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="font-heading text-2xl sm:text-3xl font-black text-text-main">
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <h1 className="font-heading text-2xl sm:text-3xl font-black text-text-main leading-tight truncate">
               My Account
             </h1>
-            <p className="text-xs text-text-muted mt-0.5">
-              Welcome back, {userInfo.firstName}! Manage your orders, wishlist, and preferences.
+            <p className="text-xs text-text-muted mt-0.5 truncate sm:whitespace-normal">
+              Welcome back, {userInfo.firstName}! Manage your orders and profile.
             </p>
           </div>
 
           <button
             type="button"
             onClick={handleSignOut}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-rose-200 text-xs font-bold text-rose-600 bg-rose-50/50 hover:bg-rose-100/70 transition-all cursor-pointer"
+            className="shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl border border-rose-200 text-xs font-bold text-rose-600 bg-rose-50/70 hover:bg-rose-100 transition-all cursor-pointer shadow-2xs"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Sign Out</span>
@@ -376,11 +376,49 @@ const Profile = () => {
         </div>
 
 
+        {/* ── Mobile Navigation Tabs (Horizontal Scrollable Pills) ── */}
+        <div className="lg:hidden mb-5">
+          <div className="flex items-center gap-2 overflow-x-auto py-1 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar snap-x scroll-smooth">
+            {navTabs.map((tab) => {
+              const isActive = activeTab === tab.key;
+              const isNavButton = Boolean(tab.href);
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => {
+                    if (tab.href) {
+                      router.push(tab.href);
+                    } else {
+                      setActiveTab(tab.key as Tab);
+                    }
+                  }}
+                  className={`shrink-0 snap-start inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer active:scale-95 ${
+                    isActive
+                      ? 'bg-brand-purple text-white shadow-soft font-extrabold'
+                      : 'bg-white text-text-main border border-[#EAE6DE] shadow-2xs hover:bg-[#FAF8F5]'
+                  }`}
+                >
+                  <span className={isActive ? 'text-white' : 'text-text-muted'}>
+                    {tab.icon}
+                  </span>
+                  <span>{tab.mobileLabel || tab.label}</span>
+                  {isNavButton && (
+                    <ChevronRight className={`w-3 h-3 ${isActive ? 'text-white/80' : 'text-text-muted/60'}`} />
+                  )}
+                </button>
+              );
+            })}
+            {/* End spacer for smooth right edge padding */}
+            <div className="shrink-0 w-2 h-4 pointer-events-none" />
+          </div>
+        </div>
+
         {/* ── Main Layout: Sidebar & Content Area ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           
-          {/* Left Navigation Sidebar */}
-          <div className="lg:col-span-4 bg-white rounded-3xl border border-[#EFECE6] p-4 shadow-xs sticky top-24">
+          {/* Left Navigation Sidebar (Desktop only) */}
+          <div className="hidden lg:block lg:col-span-4 bg-white rounded-3xl border border-[#EFECE6] p-4 shadow-xs sticky top-24">
             <div className="space-y-1">
               {navTabs.map((tab, idx) => {
                 const isActive = activeTab === tab.key;
@@ -412,22 +450,9 @@ const Profile = () => {
                         <span>{tab.label}</span>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        {tab.count !== undefined && (
-                          <span
-                            className={`text-xs px-2.5 py-0.5 rounded-full font-extrabold ${
-                              isActive
-                                ? 'bg-white/20 text-white'
-                                : 'bg-[#F2EFE9] text-text-muted'
-                            }`}
-                          >
-                            {tab.count}
-                          </span>
-                        )}
-                        {isNavButton && (
-                          <ChevronRight className="w-3.5 h-3.5 text-text-muted/60 group-hover:text-text-main group-hover:translate-x-0.5 transition-all" />
-                        )}
-                      </div>
+                      {isNavButton && (
+                        <ChevronRight className="w-3.5 h-3.5 text-text-muted/60 group-hover:text-text-main group-hover:translate-x-0.5 transition-all" />
+                      )}
                     </button>
                   </React.Fragment>
                 );
@@ -452,7 +477,7 @@ const Profile = () => {
           </div>
 
           {/* Right Content Area */}
-          <div className="lg:col-span-8 bg-white rounded-3xl border border-[#EFECE6] p-6 sm:p-8 shadow-xs min-h-[500px]">
+          <div className="lg:col-span-8 bg-white rounded-2xl sm:rounded-3xl border border-[#EFECE6] p-4 sm:p-6 lg:p-8 shadow-xs min-h-[500px]">
             
             {/* ── 1. ORDERS TAB ── */}
             {activeTab === 'orders' && (
@@ -614,12 +639,12 @@ const Profile = () => {
               <div className="space-y-6 animate-fade-in">
                 {!isAddressFormOpen ? (
                   <>
-                    <div className="flex items-center justify-between pb-4 border-b border-[#EFECE6]">
-                      <div>
-                        <h2 className="font-heading text-xl sm:text-2xl font-black text-text-main">
+                    <div className="flex items-center justify-between gap-3 pb-4 border-b border-[#EFECE6]">
+                      <div className="min-w-0 flex-1">
+                        <h2 className="font-heading text-xl sm:text-2xl font-black text-text-main leading-tight truncate">
                           Saved Addresses
                         </h2>
-                        <p className="text-xs text-text-muted font-medium mt-0.5">
+                        <p className="text-xs text-text-muted font-medium mt-0.5 truncate sm:whitespace-normal">
                           Manage your shipping destinations for faster checkout.
                         </p>
                       </div>
@@ -627,10 +652,10 @@ const Profile = () => {
                       <button
                         type="button"
                         onClick={handleOpenAddAddress}
-                        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-purple text-white text-xs font-bold hover:bg-brand-purple-dark transition-all shadow-xs cursor-pointer"
+                        className="shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-brand-purple text-white text-xs font-bold hover:bg-brand-purple-dark transition-all shadow-xs cursor-pointer active:scale-95"
                       >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>Add New Address</span>
+                        <Plus className="w-3.5 h-3.5 shrink-0" />
+                        <span>Add <span className="hidden sm:inline">New </span>Address</span>
                       </button>
                     </div>
 
@@ -1244,6 +1269,24 @@ const Profile = () => {
 
           </div>
 
+        </div>
+
+        {/* ── Mobile-Only Quick Help Banner ── */}
+        <div className="lg:hidden mt-6 p-4 rounded-2xl bg-white border border-[#EFECE6] shadow-2xs">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="font-bold text-text-main text-xs">Need help with an order?</p>
+              <p className="text-text-muted text-[11px] mt-0.5 leading-relaxed">
+                Our customer care team is available 24/7 for order tracking and returns.
+              </p>
+            </div>
+            <a
+              href="mailto:support@bahafashion.com"
+              className="shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-brand-purple-light text-brand-purple text-xs font-bold hover:bg-brand-purple hover:text-white transition-colors"
+            >
+              Support <ArrowRight className="w-3 h-3" />
+            </a>
+          </div>
         </div>
 
       </div>

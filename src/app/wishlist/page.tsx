@@ -59,9 +59,14 @@ export default function WishlistPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#FFFDF8] text-text-main flex flex-col font-body selection:bg-brand-yellow">
+        <div className="min-h-screen bg-[#FFFDF8] text-text-main flex flex-col font-body selection:bg-brand-yellow relative overflow-hidden">
+            {/* ── Soft Background Ambient Splashes (matching cart & home page) ── */}
+            <div className="absolute top-0 left-[-8%] w-80 sm:w-[34rem] h-80 sm:h-[34rem] bg-purple-200/35 rounded-full blur-3xl pointer-events-none -z-0" />
+            <div className="absolute top-28 right-[-8%] w-72 sm:w-[30rem] h-72 sm:h-[30rem] bg-amber-200/35 rounded-full blur-3xl pointer-events-none -z-0" />
+            <div className="absolute top-[45%] left-[5%] w-64 sm:w-80 h-64 sm:h-80 bg-rose-100/30 rounded-full blur-3xl pointer-events-none -z-0" />
+            <div className="absolute bottom-16 right-[-5%] w-80 sm:w-[30rem] h-80 sm:h-[30rem] bg-brand-yellow/20 rounded-full blur-3xl pointer-events-none -z-0" />
 
-            <main className="flex-1 py-8 sm:py-12">
+            <main className="flex-1 py-8 sm:py-12 relative z-10">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
 
                     {/* Breadcrumbs Navigation */}

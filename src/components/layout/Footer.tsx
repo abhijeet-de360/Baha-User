@@ -104,10 +104,22 @@ export const Footer: React.FC = () => {
               Help & Support
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-white/80">
-              <li className="hover:text-brand-yellow transition-colors cursor-pointer">Track Your Package</li>
-              <li className="hover:text-brand-yellow transition-colors cursor-pointer">Free 30-Day Returns</li>
-              <li className="hover:text-brand-yellow transition-colors cursor-pointer">Shipping & Delivery Info</li>
-              <li className="hover:text-brand-yellow transition-colors cursor-pointer">FAQ & Help Desk</li>
+              <li>
+                <Link href="/orders" className="hover:text-brand-yellow transition-colors cursor-pointer">
+                  Track Your Package
+                </Link>
+              </li>
+              <li>
+                <Link href="/return-and-refund-policy" className="hover:text-brand-yellow transition-colors cursor-pointer">
+                  Free 30-Day Returns
+                </Link>
+              </li>
+              <li>
+                <Link href="/shipping-policy" className="hover:text-brand-yellow transition-colors cursor-pointer">
+                  Shipping &amp; Delivery Info
+                </Link>
+              </li>
+              <li className="hover:text-brand-yellow transition-colors cursor-pointer">FAQ &amp; Help Desk</li>
               <li className="hover:text-brand-yellow transition-colors cursor-pointer">Contact Parent Support</li>
             </ul>
           </div>
@@ -118,11 +130,31 @@ export const Footer: React.FC = () => {
               Useful Links & Policies
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-white/80">
-              <li className="hover:text-brand-yellow transition-colors cursor-pointer">Privacy Policy</li>
-              <li className="hover:text-brand-yellow transition-colors cursor-pointer">Terms & Conditions</li>
-              <li className="hover:text-brand-yellow transition-colors cursor-pointer">Return & Refund Policy</li>
-              <li className="hover:text-brand-yellow transition-colors cursor-pointer">Shipping Policy</li>
-              <li className="hover:text-brand-yellow transition-colors cursor-pointer">Cancellation Policy</li>
+              <li>
+                <Link href="/privacy-policy" className="hover:text-brand-yellow transition-colors cursor-pointer">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms-and-conditions" className="hover:text-brand-yellow transition-colors cursor-pointer">
+                  Terms &amp; Conditions
+                </Link>
+              </li>
+              <li>
+                <Link href="/return-and-refund-policy" className="hover:text-brand-yellow transition-colors cursor-pointer">
+                  Return &amp; Refund Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/shipping-policy" className="hover:text-brand-yellow transition-colors cursor-pointer">
+                  Shipping Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/cancellation-policy" className="hover:text-brand-yellow transition-colors cursor-pointer">
+                  Cancellation Policy
+                </Link>
+              </li>
             </ul>
           </div>
 

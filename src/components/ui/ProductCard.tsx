@@ -54,7 +54,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10 pointer-events-none">
           {product.badges?.includes('sale') && product.discountPercent && (
             <span className="bg-brand-coral text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-sm">
-              -{product.discountPercent}% OFF
+              {product.discountPercent}% OFF
             </span>
           )}
           {product.badges?.includes('new') && (
@@ -75,11 +75,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 e.stopPropagation();
                 onToggleWishlist(product);
               }}
-              className={`rounded-full transition-all cursor-pointer ${
-                isWishlisted
+              className={`rounded-full transition-all cursor-pointer ${isWishlisted
                   ? 'bg-brand-coral text-white shadow-md hover:bg-brand-coral hover:text-white'
                   : 'bg-white/90 backdrop-blur-sm text-text-muted hover:text-brand-coral hover:bg-white shadow-sm'
-              }`}
+                }`}
               title="Save to Wishlist"
               aria-label="Wishlist"
             >
@@ -107,7 +106,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Quick Size Overlay */}
         {product.sizes && product.sizes.length > 0 && (
-          <div className="absolute bottom-2 left-2 right-2 hidden sm:flex items-center justify-center gap-1 bg-white/90 backdrop-blur-md py-1.5 px-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 pointer-events-none">
+          <div className="absolute w-fit bottom-2 left-2 right-2 hidden sm:flex items-center justify-center gap-1 bg-white/90 backdrop-blur-md py-1.5 px-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 pointer-events-none">
             <span className="text-[10px] font-bold text-text-muted mr-1">Sizes:</span>
             {product.sizes.slice(0, 4).map((size) => (
               <span key={size} className="text-[10px] bg-background text-text-main px-1.5 py-0.5 rounded font-medium">
@@ -134,7 +133,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
         </div>
 
-        <Link 
+        <Link
           href={`/product/${product.id}`}
           className="font-body text-sm sm:text-base font-semibold text-text-main hover:text-brand-purple line-clamp-1 cursor-pointer transition-colors block"
         >
@@ -150,11 +149,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 type="button"
                 onClick={() => handleColorChange(c.name)}
                 style={{ backgroundColor: c.hex }}
-                className={`w-4 h-4 rounded-full transition-transform cursor-pointer border ${
-                  activeColorName === c.name
+                className={`w-4 h-4 rounded-full transition-transform cursor-pointer border ${activeColorName === c.name
                     ? 'ring-2 ring-brand-purple ring-offset-1 scale-110 border-white'
                     : 'border-black/10 hover:scale-110'
-                }`}
+                  }`}
                 title={c.name}
                 aria-label={`Select color ${c.name}`}
               />
@@ -188,7 +186,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             className="p-0! px-0 py-0 h-9 w-9 rounded-full cursor-pointer shadow-xs"
             title="Add to shopping bag"
           >
-            <ShoppingBag className="w-4 h-4" />  
+            <ShoppingBag className="w-4 h-4" />
           </Button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Search, ShoppingBag, Heart, User, Menu, X, Sparkles } from 'lucide-react';
+import { Search, ShoppingBag, Heart, User, Menu, X, Sparkles, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -80,25 +80,51 @@ export const Navbar: React.FC = () => {
     return () => clearTimeout(timer);
   }, [searchInput, searchQuery, router]);
 
-  return (
-    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#EFECE6] transition-all shadow-xs">
-      <div className="container">
-        <div className="flex items-center justify-between py-3.5 gap-4">
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
-          {/* Left Side: Hamburger Menu (mobile) & Brand Logo */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Mobile Menu Button */}
-            <div className="flex items-center lg:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="rounded-xl text-text-main hover:bg-brand-purple-light transition-colors -ml-1.5"
-                aria-label="Toggle navigation menu"
-              >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </Button>
-            </div>
+  // Close drawer on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        setIsSearchOpen(false);
+        setUserModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  return (
+    <>
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#EFECE6] transition-all shadow-xs">
+        <div className="container">
+          <div className="flex items-center justify-between py-3.5 gap-4">
+
+            {/* Left Side: Hamburger Menu (mobile) & Brand Logo */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              {/* Mobile Menu Button */}
+              <div className="flex items-center lg:hidden">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMobileMenuOpen(true)}
+                  className="rounded-xl text-text-main hover:bg-brand-purple-light transition-colors -ml-1.5 cursor-pointer"
+                  aria-label="Open navigation menu"
+                >
+                  <Menu className="w-6 h-6" />
+                </Button>
+              </div>
 
             {/* Brand Logo */}
             <Link
@@ -349,108 +375,142 @@ export const Navbar: React.FC = () => {
         )}
 
       </div>
+    </header>
 
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[#EFECE6] bg-white px-4 py-4 space-y-3 shadow-lg animate-fade-in">
-          {/* Mobile Search */}
-          <div className="relative w-full rounded-2xl bg-background border border-[#EBE7DF] px-3 py-2 flex items-center">
-            <Search className="w-4 h-4 text-text-muted mr-2" />
-            <input
-              type="text"
-              placeholder="Search kids apparel..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full bg-transparent text-sm text-text-main placeholder-text-light focus:outline-none"
-            />
+    {/* Mobile Left Drawer Backdrop */}
+    <div
+      className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-300 lg:hidden ${
+        mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+      }`}
+      onClick={() => setMobileMenuOpen(false)}
+      aria-hidden={!mobileMenuOpen}
+    />
+
+    {/* Mobile Left Slide Drawer */}
+    <aside
+      className={`fixed top-0 bottom-0 left-0 z-50 w-[84%] max-w-xs sm:max-w-sm bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-in-out lg:hidden ${
+        mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}
+      aria-label="Mobile Navigation"
+      aria-hidden={!mobileMenuOpen}
+    >
+      {/* Drawer Header with Brand Logo & Close Button */}
+      <div className="flex items-center justify-between px-4 py-3.5 border-b border-[#EFECE6] bg-[#FAF8F5]/80 shrink-0">
+        <Link
+          href="/"
+          onClick={() => setMobileMenuOpen(false)}
+          className="group text-left cursor-pointer"
+        >
+          <div className="flex items-center gap-1.5">
+            <span className="font-heading text-xl sm:text-2xl font-black text-brand-purple tracking-tight block leading-none">
+              Baha <span className="text-brand-yellow">Fashion</span>
+            </span>
           </div>
+        </Link>
 
-          <div className="space-y-1.5 pt-2">
-            {navLinks.map((link) => (
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen(false)}
+          className="w-9 h-9 rounded-xl flex items-center justify-center text-text-muted hover:text-text-main hover:bg-[#EFECE6] transition-colors cursor-pointer"
+          aria-label="Close menu"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      {/* Scrollable Navigation List */}
+      <div className="flex-1 overflow-y-auto px-3.5 py-4 space-y-1">
+        <p className="text-[11px] font-bold text-text-light uppercase tracking-wider px-2 mb-2">
+          Collections
+        </p>
+        <div className="space-y-1">
+          {navLinks.map((link) => {
+            const isActive = activeCategory === link.value;
+            return (
               <Link
                 key={link.label}
-                href={`/product?category=${encodeURIComponent(link.value)}`}
+                href={`/products/category/${encodeURIComponent(link.value)}`}
                 onClick={() => {
                   setActiveCategory(link.value);
                   setMobileMenuOpen(false);
                 }}
-                // variant={selectedCategory === link.value ? "default" : "ghost"}
-                // onClick={() => {
-                //   onSelectCategory(link.value);
-                //   setMobileMenuOpen(false);
-                //   document.getElementById('featured-collection')?.scrollIntoView({ behavior: 'smooth' });
-                // }}
-                className={`w-full justify-between h-10 px-3 rounded-xl text-sm font-semibold ${activeCategory === link.value
-                  ? 'font-bold'
-                  : 'text-text-main hover:bg-brand-purple-light hover:text-brand-purple'
-                  }`}
+                className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                  isActive
+                    ? 'bg-brand-purple-light text-brand-purple font-bold'
+                    : link.isSale
+                    ? 'text-brand-coral hover:bg-red-50 font-bold'
+                    : 'text-text-main hover:bg-[#F7F5F0]'
+                }`}
               >
-                <span>{link.label}</span>
-                {link.isSale && (
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${activeCategory === link.value ? 'bg-white text-brand-coral' : 'bg-brand-coral text-white'
-                    }`}>
-                    Sale
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  <span>{link.label}</span>
+                  {link.isSale && (
+                    <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold bg-brand-coral text-white">
+                      Sale
+                    </span>
+                  )}
+                </div>
+                <ChevronRight className={`w-4 h-4 ${isActive ? 'text-brand-purple' : 'text-text-light'}`} />
               </Link>
-            ))}
-          </div>
-
-          {/* Quick Mobile Action Links for Cart, Wishlist & Account */}
-          <div className="pt-3 border-t border-[#EFECE6] grid grid-cols-3 gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                router.push('/cart');
-              }}
-              className="rounded-xl font-bold justify-center gap-1.5 h-10 border-[#DDD8CE] text-xs px-1 cursor-pointer"
-            >
-              <ShoppingBag className="w-4 h-4 text-brand-purple" />
-              <span>Bag ({cartCount})</span>
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                router.push('/wishlist');
-              }}
-              className="rounded-xl font-bold justify-center gap-1.5 h-10 border-[#DDD8CE] text-xs px-1"
-            >
-              <Heart className="w-4 h-4 text-brand-coral" />
-              <span>Saved ({wishlistCount})</span>
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                try {
-                  const isAuth = localStorage.getItem('isAuthenticated') === 'true';
-                  if (isAuth) {
-                    router.push('/profile');
-                  } else {
-                    router.push('/sign-in');
-                  }
-                } catch {
-                  router.push('/sign-in');
-                }
-              }}
-              className="rounded-xl font-bold justify-center gap-1.5 h-10 border-[#DDD8CE] text-xs px-1"
-            >
-              <User className="w-4 h-4 text-brand-purple" />
-              <span>Account</span>
-            </Button>
-          </div>
+            );
+          })}
         </div>
-      )}
-    </header>
+      </div>
+
+      {/* Drawer Bottom Actions */}
+      <div className="p-3.5 border-t border-[#EFECE6] bg-[#FAF8F5]/80 space-y-2 shrink-0">
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              router.push('/cart');
+            }}
+            className="rounded-xl font-bold justify-center gap-1.5 h-9 border-[#DDD8CE] bg-white text-xs cursor-pointer shadow-xs"
+          >
+            <ShoppingBag className="w-4 h-4 text-brand-purple" />
+            <span>Bag ({cartCount})</span>
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              router.push('/wishlist');
+            }}
+            className="rounded-xl font-bold justify-center gap-1.5 h-9 border-[#DDD8CE] bg-white text-xs cursor-pointer shadow-xs"
+          >
+            <Heart className="w-4 h-4 text-brand-coral" />
+            <span>Saved ({wishlistCount})</span>
+          </Button>
+        </div>
+
+        <Button
+          type="button"
+          onClick={() => {
+            setMobileMenuOpen(false);
+            try {
+              const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+              if (isAuth) {
+                router.push('/profile');
+              } else {
+                router.push('/sign-in');
+              }
+            } catch {
+              router.push('/sign-in');
+            }
+          }}
+          className="w-full rounded-xl font-bold justify-center gap-2 h-10 bg-brand-purple hover:bg-brand-purple/90 text-white text-xs cursor-pointer shadow-xs"
+        >
+          <User className="w-4 h-4 text-white" />
+          <span>My Account</span>
+        </Button>
+      </div>
+    </aside>
+  </>
   );
 };

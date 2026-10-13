@@ -406,14 +406,14 @@ const SignUp = () => {
                 <span className="text-xs text-text-muted font-medium leading-relaxed group-hover:text-text-main transition-colors">
                   I agree to the{" "}
                   <Link
-                    href="#"
+                    href="/terms-and-conditions"
                     className="text-brand-purple font-semibold hover:underline"
                   >
                     Terms of Service
                   </Link>{" "}
                   and{" "}
                   <Link
-                    href="#"
+                    href="/privacy-policy"
                     className="text-brand-purple font-semibold hover:underline"
                   >
                     Privacy Policy
