@@ -85,6 +85,10 @@
   --text-color: #292936;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: #FFFDF8;
   color: #292936;

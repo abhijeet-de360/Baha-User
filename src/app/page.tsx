@@ -155,8 +155,7 @@ export const Home: React.FC = () => {
         {/*============================ FULL-WIDTH SWIPER HERO BANNER SLIDER ========================        */}
         <HeroBannerSlider
           onSelectCategory={(cat) => {
-            setSelectedCategory(cat);
-            scrollToFeatured();
+            router.push(`/products/category/${cat}`);
           }}
           onPromoClick={(code) => {
             setAppliedPromo(code);
@@ -173,44 +172,34 @@ export const Home: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-3 gap-4">
               <div>
                 <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight">
-                  Shop by Age & Category
+                  Shop by Age &amp; Category
                 </h2>
               </div>
             </div>
 
             <div className="flex sm:grid sm:grid-cols-4 lg:grid-cols-8 gap-4 sm:gap-6 overflow-x-auto sm:overflow-x-visible pb-2 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
-              {MOCK_CATEGORIES.map((cat) => {
-                const isSelected = selectedCategory === cat.title;
-
-                return (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedCategory(cat.title);
-                      scrollToFeatured();
-                    }}
-                    className="group text-center transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col items-center focus:outline-none shrink-0 w-24 sm:w-auto"
+              {MOCK_CATEGORIES.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={`/products/category/${cat.slug}`}
+                  className="group text-center transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col items-center focus:outline-none shrink-0 w-24 sm:w-auto"
+                >
+                  <div
+                    className={`relative aspect-square w-24 sm:w-full rounded-full overflow-hidden mb-2 sm:mb-3 bg-gradient-to-br ${cat.bgGradient} transition-all duration-300 border border-[#EFECE6] group-hover:shadow-soft group-hover:border-brand-purple/40`}
                   >
-                    <div className={`relative aspect-square w-24 sm:w-full rounded-full overflow-hidden mb-2 sm:mb-3 bg-gradient-to-br ${cat.bgGradient} transition-all duration-300 ${isSelected
-                      ? 'ring-3 ring-brand-purple ring-offset-2 shadow-md scale-105'
-                      : 'border border-[#EFECE6] group-hover:shadow-soft group-hover:border-brand-purple/40'
-                      }`}>
-                      <img
-                        src={cat.image}
-                        alt={cat.title}
-                        className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
-                        loading="lazy"
-                      />
-                    </div>
+                    <img
+                      src={cat.image}
+                      alt={cat.title}
+                      className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                  </div>
 
-                    <h3 className={`font-heading text-xs sm:text-sm lg:text-base font-bold transition-colors whitespace-nowrap sm:whitespace-normal ${isSelected ? 'text-brand-purple font-extrabold' : 'text-text-main group-hover:text-brand-purple'
-                      }`}>
-                      {cat.title}
-                    </h3>
-                  </button>
-                );
-              })}
+                  <h3 className="font-heading text-xs sm:text-sm lg:text-base font-bold transition-colors whitespace-nowrap sm:whitespace-normal text-text-main group-hover:text-brand-purple">
+                    {cat.title}
+                  </h3>
+                </Link>
+              ))}
             </div>
           </div>
         </section>
@@ -230,19 +219,13 @@ export const Home: React.FC = () => {
                 </h2>
               </div>
 
-              <Button
-                type="button"
-                variant="outline"
-                size="default"
-                onClick={() => {
-                  setSelectedCategory('all');
-                  scrollToFeatured();
-                }}
-                className="group shrink-0 whitespace-nowrap rounded-full px-3.5 sm:px-5 py-1.5 sm:py-2 h-8 sm:h-10 border-[#DDD8CE] bg-white hover:bg-brand-purple hover:text-white hover:border-brand-purple text-text-main font-bold text-xs sm:text-sm shadow-xs transition-all duration-300 cursor-pointer active:scale-95"
+              <Link
+                href="/products/category/all"
+                className="group shrink-0 whitespace-nowrap rounded-full px-3.5 sm:px-5 py-1.5 sm:py-2 h-8 sm:h-10 border border-[#DDD8CE] bg-white hover:bg-brand-purple hover:text-white hover:border-brand-purple text-text-main font-bold text-xs sm:text-sm shadow-xs transition-all duration-300 cursor-pointer active:scale-95 inline-flex items-center gap-1.5"
               >
                 <span>View All</span>
                 <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
+              </Link>
             </div>
 
             {/* Products Grid */}
@@ -384,7 +367,7 @@ export const Home: React.FC = () => {
         </section>
 
         {/*============================ FULL-WIDTH SPECIAL OFFER BANNER ========================        */}
-        <section className="container">
+        <section className="container py-12">
           <div
             onClick={scrollToFeatured}
             className="w-full relative cursor-pointer group select-none overflow-hidden"
@@ -392,7 +375,7 @@ export const Home: React.FC = () => {
             <img
               src="/images/offer.png"
               alt="Special Offer Banner - Baha Fashion"
-              className="w-full object-center transform transition-transform duration-700 ease-out rounded-2xl"
+              className="w-full object-center transform transition-transform duration-700 ease-out rounded-3xl"
               loading="lazy"
             />
           </div>

@@ -121,7 +121,7 @@ export default function OrdersPage() {
   const router = useRouter();
   const { handleAddToCart, toast, setToast } = useShopState();
 
-  const [orderFilter, setOrderFilter] = useState<'all' | 'In Transit' | 'Delivered' | 'Processing'>('all');
+  const [orderFilter, setOrderFilter] = useState<'all' | 'In Transit' | 'Delivered' | 'Processing' | 'Cancelled'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [copiedOrderId, setCopiedOrderId] = useState<string | null>(null);
@@ -346,6 +346,7 @@ export default function OrdersPage() {
       inTransit: orders.filter((o) => o.status === 'In Transit').length,
       delivered: orders.filter((o) => o.status === 'Delivered').length,
       processing: orders.filter((o) => o.status === 'Processing').length,
+      cancelled: orders.filter((o) => o.status === 'Cancelled').length,
     };
   }, [orders]);
 
@@ -426,6 +427,7 @@ export default function OrdersPage() {
                   {orderFilter === 'In Transit' && <span className="w-2 h-2 rounded-full bg-brand-purple animate-pulse" />}
                   {orderFilter === 'Delivered' && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
                   {orderFilter === 'Processing' && <span className="w-2 h-2 rounded-full bg-amber-500" />}
+                  {orderFilter === 'Cancelled' && <span className="w-2 h-2 rounded-full bg-rose-500" />}
                   <span>{orderFilter === 'all' ? 'All Orders' : orderFilter}</span>
                 </span>
               </div>
@@ -439,11 +441,14 @@ export default function OrdersPage() {
             {isStatusDropdownOpen && (
               <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl border border-[#EFECE6] shadow-xl p-1.5 z-30 animate-scale-up space-y-1">
                 {[
-                  { value: 'all', label: 'All Orders', count: counts.all, dot: null },
-                  { value: 'In Transit', label: 'In Transit', count: counts.inTransit, dot: 'bg-brand-purple animate-pulse' },
-                  { value: 'Delivered', label: 'Delivered', count: counts.delivered, dot: 'bg-emerald-500' },
+                  { value: 'all', label: 'All Orders', count: counts.all, },
+                  { value: 'In Transit', label: 'In Transit', count: counts.inTransit, },
+                  { value: 'Delivered', label: 'Delivered', count: counts.delivered, },
                   ...(counts.processing > 0
-                    ? [{ value: 'Processing', label: 'Processing', count: counts.processing, dot: 'bg-amber-500' }]
+                    ? [{ value: 'Processing', label: 'Processing', count: counts.processing, }]
+                    : []),
+                  ...(counts.cancelled > 0
+                    ? [{ value: 'Cancelled', label: 'Cancelled', count: counts.cancelled, }]
                     : []),
                 ].map((opt) => (
                   <button
@@ -460,22 +465,8 @@ export default function OrdersPage() {
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      {opt.dot ? (
-                        <span className={`w-2 h-2 rounded-full ${opt.dot}`} />
-                      ) : (
-                        <span className="w-2 h-2 rounded-full bg-gray-300" />
-                      )}
                       <span>{opt.label}</span>
                     </div>
-                    <span
-                      className={`text-[11px] px-2 py-0.5 rounded-full ${
-                        orderFilter === opt.value
-                          ? 'bg-brand-purple/20 text-brand-purple'
-                          : 'bg-[#F2EFE9] text-text-muted'
-                      }`}
-                    >
-                      {opt.count}
-                    </span>
                   </button>
                 ))}
               </div>
@@ -511,7 +502,7 @@ export default function OrdersPage() {
         {/* ── Orders Listing ── */}
         {filteredOrders.length === 0 ? (
           /* Empty / Not Found State */
-          <div className="bg-white rounded-2xl border border-[#EFECE6] p-10 sm:p-14 text-center shadow-xs">
+          <div className=" p-10 sm:p-14 text-center ">
             <div className="w-14 h-14 rounded-2xl bg-[#FAF8F5] text-text-muted flex items-center justify-center mx-auto mb-3 border border-[#EFECE6]">
               <Package className="w-7 h-7 stroke-[1.5]" />
             </div>

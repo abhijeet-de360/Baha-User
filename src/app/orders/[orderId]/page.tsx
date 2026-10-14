@@ -17,6 +17,9 @@ interface OrderItem {
   selectedColor?: string;
   selectedSize?: string;
   quantity?: number;
+  status?: 'Active' | 'Cancelled';
+  cancelledAt?: string;
+  cancelReason?: string;
 }
 
 interface OrderAddress {
@@ -121,6 +124,11 @@ export default function OrderDetailsPage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [targetItemToCancel, setTargetItemToCancel] = useState<OrderItem | null>(null);
+  const [cancelReason, setCancelReason] = useState('Ordered by mistake / wrong item');
+  const [otherReasonText, setOtherReasonText] = useState('');
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const allProducts = useMemo(() => mockData.products as Product[], []);
 
@@ -128,6 +136,31 @@ export default function OrderDetailsPage() {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   };
+
+  // Lock body scroll when cancel sheet is open
+  useEffect(() => {
+    if (showCancelModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showCancelModal]);
+
+  // Handle Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowCancelModal(false);
+        setTargetItemToCancel(null);
+        setShowInvoiceModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // 1-Click Copy
   const handleCopyText = (text: string, type: 'awb' | 'orderId') => {
@@ -176,10 +209,12 @@ export default function OrderDetailsPage() {
         total: o.total,
         items: o.items,
         paymentMethod: 'upi',
-        carrier: o.status === 'In Transit' ? 'Blue Dart Express' : 'Delhivery Air',
-        trackingNumber: o.status === 'In Transit' ? 'BD-88492019' : 'DL-77291048',
+        carrier: o.status === 'Processing' ? 'Assigned upon dispatch' : o.status === 'In Transit' ? 'Blue Dart Express' : 'Delhivery Air',
+        trackingNumber: o.status === 'Processing' ? 'Pending' : o.status === 'In Transit' ? 'BD-88492019' : 'DL-77291048',
         estimatedDelivery:
-          o.status === 'In Transit'
+          o.status === 'Processing'
+            ? 'Expected in 3–5 business days'
+            : o.status === 'In Transit'
             ? 'Thursday, 16 Oct'
             : new Date(o.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
         address: {
@@ -233,7 +268,10 @@ export default function OrderDetailsPage() {
   const orderItems = useMemo((): OrderItem[] => {
     if (!order) return [];
     if (order.cartItemsSnapshot && order.cartItemsSnapshot.length > 0) {
-      return order.cartItemsSnapshot;
+      return order.cartItemsSnapshot.map((item) => ({
+        ...item,
+        status: (item.status || (order.status === 'Cancelled' ? 'Cancelled' : 'Active')) as 'Active' | 'Cancelled',
+      }));
     }
     return order.items
       .map((id) => allProducts.find((p) => p.id === id))
@@ -246,8 +284,18 @@ export default function OrderDetailsPage() {
         selectedColor: prod.colors?.[0]?.name || 'Standard',
         selectedSize: prod.sizes?.[0] || '3-4Y',
         quantity: 1,
+        status: (order.status === 'Cancelled' ? 'Cancelled' : 'Active') as 'Active' | 'Cancelled',
       }));
   }, [order, allProducts]);
+
+  const activeItems = useMemo(
+    () => orderItems.filter((i) => i.status !== 'Cancelled'),
+    [orderItems]
+  );
+  const cancelledItems = useMemo(
+    () => orderItems.filter((i) => i.status === 'Cancelled'),
+    [orderItems]
+  );
 
   // Buy item again
   const handleBuyItemAgain = (item: OrderItem) => {
@@ -275,13 +323,121 @@ export default function OrderDetailsPage() {
 
   // Reorder all items in order
   const handleReorderAll = () => {
-    orderItems.forEach((item) => {
+    activeItems.forEach((item) => {
       const fullProd = allProducts.find((p) => p.id === item.id);
       if (fullProd) {
         handleAddToCart(fullProd, item.selectedColor || 'Standard', item.selectedSize || '3-4Y', item.quantity || 1);
       }
     });
-    showToast(`Added all items from Order #${order?.orderId} to your bag! 🛒`);
+    showToast(`Added items from Order #${order?.orderId} to your bag! 🛒`);
+  };
+
+  // Cancel Order / Item function (only available when order.status === 'Processing')
+  const handleCancelOrder = () => {
+    if (!order) return;
+    setIsCancelling(true);
+
+    const chosenReason =
+      cancelReason === 'Other reason' && otherReasonText.trim()
+        ? otherReasonText.trim()
+        : cancelReason;
+
+    if (targetItemToCancel) {
+      // ── Cancel Specific Individual Item ──
+      const updatedSnapshot = orderItems.map((item) => {
+        if (item.id === targetItemToCancel.id && item.selectedSize === targetItemToCancel.selectedSize) {
+          return {
+            ...item,
+            status: 'Cancelled' as const,
+            cancelledAt: new Date().toISOString(),
+            cancelReason: chosenReason,
+          };
+        }
+        return item;
+      });
+
+      const remainingActive = updatedSnapshot.filter((i) => i.status !== 'Cancelled');
+      const isAllCancelled = remainingActive.length === 0;
+
+      // Recalculate remaining total
+      const remainingTotal = isAllCancelled
+        ? order.total
+        : remainingActive.reduce((acc, it) => acc + (it.price || 0) * (it.quantity || 1), 0);
+
+      const updatedOrder: OrderRecord = {
+        ...order,
+        status: isAllCancelled ? 'Cancelled' : 'Processing',
+        total: Number(remainingTotal.toFixed(2)),
+        cartItemsSnapshot: updatedSnapshot,
+      };
+
+      setOrder(updatedOrder);
+
+      // Persist to localStorage
+      if (typeof window !== 'undefined') {
+        try {
+          const stored = localStorage.getItem('baha_placed_orders');
+          const parsed = stored ? (JSON.parse(stored) as OrderRecord[]) : [];
+          const existingIdx = parsed.findIndex((o) => o.orderId === order.orderId);
+          let updatedList: OrderRecord[];
+          if (existingIdx >= 0) {
+            updatedList = parsed.map((o) => (o.orderId === order.orderId ? updatedOrder : o));
+          } else {
+            updatedList = [updatedOrder, ...parsed];
+          }
+          localStorage.setItem('baha_placed_orders', JSON.stringify(updatedList));
+        } catch (err) {
+          console.error('Failed to update order in localStorage:', err);
+        }
+      }
+
+      showToast(
+        isAllCancelled
+          ? `All items cancelled. Order #${order.orderId} is now cancelled.`
+          : `"${targetItemToCancel.name}" was cancelled from your order.`
+      );
+    } else {
+      // ── Cancel Entire Order ──
+      const updatedSnapshot = orderItems.map((item) => ({
+        ...item,
+        status: 'Cancelled' as const,
+        cancelledAt: new Date().toISOString(),
+        cancelReason: chosenReason,
+      }));
+
+      const updatedOrder: OrderRecord = {
+        ...order,
+        status: 'Cancelled',
+        cartItemsSnapshot: updatedSnapshot,
+      };
+
+      setOrder(updatedOrder);
+
+      // Persist cancellation to localStorage
+      if (typeof window !== 'undefined') {
+        try {
+          const stored = localStorage.getItem('baha_placed_orders');
+          const parsed = stored ? (JSON.parse(stored) as OrderRecord[]) : [];
+          const existingIdx = parsed.findIndex((o) => o.orderId === order.orderId);
+          let updatedList: OrderRecord[];
+          if (existingIdx >= 0) {
+            updatedList = parsed.map((o) => (o.orderId === order.orderId ? updatedOrder : o));
+          } else {
+            updatedList = [updatedOrder, ...parsed];
+          }
+          localStorage.setItem('baha_placed_orders', JSON.stringify(updatedList));
+        } catch (err) {
+          console.error('Failed to update cancelled order in localStorage:', err);
+        }
+      }
+
+      showToast(`Order #${order.orderId} has been cancelled successfully.`);
+    }
+
+    setIsCancelling(false);
+    setShowCancelModal(false);
+    setTargetItemToCancel(null);
+    setOtherReasonText('');
   };
 
   // Professional Invoice Download via pure vector jsPDF (no html2canvas / CSS color parser issues)
@@ -572,7 +728,9 @@ export default function OrderDetailsPage() {
   const StatusIcon = statusConfig.icon;
 
   // Breakdown Calculations
-  const subtotal = orderItems.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0) || order.total;
+  const activeSubtotal = activeItems.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0);
+  const refundedAmount = cancelledItems.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0);
+  const subtotal = activeItems.length > 0 ? activeSubtotal : (orderItems.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0) || order.total);
   const shippingFee = 0.0;
   const packagingFee = 0.0;
   const totalTaxIncluded = Number((order.total * 0.05).toFixed(2));
@@ -588,9 +746,9 @@ export default function OrderDetailsPage() {
       status: 'done',
     },
     {
-      title: 'Packed',
-      time: `${new Date(order.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}, 04:15 PM`,
-      status: 'done',
+      title: 'Processing',
+      time: order.status === 'Processing' ? 'In Progress' : `${new Date(order.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}, 04:15 PM`,
+      status: order.status === 'Processing' ? 'current' : order.status === 'Cancelled' ? 'upcoming' : 'done',
     },
     {
       title: 'In Transit',
@@ -636,20 +794,27 @@ export default function OrderDetailsPage() {
 
           {/* Quick Header Action Buttons */}
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Download PDF button (Especially for Delivered order, but accessible anytime) */}
-            <button
-              type="button"
-              onClick={handleDownloadInvoicePdf}
-              disabled={isDownloadingPdf}
-              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer ${
-                order.status === 'Delivered'
-                  ? 'bg-brand-purple text-white hover:bg-[#584F93] shadow-xs shadow-brand-purple/20'
-                  : 'bg-white border border-[#DDD8CE] text-text-main hover:border-brand-purple hover:text-brand-purple hover:bg-brand-purple-light/20'
-              }`}
+            {/* Download PDF button: ONLY shown when order.status === 'Delivered' */}
+            {order.status === 'Delivered' && (
+              <button
+                type="button"
+                onClick={handleDownloadInvoicePdf}
+                disabled={isDownloadingPdf}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-brand-purple text-white hover:bg-[#584F93] shadow-xs shadow-brand-purple/20 transition-all cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>{isDownloadingPdf ? 'Generating PDF...' : 'Download Invoice (PDF)'}</span>
+              </button>
+            )}
+
+            {/* Need Help? Quick Action */}
+            <Link
+              href="/profile?tab=support"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[#DDD8CE] bg-white text-xs font-semibold text-text-muted hover:text-brand-purple hover:border-brand-purple hover:bg-brand-purple-light/20 transition-all shadow-2xs cursor-pointer"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>{isDownloadingPdf ? 'Generating PDF...' : 'Download Invoice (PDF)'}</span>
-            </button>
+              <HelpCircle className="w-3.5 h-3.5 text-brand-purple" />
+              <span>Need Help?</span>
+            </Link>
           </div>
         </div>
 
@@ -685,150 +850,200 @@ export default function OrderDetailsPage() {
             <span
               className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border ${statusConfig.bg} ${statusConfig.border} ${statusConfig.color}`}
             >
-              <span className={`w-2 h-2 rounded-full ${statusConfig.dot}`} />
-              <StatusIcon className="w-3.5 h-3.5" />
               <span>{statusConfig.label}</span>
             </span>
           </div>
         </div>
 
-        {/* ── Tracking Bar (Clean & Simple) ── */}
-        <div className="mt-8 bg-white rounded-2xl border border-[#EFECE6] p-5 sm:p-6 shadow-2xs">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 border-b border-[#F2EFE9]">
-            <h2 className="font-heading font-black text-base sm:text-lg text-text-main">
-              Shipment Tracking
-            </h2>
-            <p className="text-xs text-text-muted flex items-center gap-2">
-              <span>Carrier: <strong className="text-text-main font-semibold">{order.carrier || 'Blue Dart Express'}</strong></span>
-              <span>•</span>
-              <span>AWB: <strong className="text-brand-purple font-bold">{order.trackingNumber || 'BD-88492019'}</strong></span>
+        {/* Processing Order Alert & Cancel Action */}
+        {order.status === 'Processing' && (
+          <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
+            <div className="flex items-start sm:items-center gap-3">
+
+              <div>
+                <p className="text-xs font-bold text-amber-950">
+                  {cancelledItems.length > 0
+                    ? `Order in processing (${cancelledItems.length} ${cancelledItems.length === 1 ? 'item' : 'items'} cancelled)`
+                    : 'This order is currently being processed'}
+                </p>
+                <p className="text-[11px] text-amber-800 mt-0.5">
+                  {cancelledItems.length > 0
+                    ? `Your remaining ${activeItems.length} item(s) are being prepared. Refund of ₹${refundedAmount.toFixed(2)} is being processed.`
+                    : 'Items are being prepared and packed. You can cancel individual items or the entire order before dispatch.'}
+                </p>
+              </div>
+            </div>
+            {activeItems.length > 0 && (
               <button
                 type="button"
-                onClick={() => handleCopyText(order.trackingNumber || 'BD-88492019', 'awb')}
-                className="p-1 rounded text-text-muted hover:text-brand-purple transition-colors cursor-pointer"
-                title="Copy AWB Number"
+                onClick={() => {
+                  setTargetItemToCancel(null);
+                  setShowCancelModal(true);
+                }}
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-red-500 hover:bg-red-400 text-white transition-all shadow-2xs shrink-0 cursor-pointer active:scale-98"
               >
-                {copiedAWB ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>Cancel Order</span>
               </button>
-            </p>
+            )}
           </div>
+        )}
 
-          {/* Stepper */}
-          <div className="pt-6 sm:pt-8">
-            {/* Desktop Horizontal Stepper */}
-            <div className="hidden lg:grid grid-cols-5 gap-2 relative">
-              {/* Connecting progress line */}
-              <div className="absolute top-5 left-[10%] right-[10%] h-1 bg-[#F0ECE6] -z-0">
-                <div
-                  className="h-full bg-linear-to-r from-emerald-500 to-brand-purple transition-all duration-700"
-                  style={{
-                    width:
-                      order.status === 'Delivered'
-                        ? '100%'
-                        : order.status === 'In Transit'
-                        ? '55%'
-                        : '25%',
-                  }}
-                />
-              </div>
+        {/* Cancelled Order Notice */}
+        {order.status === 'Cancelled' && (
+          <div className="mt-4 p-4 rounded-2xl bg-rose-50/90 border border-rose-200 flex items-center gap-3 shadow-2xs animate-fade-in">
+            <div className="w-9 h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+              <X className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-rose-950">
+                Order Cancelled
+              </p>
+              <p className="text-[11px] text-rose-800 mt-0.5">
+                This order was cancelled. Any prepaid payment of ₹{order.total.toFixed(2)} will be refunded back to your original payment method within 3–5 business days.
+              </p>
+            </div>
+          </div>
+        )}
 
-              {trackingSteps.map((step, idx) => {
-                const isDone = step.status === 'done';
-                const isCurrent = step.status === 'current';
-
-                return (
-                  <div key={idx} className="flex flex-col items-center text-center relative z-10 px-2">
-                    {/* Circle Node */}
-                    <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                        isDone
-                          ? 'bg-emerald-500 text-white'
-                          : isCurrent
-                          ? 'bg-brand-purple text-white ring-4 ring-brand-purple/20 shadow-xs'
-                          : 'bg-white text-text-muted border border-[#E5E0D8]'
-                      }`}
-                    >
-                      {isDone ? (
-                        <CheckCircle2 className="w-5 h-5 stroke-[2]" />
-                      ) : isCurrent ? (
-                        <Truck className="w-5 h-5 stroke-[2]" />
-                      ) : (
-                        <Clock className="w-4 h-4 text-text-muted/60" />
-                      )}
-                    </div>
-
-                    {/* Step Title & Timestamp */}
-                    <h4
-                      className={`font-heading font-bold text-xs sm:text-sm mt-3 ${
-                        isCurrent ? 'text-brand-purple font-black' : isDone ? 'text-text-main' : 'text-text-muted'
-                      }`}
-                    >
-                      {step.title}
-                    </h4>
-                    <span className="text-[11px] text-text-muted mt-1 font-medium">
-                      {step.time}
-                    </span>
-                  </div>
-                );
-              })}
+        {/* ── Tracking Bar (Clean & Simple) - Hidden when order is Cancelled ── */}
+        {order.status !== 'Cancelled' && (
+          <div className="mt-8 bg-white rounded-2xl border border-[#EFECE6] p-5 sm:p-6 shadow-2xs">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 border-b border-[#F2EFE9]">
+              <h2 className="font-heading font-black text-base sm:text-lg text-text-main">
+                Shipment Tracking
+              </h2>
+              <p className="text-xs text-text-muted flex items-center gap-2">
+                <span>Carrier: <strong className="text-text-main font-semibold">{order.carrier || 'Blue Dart Express'}</strong></span>
+                <span>•</span>
+                <span>AWB: <strong className="text-brand-purple font-bold">{order.trackingNumber || 'BD-88492019'}</strong></span>
+                <button
+                  type="button"
+                  onClick={() => handleCopyText(order.trackingNumber || 'BD-88492019', 'awb')}
+                  className="p-1 rounded text-text-muted hover:text-brand-purple transition-colors cursor-pointer"
+                  title="Copy AWB Number"
+                >
+                  {copiedAWB ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                </button>
+              </p>
             </div>
 
-            {/* Mobile / Tablet Vertical Stepper */}
-            <div className="lg:hidden space-y-5 relative pl-1">
-              {trackingSteps.map((step, idx, arr) => {
-                const isDone = step.status === 'done';
-                const isCurrent = step.status === 'current';
+            {/* Stepper */}
+            <div className="pt-6 sm:pt-8">
+              {/* Desktop Horizontal Stepper */}
+              <div className="hidden lg:grid grid-cols-5 gap-2 relative">
+                {/* Connecting progress line */}
+                <div className="absolute top-5 left-[10%] right-[10%] h-1 bg-[#F0ECE6] -z-0">
+                  <div
+                    className="h-full bg-linear-to-r from-emerald-500 to-brand-purple transition-all duration-700"
+                    style={{
+                      width:
+                        order.status === 'Delivered'
+                          ? '100%'
+                          : order.status === 'In Transit'
+                          ? '55%'
+                          : '25%',
+                    }}
+                  />
+                </div>
 
-                return (
-                  <div key={idx} className="flex items-center gap-3.5 relative">
-                    {/* Connecting line */}
-                    {idx < arr.length - 1 && (
+                {trackingSteps.map((step, idx) => {
+                  const isDone = step.status === 'done';
+                  const isCurrent = step.status === 'current';
+
+                  return (
+                    <div key={idx} className="flex flex-col items-center text-center relative z-10 px-2">
+                      {/* Circle Node */}
                       <div
-                        className={`absolute left-[17px] top-8 bottom-[-20px] w-0.5 ${
-                          isDone ? 'bg-emerald-500' : 'bg-[#EAE6DF]'
+                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                          isDone
+                            ? 'bg-emerald-500 text-white'
+                            : isCurrent
+                            ? 'bg-brand-purple text-white ring-4 ring-brand-purple/20 shadow-xs'
+                            : 'bg-white text-text-muted border border-[#E5E0D8]'
                         }`}
-                      />
-                    )}
+                      >
+                        {isDone ? (
+                          <CheckCircle2 className="w-5 h-5 stroke-[2]" />
+                        ) : isCurrent ? (
+                          <Truck className="w-5 h-5 stroke-[2]" />
+                        ) : (
+                          <Clock className="w-4 h-4 text-text-muted/60" />
+                        )}
+                      </div>
 
-                    {/* Node */}
-                    <div
-                      className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 z-10 ${
-                        isDone
-                          ? 'bg-emerald-500 text-white'
-                          : isCurrent
-                          ? 'bg-brand-purple text-white ring-4 ring-brand-purple/20'
-                          : 'bg-[#FAF8F5] text-text-muted border border-[#E5E0D8]'
-                      }`}
-                    >
-                      {isDone ? (
-                        <CheckCircle2 className="w-4 h-4 stroke-[2]" />
-                      ) : isCurrent ? (
-                        <Truck className="w-4 h-4 stroke-[2]" />
-                      ) : (
-                        <Clock className="w-3.5 h-3.5 text-text-muted" />
-                      )}
-                    </div>
-
-                    {/* Title and Time */}
-                    <div className="flex-1 flex items-center justify-between gap-2">
+                      {/* Step Title & Timestamp */}
                       <h4
-                        className={`font-heading font-bold text-xs sm:text-sm ${
+                        className={`font-heading font-bold text-xs sm:text-sm mt-3 ${
                           isCurrent ? 'text-brand-purple font-black' : isDone ? 'text-text-main' : 'text-text-muted'
                         }`}
                       >
                         {step.title}
                       </h4>
-                      <span className="text-[11px] text-text-muted font-medium">
+                      <span className="text-[11px] text-text-muted mt-1 font-medium">
                         {step.time}
                       </span>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+
+              {/* Mobile / Tablet Vertical Stepper */}
+              <div className="lg:hidden space-y-5 relative pl-1">
+                {trackingSteps.map((step, idx, arr) => {
+                  const isDone = step.status === 'done';
+                  const isCurrent = step.status === 'current';
+
+                  return (
+                    <div key={idx} className="flex items-center gap-3.5 relative">
+                      {/* Connecting line */}
+                      {idx < arr.length - 1 && (
+                        <div
+                          className={`absolute left-[17px] top-8 bottom-[-20px] w-0.5 ${
+                            isDone ? 'bg-emerald-500' : 'bg-[#EAE6DF]'
+                          }`}
+                        />
+                      )}
+
+                      {/* Node */}
+                      <div
+                        className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 z-10 ${
+                          isDone
+                            ? 'bg-emerald-500 text-white'
+                            : isCurrent
+                            ? 'bg-brand-purple text-white ring-4 ring-brand-purple/20'
+                            : 'bg-[#FAF8F5] text-text-muted border border-[#E5E0D8]'
+                        }`}
+                      >
+                        {isDone ? (
+                          <CheckCircle2 className="w-4 h-4 stroke-[2]" />
+                        ) : isCurrent ? (
+                          <Truck className="w-4 h-4 stroke-[2]" />
+                        ) : (
+                          <Clock className="w-3.5 h-3.5 text-text-muted" />
+                        )}
+                      </div>
+
+                      {/* Title and Time */}
+                      <div className="flex-1 flex items-center justify-between gap-2">
+                        <h4
+                          className={`font-heading font-bold text-xs sm:text-sm ${
+                            isCurrent ? 'text-brand-purple font-black' : isDone ? 'text-text-main' : 'text-text-muted'
+                          }`}
+                        >
+                          {step.title}
+                        </h4>
+                        <span className="text-[11px] text-text-muted font-medium">
+                          {step.time}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* ── Main Layout: Products (Left) + Breakdown & Address (Right) ── */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -848,63 +1063,114 @@ export default function OrderDetailsPage() {
 
               {/* Items List */}
               <div className="divide-y divide-[#F2EFE9]">
-                {orderItems.map((item, idx) => (
-                  <div key={`${item.id}-${idx}`} className="py-5 sm:py-6 flex flex-col sm:flex-row items-start gap-4">
-                    {/* Product Image */}
-                    <Link
-                      href={`/product/${item.id}`}
-                      className="group/img block rounded-2xl overflow-hidden shrink-0 border border-[#EFECE6] bg-[#FAF8F5] shadow-2xs"
-                    >
-                      <img
-                        src={item.featuredImage}
-                        alt={item.name}
-                        className="w-20 h-20 sm:w-24 sm:h-24 object-cover group-hover/img:scale-105 transition-transform duration-300"
-                      />
-                    </Link>
+                {orderItems.map((item, idx) => {
+                  const isItemCancelled = item.status === 'Cancelled' || order.status === 'Cancelled';
+                  const canCancelItem = order.status === 'Processing' && !isItemCancelled;
+                  const itemTotal = (item.price || 0) * (item.quantity || 1);
 
-                    {/* Product Specs */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <Link
-                            href={`/product/${item.id}`}
-                            className="font-heading font-bold text-sm sm:text-base text-text-main hover:text-brand-purple transition-colors line-clamp-1"
-                          >
-                            {item.name}
-                          </Link>
-                          <p className="text-[11px] font-semibold text-brand-purple mt-0.5">
-                            100% GOTS Organic Cotton • Hypoallergenic
-                          </p>
+                  return (
+                    <div key={`${item.id}-${idx}`} className="py-5 sm:py-6 flex flex-col sm:flex-row items-start gap-4">
+                      {/* Product Image */}
+                      <Link
+                        href={`/product/${item.id}`}
+                        className={`group/img block rounded-2xl overflow-hidden shrink-0 border border-[#EFECE6] bg-[#FAF8F5] shadow-2xs relative ${
+                          isItemCancelled ? 'opacity-60' : ''
+                        }`}
+                      >
+                        <img
+                          src={item.featuredImage}
+                          alt={item.name}
+                          className="w-20 h-20 sm:w-24 sm:h-24 object-cover group-hover/img:scale-105 transition-transform duration-300"
+                        />
+                        {isItemCancelled && (
+                          <div className="absolute inset-0 bg-white/40 flex items-center justify-center pointer-events-none">
+                            <span className="bg-rose-600 text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full shadow-xs">
+                              Cancelled
+                            </span>
+                          </div>
+                        )}
+                      </Link>
+
+                      {/* Product Specs */}
+                      <div className="flex-1 min-w-0 w-full">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <Link
+                                href={`/product/${item.id}`}
+                                className={`font-heading font-bold text-sm sm:text-base hover:text-brand-purple transition-colors line-clamp-1 ${
+                                  isItemCancelled ? 'text-text-muted line-through' : 'text-text-main'
+                                }`}
+                              >
+                                {item.name}
+                              </Link>
+                              {isItemCancelled && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                  <span>Cancelled</span>
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[11px] font-semibold text-brand-purple mt-0.5">
+                              100% GOTS Organic Cotton • Hypoallergenic
+                            </p>
+                          </div>
+
+                          {/* Price */}
+                          <div className="text-right shrink-0">
+                            <span
+                              className={`font-heading font-black text-sm sm:text-base block ${
+                                isItemCancelled ? 'line-through text-text-muted' : 'text-text-main'
+                              }`}
+                            >
+                              ₹{itemTotal.toFixed(2)}
+                            </span>
+                            {item.quantity && item.quantity > 1 && (
+                              <span className="text-[10px] text-text-muted block">
+                                (₹{item.price.toFixed(2)} × {item.quantity})
+                              </span>
+                            )}
+                          </div>
                         </div>
 
-                        {/* Price */}
-                        <div className="text-right shrink-0">
-                          <span className="font-heading font-black text-sm sm:text-base text-text-main block">
-                            ₹{((item.price || 0) * (item.quantity || 1)).toFixed(2)}
-                          </span>
-                          {item.quantity && item.quantity > 1 && (
-                            <span className="text-[10px] text-text-muted block">
-                              (₹{item.price.toFixed(2)} × {item.quantity})
+                        {/* Variant Badges & Cancel Item Action */}
+                        <div className="mt-3 flex items-center justify-between gap-3 flex-wrap">
+                          <div className="flex items-center gap-2 flex-wrap text-xs">
+                            <span className="px-2.5 py-0.5 rounded-lg bg-[#FAF8F5] border border-[#EAE6DE] text-[11px] font-bold text-text-muted">
+                              Size: <strong className="text-text-main">{item.selectedSize || '3-4Y'}</strong>
                             </span>
+                            <span className="px-2.5 py-0.5 rounded-lg bg-[#FAF8F5] border border-[#EAE6DE] text-[11px] font-bold text-text-muted">
+                              Color: <strong className="text-text-main">{item.selectedColor || 'Standard'}</strong>
+                            </span>
+                            <span className="px-2.5 py-0.5 rounded-lg bg-[#FAF8F5] border border-[#EAE6DE] text-[11px] font-bold text-text-muted">
+                              Qty: <strong className="text-text-main">{item.quantity || 1}</strong>
+                            </span>
+                          </div>
+
+                          {/* Cancel Item Button for this individual product */}
+                          {canCancelItem && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setTargetItemToCancel(item);
+                                setShowCancelModal(true);
+                              }}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-red-500 border border-rose-400 hover:bg-red-400 hover:border-rose-400 transition-all cursor-pointer shadow-2xs active:scale-95"
+                            >
+                              <span>Cancel Item</span>
+                            </button>
                           )}
                         </div>
-                      </div>
 
-                      {/* Variant Badges */}
-                      <div className="mt-3 flex items-center gap-2 flex-wrap text-xs">
-                        <span className="px-2.5 py-0.5 rounded-lg bg-[#FAF8F5] border border-[#EAE6DE] text-[11px] font-bold text-text-muted">
-                          Size: <strong className="text-text-main">{item.selectedSize || '3-4Y'}</strong>
-                        </span>
-                        <span className="px-2.5 py-0.5 rounded-lg bg-[#FAF8F5] border border-[#EAE6DE] text-[11px] font-bold text-text-muted">
-                          Color: <strong className="text-text-main">{item.selectedColor || 'Standard'}</strong>
-                        </span>
-                        <span className="px-2.5 py-0.5 rounded-lg bg-[#FAF8F5] border border-[#EAE6DE] text-[11px] font-bold text-text-muted">
-                          Qty: <strong className="text-text-main">{item.quantity || 1}</strong>
-                        </span>
+                        {/* Cancelled notice on item */}
+                        {isItemCancelled && (
+                          <div className="mt-2.5 p-2 rounded-xl bg-rose-50/70 border border-rose-200/60 text-[11px] text-rose-800 flex items-center justify-between gap-2">
+                            <span>This item was cancelled. Refund of <strong>₹{itemTotal.toFixed(2)}</strong> is being processed.</span>
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -921,9 +1187,16 @@ export default function OrderDetailsPage() {
 
               <div className="py-4 space-y-3 text-xs border-b border-[#F2EFE9]">
                 <div className="flex justify-between items-center text-text-muted">
-                  <span>Items Subtotal ({orderItems.length} items)</span>
+                  <span>Items Subtotal ({activeItems.length > 0 ? activeItems.length : orderItems.length} {activeItems.length === 1 ? 'item' : 'items'})</span>
                   <span className="font-bold text-text-main">₹{subtotal.toFixed(2)}</span>
                 </div>
+
+                {refundedAmount > 0 && (
+                  <div className="flex justify-between items-center text-rose-600 bg-rose-50/70 border border-rose-200/60 p-2 rounded-xl">
+                    <span className="font-semibold">Refund Initiated ({cancelledItems.length} {cancelledItems.length === 1 ? 'item' : 'items'})</span>
+                    <span className="font-bold">-₹{refundedAmount.toFixed(2)}</span>
+                  </div>
+                )}
 
                 <div className="flex justify-between items-center text-text-muted">
                   <span className="flex items-center gap-1">
@@ -992,6 +1265,55 @@ export default function OrderDetailsPage() {
                 <div className="pt-2 text-[11px] text-text-muted flex items-center gap-1 font-mono">
                   <Phone className="w-3.5 h-3.5 text-text-muted shrink-0" />
                   <span>{order.address?.phone || '+91 98765 43210'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Modern Order Assistance Card */}
+            <div className="bg-white rounded-3xl border border-[#EFECE6] p-6 shadow-xs space-y-4">
+              <div className="flex items-center gap-2 pb-3 border-b border-[#F2EFE9]">
+                <HelpCircle className="w-4 h-4 text-brand-purple" />
+                <h3 className="font-heading font-bold text-base text-text-main">
+                  Order Assistance
+                </h3>
+              </div>
+
+              <div className="space-y-2.5 text-xs">
+                {order.status === 'Processing' && activeItems.length > 0 && (
+                  <div className="p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-between gap-3 hover:border-brand-purple/30 transition-colors">
+                    <div>
+                      <p className="font-bold text-text-main">Need to cancel this order?</p>
+                      <p className="text-[11px] text-text-muted mt-0.5">
+                        Free cancellation is available before your package is dispatched.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTargetItemToCancel(null);
+                        setShowCancelModal(true);
+                      }}
+                      className="px-3 py-1.5 rounded-xl border border-rose-200 text-rose-600 bg-white hover:bg-rose-50 hover:border-rose-300 text-xs font-bold transition-all shadow-2xs cursor-pointer shrink-0 active:scale-95 whitespace-nowrap"
+                    >
+                      Cancel Order
+                    </button>
+                  </div>
+                )}
+
+                <div className="p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-between gap-3 hover:border-brand-purple/30 transition-colors">
+                  <div>
+                    <p className="font-bold text-text-main">Need to update shipping address?</p>
+                    <p className="text-[11px] text-text-muted mt-0.5">
+                      Need help or changes? Our customer support team is here to assist.
+                    </p>
+                  </div>
+                  <Link
+                    href="/profile?tab=support"
+                    className="px-3 py-1.5 rounded-xl border border-[#DDD8CE] text-text-main bg-white hover:border-brand-purple hover:text-brand-purple text-xs font-bold transition-all shadow-2xs shrink-0 inline-flex items-center gap-1 active:scale-95 whitespace-nowrap"
+                  >
+                    <span>Help Desk</span>
+                    <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                  </Link>
                 </div>
               </div>
             </div>
@@ -1124,6 +1446,218 @@ export default function OrderDetailsPage() {
           </div>
         </div>
       )}
+
+      {/* ─────────────────────────────────────────────────────────────
+          RIGHT SIDE SHEET: CANCEL ORDER DRAWER
+         ───────────────────────────────────────────────────────────── */}
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-300 ease-in-out ${
+          showCancelModal ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => {
+          setShowCancelModal(false);
+          setTargetItemToCancel(null);
+        }}
+        aria-hidden={!showCancelModal}
+      />
+
+      {/* Right Drawer */}
+      <aside
+        className={`fixed top-0 right-0 bottom-0 z-[51] w-full max-w-md bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
+          showCancelModal ? 'translate-x-0' : 'translate-x-full'
+        }`}
+        aria-label="Cancel Drawer"
+        aria-hidden={!showCancelModal}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#EFECE6] bg-[#FAF8F5]/80 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div>
+              <h3 className="font-heading font-black text-base sm:text-lg text-text-main leading-tight">
+                {targetItemToCancel
+                  ? 'Cancel Item'
+                  : activeItems.length > 1
+                  ? 'Cancel Entire Order'
+                  : 'Cancel Order'}
+              </h3>
+              <p className="text-[11px] text-text-muted mt-0.5">
+                Order #{order.orderId} • {targetItemToCancel ? '1 item selected' : `${activeItems.length} active ${activeItems.length === 1 ? 'item' : 'items'}`}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setShowCancelModal(false);
+              setTargetItemToCancel(null);
+            }}
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-text-muted hover:text-text-main hover:bg-[#EFECE6] transition-colors cursor-pointer"
+            aria-label="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5 text-xs">
+          {/* Target Item Snapshot (when cancelling individual item) */}
+          {targetItemToCancel ? (
+            <div className="p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6] flex items-center gap-3.5 animate-fade-in">
+              <div className="w-14 h-14 rounded-xl overflow-hidden bg-white border border-[#EFECE6] shrink-0">
+                <img
+                  src={targetItemToCancel.featuredImage}
+                  alt={targetItemToCancel.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-bold text-xs text-text-main truncate">
+                  {targetItemToCancel.name}
+                </h4>
+                <p className="text-[11px] text-text-muted mt-0.5">
+                  Size: <strong className="text-text-main">{targetItemToCancel.selectedSize || '3-4Y'}</strong> • Qty: <strong className="text-text-main">{targetItemToCancel.quantity || 1}</strong>
+                </p>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="font-bold font-mono text-xs text-text-main">
+                    ₹{((targetItemToCancel.price || 0) * (targetItemToCancel.quantity || 1)).toFixed(2)}
+                  </span>
+                  <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                    Refundable
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Entire Order Cancellation Summary (Modern eCommerce UX) */
+            <div className="space-y-4 animate-fade-in">
+              {/* Active Items Stack */}
+              <div className="p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6] space-y-3">
+                <div className="flex items-center justify-between text-xs pb-2 border-b border-[#EAE6DE]">
+                  <span className="font-bold text-text-main">
+                    Items to be Cancelled ({activeItems.length})
+                  </span>
+                  <span className="font-bold font-mono text-brand-purple">
+                    ₹{activeSubtotal.toFixed(2)}
+                  </span>
+                </div>
+
+                {/* Items List */}
+                <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
+                  {activeItems.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-xl overflow-hidden bg-white border border-[#EAE6DE] shrink-0">
+                        <img
+                          src={item.featuredImage}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-xs text-text-main truncate">
+                          {item.name}
+                        </p>
+                        <p className="text-[11px] text-text-muted">
+                          Size: <strong className="text-text-main">{item.selectedSize || '3-4Y'}</strong> • Qty: {item.quantity || 1}
+                        </p>
+                      </div>
+                      <span className="font-bold font-mono text-xs text-text-main shrink-0">
+                        ₹{((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* Reason Selection */}
+          <div className="space-y-2 pt-1">
+            <label className="font-bold text-text-main block text-xs">
+              Why do you want to cancel this {targetItemToCancel ? 'item' : 'order'}?
+            </label>
+            <p className="text-[11px] text-text-muted">
+              Please choose a reason so we can improve our service:
+            </p>
+            <div className="space-y-2 pt-1">
+              {[
+                'Ordered by mistake / wrong item',
+                'Need to change shipping address',
+                'Delivery time is too long',
+                'Found a better deal / discount',
+                'Other reason',
+              ].map((reason) => (
+                <label
+                  key={reason}
+                  className={`flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition-all ${
+                    cancelReason === reason
+                      ? 'border-brand-purple bg-brand-purple-light/20 text-brand-purple font-semibold shadow-2xs'
+                      : 'border-[#EFECE6] hover:bg-[#FAF8F5] text-text-main'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="cancelReason"
+                    value={reason}
+                    checked={cancelReason === reason}
+                    onChange={() => setCancelReason(reason)}
+                    className="accent-brand-purple w-4 h-4 cursor-pointer"
+                  />
+                  <span className="text-xs">{reason}</span>
+                </label>
+              ))}
+            </div>
+
+            {/* Small textarea when 'Other reason' is selected */}
+            {cancelReason === 'Other reason' && (
+              <div className="pt-2 animate-fade-in space-y-1.5">
+                <label className="text-[11px] font-bold text-text-main block">
+                  Please type your reason
+                </label>
+                <textarea
+                  value={otherReasonText}
+                  onChange={(e) => setOtherReasonText(e.target.value)}
+                  placeholder={`Tell us why you want to cancel this ${targetItemToCancel ? 'item' : 'order'}...`}
+                  rows={3}
+                  className="w-full p-3 rounded-xl border border-[#EFECE6] bg-white text-xs text-text-main placeholder:text-text-muted/60 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all resize-none shadow-2xs"
+                  autoFocus
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer Actions - Side by Side */}
+        <div className="p-5 border-t border-[#EFECE6] bg-[#FAF8F5]/80 flex items-center gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() => {
+              setShowCancelModal(false);
+              setTargetItemToCancel(null);
+            }}
+            className="flex-1 h-11 rounded-xl text-xs font-bold border border-[#DDD8CE] bg-white text-text-main hover:bg-[#FAF8F5] transition-all cursor-pointer flex items-center justify-center shadow-2xs active:scale-98"
+          >
+            {targetItemToCancel ? 'Keep Item' : 'Keep Order'}
+          </button>
+
+          <button
+            type="button"
+            disabled={isCancelling}
+            onClick={handleCancelOrder}
+            className="flex-1 h-11 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5 active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap"
+          >
+            {isCancelling ? (
+              <span>Cancelling...</span>
+            ) : (
+              <>
+                <X className="w-4 h-4 shrink-0" />
+                <span>{targetItemToCancel ? 'Cancel Item' : 'Confirm Cancellation'}</span>
+              </>
+            )}
+          </button>
+        </div>
+      </aside>
     </div>
   );
 }

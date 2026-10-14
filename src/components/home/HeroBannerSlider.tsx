@@ -53,7 +53,6 @@ export const HeroBannerSlider: React.FC<HeroBannerSliderProps> = ({
     if (slide.promoCode && onPromoClick) {
       onPromoClick(slide.promoCode);
     }
-    document.getElementById('featured-collection')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (

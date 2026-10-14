@@ -37,7 +37,7 @@
     },
     {
       "id": "cat-6",
-      "slug": "sets",
+      "slug": "party-wear",
       "title": "Party Wear",
       "image": "/assets/category/party.png",
       "bgGradient": "from-[#EEF8F1] to-[#FFF8E7]"
@@ -641,6 +641,13 @@
         "status": "In Transit",
         "total": 112.00,
         "items": ["prod-9", "prod-12", "prod-15"]
+      },
+      {
+        "orderId": "BF-20241014-004",
+        "date": "2024-10-14",
+        "status": "Processing",
+        "total": 68.00,
+        "items": ["prod-2", "prod-5"]
       }
     ],
     "preferences": {
