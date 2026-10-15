@@ -43,8 +43,32 @@ interface OrderRecord {
   carrier?: string;
   trackingNumber?: string;
   estimatedDelivery?: string;
+  deliveredDate?: string;
   paymentMethod?: string;
   address?: OrderAddress;
+}
+
+interface ItemReview {
+  orderId: string;
+  itemId: string;
+  itemSize?: string;
+  rating: number; // 1 to 5
+  title?: string;
+  comment: string;
+  tags?: string[];
+  recommend?: boolean;
+  createdAt: string;
+}
+
+interface ItemReturnRequest {
+  orderId: string;
+  itemId: string;
+  itemSize?: string;
+  reason: string;
+  comments?: string;
+  refundMode: 'original' | 'wallet';
+  requestedAt: string;
+  status: 'Pending Pickup' | 'In Inspection' | 'Refund Completed';
 }
 
 const STATUS_CONFIG: Record<
@@ -130,6 +154,25 @@ export default function OrderDetailsPage() {
   const [otherReasonText, setOtherReasonText] = useState('');
   const [isCancelling, setIsCancelling] = useState(false);
 
+  // Rate & Review States
+  const [reviews, setReviews] = useState<Record<string, ItemReview>>({});
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [targetItemToReview, setTargetItemToReview] = useState<OrderItem | null>(null);
+  const [ratingInput, setRatingInput] = useState<number>(5);
+  const [hoverRating, setHoverRating] = useState<number>(0);
+  const [reviewComment, setReviewComment] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
+  // Return Request States
+  const [returnRequests, setReturnRequests] = useState<Record<string, ItemReturnRequest>>({});
+  const [showReturnModal, setShowReturnModal] = useState(false);
+  const [targetItemToReturn, setTargetItemToReturn] = useState<OrderItem | null>(null);
+  const [selectedReturnKeys, setSelectedReturnKeys] = useState<string[]>([]);
+  const [returnReason, setReturnReason] = useState('Size didn’t fit / too small');
+  const [returnComments, setReturnComments] = useState('');
+  const [refundMode, setRefundMode] = useState<'original' | 'wallet'>('original');
+  const [isSubmittingReturn, setIsSubmittingReturn] = useState(false);
+
   const allProducts = useMemo(() => mockData.products as Product[], []);
 
   const showToast = (msg: string) => {
@@ -137,9 +180,33 @@ export default function OrderDetailsPage() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Lock body scroll when cancel sheet is open
+  const getReviewKey = (orderId: string, itemId: string, size?: string) =>
+    `${orderId}_${itemId}_${size || 'default'}`;
+
+  const getReturnKey = (orderId: string, itemId: string, size?: string) =>
+    `${orderId}_${itemId}_${size || 'default'}`;
+
+  // Load saved reviews & returns from localStorage on mount
   useEffect(() => {
-    if (showCancelModal) {
+    if (typeof window !== 'undefined') {
+      try {
+        const storedReviews = localStorage.getItem('baha_order_reviews');
+        if (storedReviews) {
+          setReviews(JSON.parse(storedReviews));
+        }
+        const storedReturns = localStorage.getItem('baha_order_returns');
+        if (storedReturns) {
+          setReturnRequests(JSON.parse(storedReturns));
+        }
+      } catch (err) {
+        console.error('Failed to load reviews or returns from localStorage:', err);
+      }
+    }
+  }, []);
+
+  // Lock body scroll when cancel, review, or return sheet is open
+  useEffect(() => {
+    if (showCancelModal || showReviewModal || showReturnModal) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -147,7 +214,7 @@ export default function OrderDetailsPage() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showCancelModal]);
+  }, [showCancelModal, showReviewModal, showReturnModal]);
 
   // Handle Escape key
   useEffect(() => {
@@ -156,6 +223,10 @@ export default function OrderDetailsPage() {
         setShowCancelModal(false);
         setTargetItemToCancel(null);
         setShowInvoiceModal(false);
+        setShowReviewModal(false);
+        setTargetItemToReview(null);
+        setShowReturnModal(false);
+        setTargetItemToReturn(null);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -260,6 +331,13 @@ export default function OrderDetailsPage() {
       };
     }
 
+    if (foundOrder && foundOrder.orderId === 'BF-20240910-003') {
+      foundOrder.status = 'Delivered';
+      foundOrder.carrier = 'Delhivery Air';
+      foundOrder.trackingNumber = 'DL-77291048';
+      foundOrder.estimatedDelivery = 'Delivered on 14 Sep 2024';
+    }
+
     setOrder(foundOrder);
     setLoading(false);
   }, [decodedOrderId]);
@@ -296,6 +374,20 @@ export default function OrderDetailsPage() {
     () => orderItems.filter((i) => i.status === 'Cancelled'),
     [orderItems]
   );
+
+  const activeReturnRequests = useMemo(() => {
+    if (!order) return [];
+    return Object.values(returnRequests).filter((r) => r.orderId === order.orderId);
+  }, [returnRequests, order]);
+
+  const activeReturnableItems = useMemo(() => {
+    if (!order) return [];
+    return orderItems.filter(
+      (item) =>
+        item.status !== 'Cancelled' &&
+        !returnRequests[getReturnKey(order.orderId, item.id, item.selectedSize)]
+    );
+  }, [order, orderItems, returnRequests]);
 
   // Buy item again
   const handleBuyItemAgain = (item: OrderItem) => {
@@ -436,8 +528,130 @@ export default function OrderDetailsPage() {
 
     setIsCancelling(false);
     setShowCancelModal(false);
-    setTargetItemToCancel(null);
-    setOtherReasonText('');
+  };
+
+  // Open Rate & Review sheet
+  const handleOpenReviewModal = (item: OrderItem) => {
+    if (!order) return;
+    setTargetItemToReview(item);
+    const key = getReviewKey(order.orderId, item.id, item.selectedSize);
+    const existing = reviews[key];
+    if (existing) {
+      setRatingInput(existing.rating);
+      setReviewComment(existing.comment || '');
+    } else {
+      setRatingInput(5);
+      setReviewComment('');
+    }
+    setHoverRating(0);
+    setShowReviewModal(true);
+  };
+
+  // Submit Rate & Review
+  const handleSubmitReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!order || !targetItemToReview) return;
+    if (!ratingInput) {
+      showToast('Please select a star rating ⭐');
+      return;
+    }
+    if (!reviewComment.trim()) {
+      showToast('Please share your review in the box ✍️');
+      return;
+    }
+
+    setIsSubmittingReview(true);
+
+    const key = getReviewKey(order.orderId, targetItemToReview.id, targetItemToReview.selectedSize);
+    const newReview: ItemReview = {
+      orderId: order.orderId,
+      itemId: targetItemToReview.id,
+      itemSize: targetItemToReview.selectedSize,
+      rating: ratingInput,
+      comment: reviewComment.trim(),
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedReviews = { ...reviews, [key]: newReview };
+    setReviews(updatedReviews);
+
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('baha_order_reviews', JSON.stringify(updatedReviews));
+      } catch (err) {
+        console.error('Failed to save review in localStorage:', err);
+      }
+    }
+
+    setIsSubmittingReview(false);
+    setShowReviewModal(false);
+    setTargetItemToReview(null);
+    showToast(`Thank you! Review for "${targetItemToReview.name}" was submitted ⭐`);
+  };
+
+  // Open Return Request sheet
+  const handleOpenReturnModal = (item: OrderItem | null) => {
+    if (!order) return;
+    setTargetItemToReturn(item);
+    if (item) {
+      setSelectedReturnKeys([getReturnKey(order.orderId, item.id, item.selectedSize)]);
+    } else {
+      setSelectedReturnKeys(
+        activeReturnableItems.map((i) => getReturnKey(order.orderId, i.id, i.selectedSize))
+      );
+    }
+    setReturnReason('Size didn’t fit / too small');
+    setReturnComments('');
+    setRefundMode('original');
+    setShowReturnModal(true);
+  };
+
+  // Submit Return Request
+  const handleSubmitReturn = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!order) return;
+    if (selectedReturnKeys.length === 0) {
+      showToast('Please select at least one item to return');
+      return;
+    }
+
+    setIsSubmittingReturn(true);
+
+    const now = new Date().toISOString();
+    const updatedReturns = { ...returnRequests };
+
+    orderItems.forEach((item) => {
+      const key = getReturnKey(order.orderId, item.id, item.selectedSize);
+      if (selectedReturnKeys.includes(key)) {
+        updatedReturns[key] = {
+          orderId: order.orderId,
+          itemId: item.id,
+          itemSize: item.selectedSize,
+          reason: returnReason,
+          comments: returnComments.trim(),
+          refundMode,
+          requestedAt: now,
+          status: 'Pending Pickup',
+        };
+      }
+    });
+
+    setReturnRequests(updatedReturns);
+
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('baha_order_returns', JSON.stringify(updatedReturns));
+      } catch (err) {
+        console.error('Failed to save return request in localStorage:', err);
+      }
+    }
+
+    setTimeout(() => {
+      setIsSubmittingReturn(false);
+      setShowReturnModal(false);
+      setTargetItemToReturn(null);
+      showToast('Return request submitted! Doorstep reverse pickup scheduled in 24–48 hours 📦');
+    }, 500);
   };
 
   // Professional Invoice Download via pure vector jsPDF (no html2canvas / CSS color parser issues)
@@ -738,6 +952,22 @@ export default function OrderDetailsPage() {
   const sgst = Number((totalTaxIncluded / 2).toFixed(2));
   const invoiceNumber = `INV-2026-BH-${order.orderId.replace(/\D/g, '') || '9821'}`;
 
+  // Formatted order and delivery dates
+  const orderPlacedDate = new Date(order.date).toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+  const deliveredDateFormatted =
+    order.deliveredDate ||
+    (order.status === 'Delivered'
+      ? `${new Date(order.date).toLocaleDateString('en-IN', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        })}, 02:45 PM`
+      : null);
+
   // Tracking Timeline steps (Clean & Minimal)
   const trackingSteps = [
     {
@@ -834,19 +1064,37 @@ export default function OrderDetailsPage() {
                 {copiedOrderId ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
               </button>
             </div>
-            <p className="text-xs text-text-muted mt-1">
-              Placed on{' '}
-              <span className="text-text-main font-semibold">
-                {new Date(order.date).toLocaleDateString('en-IN', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                })}
+            <div className="flex items-center gap-2 flex-wrap text-xs text-text-muted mt-1">
+              <span>
+                Placed on{' '}
+                <span className="text-text-main font-semibold">
+                  {orderPlacedDate}
+                </span>
               </span>
-            </p>
+              {order.status === 'Delivered' && deliveredDateFormatted && (
+                <>
+                  <span className="text-[#DDD8CE]">•</span>
+                  <span className="text-emerald-700 font-semibold inline-flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 inline shrink-0" />
+                    Delivered on {deliveredDateFormatted}
+                  </span>
+                </>
+              )}
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            {order.status === 'Delivered' && activeReturnableItems.length > 0 && (
+              <button
+                type="button"
+                onClick={() => handleOpenReturnModal(null)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-text-muted hover:text-brand-purple bg-white border border-[#DDD8CE] hover:border-brand-purple hover:bg-brand-purple-light/20 transition-all cursor-pointer shadow-2xs active:scale-95"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Request Return</span>
+              </button>
+            )}
+
             <span
               className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border ${statusConfig.bg} ${statusConfig.border} ${statusConfig.color}`}
             >
@@ -854,6 +1102,28 @@ export default function OrderDetailsPage() {
             </span>
           </div>
         </div>
+
+        {/* Active Return Notice */}
+        {order.status === 'Delivered' && activeReturnRequests.length > 0 && (
+          <div className="mt-4 p-4 rounded-2xl bg-amber-50/90 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs animate-fade-in">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                <RotateCcw className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-amber-950">
+                  Return Request Underway ({activeReturnRequests.length} {activeReturnRequests.length === 1 ? 'item' : 'items'})
+                </p>
+                <p className="text-[11px] text-amber-800 mt-0.5">
+                  Reverse doorstep pickup is scheduled at your delivery address. Refund will be initiated once verified.
+                </p>
+              </div>
+            </div>
+            <span className="text-[11px] font-bold text-amber-900 bg-white/80 px-2.5 py-1 rounded-lg border border-amber-200 self-start sm:self-center shrink-0">
+              Pickup within 24–48 hrs
+            </span>
+          </div>
+        )}
 
         {/* Processing Order Alert & Cancel Action */}
         {order.status === 'Processing' && (
@@ -905,8 +1175,8 @@ export default function OrderDetailsPage() {
           </div>
         )}
 
-        {/* ── Tracking Bar (Clean & Simple) - Hidden when order is Cancelled ── */}
-        {order.status !== 'Cancelled' && (
+        {/* ── Tracking Bar (Clean & Simple) - Shown only for active shipments (Hidden when Delivered or Cancelled) ── */}
+        {order.status !== 'Cancelled' && order.status !== 'Delivered' && (
           <div className="mt-8 bg-white rounded-2xl border border-[#EFECE6] p-5 sm:p-6 shadow-2xs">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 border-b border-[#F2EFE9]">
@@ -938,9 +1208,7 @@ export default function OrderDetailsPage() {
                     className="h-full bg-linear-to-r from-emerald-500 to-brand-purple transition-all duration-700"
                     style={{
                       width:
-                        order.status === 'Delivered'
-                          ? '100%'
-                          : order.status === 'In Transit'
+                        order.status === 'In Transit'
                           ? '55%'
                           : '25%',
                     }}
@@ -1067,6 +1335,10 @@ export default function OrderDetailsPage() {
                   const isItemCancelled = item.status === 'Cancelled' || order.status === 'Cancelled';
                   const canCancelItem = order.status === 'Processing' && !isItemCancelled;
                   const itemTotal = (item.price || 0) * (item.quantity || 1);
+                  const itemReviewKey = getReviewKey(order.orderId, item.id, item.selectedSize);
+                  const itemReview = reviews[itemReviewKey];
+                  const itemReturnKey = getReturnKey(order.orderId, item.id, item.selectedSize);
+                  const itemReturn = returnRequests[itemReturnKey];
 
                   return (
                     <div key={`${item.id}-${idx}`} className="py-5 sm:py-6 flex flex-col sm:flex-row items-start gap-4">
@@ -1132,7 +1404,7 @@ export default function OrderDetailsPage() {
                           </div>
                         </div>
 
-                        {/* Variant Badges & Cancel Item Action */}
+                        {/* Variant Badges & Actions */}
                         <div className="mt-3 flex items-center justify-between gap-3 flex-wrap">
                           <div className="flex items-center gap-2 flex-wrap text-xs">
                             <span className="px-2.5 py-0.5 rounded-lg bg-[#FAF8F5] border border-[#EAE6DE] text-[11px] font-bold text-text-muted">
@@ -1159,7 +1431,79 @@ export default function OrderDetailsPage() {
                               <span>Cancel Item</span>
                             </button>
                           )}
+
+                          {/* Delivered Actions: Rate & Review and Return Item grouped together */}
+                          {order.status === 'Delivered' && !isItemCancelled && (
+                            <div className="flex items-center gap-2 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => handleOpenReviewModal(item)}
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-95 shrink-0 ${
+                                  itemReview
+                                    ? 'bg-amber-50 text-amber-900 border border-amber-300 hover:bg-amber-100'
+                                    : 'bg-brand-purple text-white hover:bg-[#584F93] shadow-xs'
+                                }`}
+                              >
+                                <span>{itemReview ? 'Edit Review' : 'Rate & Review'}</span>
+                              </button>
+
+                              {itemReturn ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-900 border border-amber-300 shrink-0">
+                                  <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
+                                  <span>Return: {itemReturn.status}</span>
+                                </span>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenReturnModal(item)}
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-text-muted hover:text-brand-purple bg-white border border-[#DDD8CE] hover:border-brand-purple hover:bg-brand-purple-light/20 transition-all cursor-pointer shadow-2xs active:scale-95 shrink-0"
+                                >
+                                  <RotateCcw className="w-3.5 h-3.5" />
+                                  <span>Return Item</span>
+                                </button>
+                              )}
+                            </div>
+                          )}
                         </div>
+
+                        {/* Customer Review display if already submitted */}
+                        {itemReview && !isItemCancelled && (
+                          <div className="mt-3 p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EAE6DE] space-y-1.5 animate-fade-in">
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                <div className="flex items-center text-amber-400">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                      key={star}
+                                      className={`w-3.5 h-3.5 ${star <= itemReview.rating ? 'fill-amber-400 text-amber-400' : 'text-[#DDD8CE]'}`}
+                                    />
+                                  ))}
+                                </div>
+                                {itemReview.title && (
+                                  <span className="font-bold text-xs text-text-main">{itemReview.title}</span>
+                                )}
+                              </div>
+                              <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold border border-emerald-200 shrink-0">
+                                Verified Purchase
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-text-muted leading-relaxed italic">
+                              &ldquo;{itemReview.comment}&rdquo;
+                            </p>
+                            {itemReview.tags && itemReview.tags.length > 0 && (
+                              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                                {itemReview.tags.map((tag) => (
+                                  <span
+                                    key={tag}
+                                    className="px-2 py-0.5 rounded-md bg-white border border-[#EAE6DE] text-[10px] font-semibold text-text-muted"
+                                  >
+                                    ✓ {tag}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
 
                         {/* Cancelled notice on item */}
                         {isItemCancelled && (
@@ -1657,6 +2001,427 @@ export default function OrderDetailsPage() {
             )}
           </button>
         </div>
+      </aside>
+
+      {/* ─────────────────────────────────────────────────────────────
+          RIGHT SIDE SHEET: RATE & REVIEW PRODUCT DRAWER
+         ───────────────────────────────────────────────────────────── */}
+      {/* Review Backdrop */}
+      <div
+        className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-300 ease-in-out ${
+          showReviewModal ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => {
+          setShowReviewModal(false);
+          setTargetItemToReview(null);
+        }}
+        aria-hidden={!showReviewModal}
+      />
+
+      {/* Review Right Drawer */}
+      <aside
+        className={`fixed top-0 right-0 bottom-0 z-[52] w-full max-w-md bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
+          showReviewModal ? 'translate-x-0' : 'translate-x-full'
+        }`}
+        aria-label="Rate & Review Drawer"
+        aria-hidden={!showReviewModal}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#EFECE6] bg-[#FAF8F5]/80 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div>
+              <h3 className="font-heading font-black text-base sm:text-lg text-text-main leading-tight flex items-center gap-1.5">
+                <span>Rate &amp; Review</span>
+              </h3>
+              <p className="text-[11px] text-text-muted mt-0.5">
+                Verified Purchase • Order #{order.orderId}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setShowReviewModal(false);
+              setTargetItemToReview(null);
+            }}
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-text-muted hover:text-text-main hover:bg-[#EFECE6] transition-colors cursor-pointer"
+            aria-label="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Scrollable Form Content */}
+        <form onSubmit={handleSubmitReview} className="flex-1 flex flex-col justify-between overflow-hidden">
+          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5 text-xs">
+            {/* Target Item Snapshot */}
+            {targetItemToReview && (
+              <div className="rounded-xl flex items-center gap-3.5 animate-fade-in">
+                <div className="w-14 h-14 rounded-lg overflow-hidden bg-white border border-[#EFECE6] shrink-0">
+                  <img
+                    src={targetItemToReview.featuredImage}
+                    alt={targetItemToReview.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-bold text-xs text-text-main truncate">
+                    {targetItemToReview.name}
+                  </h4>
+                  <p className="text-[11px] text-text-muted mt-0.5">
+                    Size: <strong className="text-text-main">{targetItemToReview.selectedSize || '3-4Y'}</strong> • Color: <strong className="text-text-main">{targetItemToReview.selectedColor || 'Standard'}</strong>
+                  </p>
+                  <span className="font-bold font-mono text-xs text-brand-purple mt-1 block">
+                    ₹{((targetItemToReview.price || 0) * (targetItemToReview.quantity || 1)).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Star Rating Section */}
+            <div className="space-y-2">
+              <label className="font-bold text-xs text-text-main block">
+                How would you rate this garment?
+              </label>
+              <div className="flex items-center gap-2 pt-1">
+                {[1, 2, 3, 4, 5].map((star) => {
+                  const isFilled = (hoverRating || ratingInput) >= star;
+                  return (
+                    <button
+                      key={star}
+                      type="button"
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      onClick={() => setRatingInput(star)}
+                      className="p-1 transition-transform hover:scale-115 active:scale-95 cursor-pointer focus:outline-none"
+                      aria-label={`${star} star`}
+                    >
+                      <Star
+                        className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${
+                          isFilled ? 'fill-amber-400 text-amber-400 drop-shadow-xs' : 'text-[#D0C9BE]'
+                        }`}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Review Textarea */}
+            <div className="space-y-1.5">
+              <label className="font-bold text-xs text-text-main block">
+                Write a Review <span className="text-rose-500">*</span>
+              </label>
+              <textarea
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+                placeholder="Write your review about the fabric, softness, fit, and overall experience..."
+                rows={5}
+                required
+                className="w-full p-3.5 rounded-xl border border-[#EFECE6] bg-white text-xs text-text-main placeholder:text-text-muted/60 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all resize-none shadow-2xs leading-relaxed"
+              />
+            </div>
+          </div>
+
+          {/* Footer Actions - Side by Side */}
+          <div className="p-5 border-t border-[#EFECE6] bg-[#FAF8F5]/80 flex items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setShowReviewModal(false);
+                setTargetItemToReview(null);
+              }}
+              className="flex-1 h-11 rounded-xl text-xs font-bold border border-[#DDD8CE] bg-white text-text-main hover:bg-[#FAF8F5] transition-all cursor-pointer flex items-center justify-center shadow-2xs active:scale-98"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              disabled={isSubmittingReview}
+              className="flex-1 h-11 rounded-xl text-xs font-bold bg-brand-purple hover:bg-[#584F93] text-white transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5 active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap"
+            >
+              <span>{isSubmittingReview ? 'Submitting...' : 'Submit Review'}</span>
+            </button>
+          </div>
+        </form>
+      </aside>
+
+      {/* ─────────────────────────────────────────────────────────────
+          RIGHT SIDE SHEET: RETURN REQUEST DRAWER
+         ───────────────────────────────────────────────────────────── */}
+      {/* Return Backdrop */}
+      <div
+        className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-300 ease-in-out ${
+          showReturnModal ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => {
+          setShowReturnModal(false);
+          setTargetItemToReturn(null);
+        }}
+        aria-hidden={!showReturnModal}
+      />
+
+      {/* Return Right Drawer */}
+      <aside
+        className={`fixed top-0 right-0 bottom-0 z-[52] w-full max-w-md bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
+          showReturnModal ? 'translate-x-0' : 'translate-x-full'
+        }`}
+        aria-label="Return Request Drawer"
+        aria-hidden={!showReturnModal}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#EFECE6] bg-[#FAF8F5]/80 shrink-0">
+          <div>
+            <h3 className="font-heading font-black text-base sm:text-lg text-text-main leading-tight flex items-center gap-1.5">
+              <span>Request Return</span>
+            </h3>
+            <p className="text-[11px] text-text-muted mt-0.5">
+              Order #{order.orderId} • 30-Day Easy Returns
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setShowReturnModal(false);
+              setTargetItemToReturn(null);
+            }}
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-text-muted hover:text-text-main hover:bg-[#EFECE6] transition-colors cursor-pointer"
+            aria-label="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Scrollable Form Content */}
+        <form onSubmit={handleSubmitReturn} className="flex-1 flex flex-col justify-between overflow-hidden">
+          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5 text-xs">
+            {/* Target Item Snapshot or Multiple Item Selection */}
+            {targetItemToReturn ? (
+              <div className="space-y-1.5">
+                <span className="font-bold text-xs text-text-main block">Item to return</span>
+                <div className="p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6] flex items-center gap-3.5 animate-fade-in">
+                  <div className="w-14 h-14 rounded-xl overflow-hidden bg-white border border-[#EFECE6] shrink-0">
+                    <img
+                      src={targetItemToReturn.featuredImage}
+                      alt={targetItemToReturn.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-xs text-text-main truncate">
+                      {targetItemToReturn.name}
+                    </h4>
+                    <p className="text-[11px] text-text-muted mt-0.5">
+                      Size: <strong className="text-text-main">{targetItemToReturn.selectedSize || '3-4Y'}</strong> • Color: <strong className="text-text-main">{targetItemToReturn.selectedColor || 'Standard'}</strong>
+                    </p>
+                    <span className="font-bold font-mono text-xs text-brand-purple mt-1 block">
+                      Refund Amount: ₹{((targetItemToReturn.price || 0) * (targetItemToReturn.quantity || 1)).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-xs text-text-main">Select items to return:</span>
+                  <span className="text-[11px] text-text-muted">
+                    {selectedReturnKeys.length} of {activeReturnableItems.length} selected
+                  </span>
+                </div>
+                <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                  {activeReturnableItems.map((item) => {
+                    const key = getReturnKey(order.orderId, item.id, item.selectedSize);
+                    const isSelected = selectedReturnKeys.includes(key);
+                    return (
+                      <label
+                        key={key}
+                        className={`flex items-center gap-3 p-3 rounded-2xl border transition-all cursor-pointer ${
+                          isSelected
+                            ? 'border-brand-purple bg-brand-purple-light/20 shadow-2xs'
+                            : 'border-[#EFECE6] bg-[#FAF8F5]/60 hover:bg-[#FAF8F5]'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedReturnKeys([...selectedReturnKeys, key]);
+                            } else {
+                              setSelectedReturnKeys(selectedReturnKeys.filter((k) => k !== key));
+                            }
+                          }}
+                          className="accent-brand-purple w-4 h-4 rounded cursor-pointer"
+                        />
+                        <img
+                          src={item.featuredImage}
+                          alt={item.name}
+                          className="w-12 h-12 rounded-lg object-cover bg-white border border-[#EFECE6] shrink-0"
+                        />
+                        <div className="flex-1 min-w-0 text-xs">
+                          <p className="font-bold text-text-main truncate">{item.name}</p>
+                          <p className="text-[11px] text-text-muted mt-0.5">
+                            Size: {item.selectedSize || '3-4Y'} • Qty: {item.quantity || 1}
+                          </p>
+                          <span className="font-mono font-bold text-brand-purple text-xs">
+                            ₹{((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                          </span>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Return Reason Selection */}
+            <div className="space-y-2">
+              <label className="font-bold text-xs text-text-main block">
+                Why are you returning? <span className="text-rose-500">*</span>
+              </label>
+              <div className="space-y-1.5">
+                {[
+                  'Size didn’t fit / too small',
+                  'Size didn’t fit / too loose',
+                  'Fabric or color not as expected',
+                  'Quality or stitching defect',
+                  'Received wrong item or size',
+                  'Other reason',
+                ].map((reason) => (
+                  <label
+                    key={reason}
+                    className={`flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition-all ${
+                      returnReason === reason
+                        ? 'border-brand-purple bg-brand-purple-light/20 text-brand-purple font-semibold shadow-2xs'
+                        : 'border-[#EFECE6] hover:bg-[#FAF8F5] text-text-main'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="returnReason"
+                      value={reason}
+                      checked={returnReason === reason}
+                      onChange={() => setReturnReason(reason)}
+                      className="accent-brand-purple w-4 h-4 cursor-pointer"
+                    />
+                    <span className="text-xs">{reason}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Additional Comments (Optional) */}
+            <div className="space-y-1.5">
+              <label className="font-bold text-xs text-text-main block">
+                Additional Comments <span className="text-text-muted font-normal">(Optional)</span>
+              </label>
+              <textarea
+                value={returnComments}
+                onChange={(e) => setReturnComments(e.target.value)}
+                placeholder="Tell us what went wrong so we can assist you better..."
+                rows={3}
+                className="w-full p-3 rounded-xl border border-[#EFECE6] bg-white text-xs text-text-main placeholder:text-text-muted/60 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all resize-none shadow-2xs"
+              />
+            </div>
+
+            {/* Refund Mode Selection */}
+            <div className="space-y-2">
+              <label className="font-bold text-xs text-text-main block">
+                Refund Method
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setRefundMode('original')}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    refundMode === 'original'
+                      ? 'border-brand-purple bg-brand-purple-light/25 ring-1 ring-brand-purple shadow-2xs'
+                      : 'border-[#EFECE6] bg-[#FAF8F5] hover:border-brand-purple/40'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="w-4 h-4 text-brand-purple" />
+                    <span className="font-bold text-xs text-text-main">Original Payment</span>
+                  </div>
+                  <p className="text-[10px] text-text-muted mt-1 leading-snug">
+                    Refund back to bank/UPI in 3–5 business days after pickup
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setRefundMode('wallet')}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    refundMode === 'wallet'
+                      ? 'border-brand-purple bg-brand-purple-light/25 ring-1 ring-brand-purple shadow-2xs'
+                      : 'border-[#EFECE6] bg-[#FAF8F5] hover:border-brand-purple/40'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    <span className="font-bold text-xs text-text-main">Baha Wallet Credit</span>
+                  </div>
+                  <p className="text-[10px] text-emerald-700 font-semibold mt-1 leading-snug">
+                    Instant refund + 5% bonus shopping credit
+                  </p>
+                </button>
+              </div>
+            </div>
+
+            {/* Reverse Pickup Address Confirmation */}
+            <div className="p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6] space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-xs text-text-main flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-brand-purple" />
+                  <span>Reverse Pickup Address</span>
+                </span>
+                <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold border border-emerald-200">
+                  Free Reverse Pickup
+                </span>
+              </div>
+              <p className="text-[11px] text-text-muted leading-relaxed">
+                {order.address?.name || 'Priya Sharma'}, {order.address?.line1 || '42, Rose Garden Apartments'},{' '}
+                {order.address?.city || 'Noida'}, {order.address?.pincode || '201301'}
+              </p>
+              <p className="text-[10px] text-text-muted flex items-center gap-1">
+                <Phone className="w-3 h-3 text-text-muted" />
+                <span>Contact: {order.address?.phone || '+91 98765 43210'}</span>
+              </p>
+            </div>
+
+            {/* Policy Guarantee Note */}
+            <div className="p-3 rounded-xl bg-purple-50/70 border border-purple-100 flex items-start gap-2.5 text-[11px] text-purple-950">
+              <ShieldCheck className="w-4 h-4 text-brand-purple shrink-0 mt-0.5" />
+              <p className="leading-relaxed">
+                Our courier executive will inspect the garment at pickup. Please ensure original brand tags are attached and the garment is unwashed.
+              </p>
+            </div>
+          </div>
+
+          {/* Footer Actions - Side by Side */}
+          <div className="p-5 border-t border-[#EFECE6] bg-[#FAF8F5]/80 flex items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setShowReturnModal(false);
+                setTargetItemToReturn(null);
+              }}
+              className="flex-1 h-11 rounded-xl text-xs font-bold border border-[#DDD8CE] bg-white text-text-main hover:bg-[#FAF8F5] transition-all cursor-pointer flex items-center justify-center shadow-2xs active:scale-98"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              disabled={isSubmittingReturn || selectedReturnKeys.length === 0}
+              className="flex-1 h-11 rounded-xl text-xs font-bold bg-brand-purple hover:bg-[#584F93] text-white transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5 active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap"
+            >
+              <RotateCcw className="w-4 h-4 shrink-0" />
+              <span>{isSubmittingReturn ? 'Submitting...' : 'Confirm Return Request'}</span>
+            </button>
+          </div>
+        </form>
       </aside>
     </div>
   );

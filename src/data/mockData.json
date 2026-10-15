@@ -638,7 +638,7 @@
       {
         "orderId": "BF-20240910-003",
         "date": "2024-09-10",
-        "status": "In Transit",
+        "status": "Delivered",
         "total": 112.00,
         "items": ["prod-9", "prod-12", "prod-15"]
       },
