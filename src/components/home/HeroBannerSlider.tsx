@@ -23,7 +23,7 @@ export const HeroBannerSlider: React.FC<HeroBannerSliderProps> = ({
     {
       id: 'summer-sale-slide-1',
       image: '/banners/banner2.png',
-      alt: 'Summer Sale Flat 50% Off - Baha Fashion',
+      alt: 'Summer Sale Flat 50% Off - Baha Kidz',
       tag: 'Special Drop 1',
       category: 'sale',
       promoCode: 'LITTLEJOY10',
@@ -31,7 +31,7 @@ export const HeroBannerSlider: React.FC<HeroBannerSliderProps> = ({
     {
       id: 'summer-sale-slide-2',
       image: '/banners/banner3.png',
-      alt: 'Summer Sale Flat 50% Off - Baha Fashion',
+      alt: 'Summer Sale Flat 50% Off - Baha Kidz',
       tag: 'Special Drop 2',
       category: 'all',
       promoCode: 'WELCOME15',
@@ -39,7 +39,7 @@ export const HeroBannerSlider: React.FC<HeroBannerSliderProps> = ({
     {
       id: 'summer-sale-slide-3',
       image: '/banners/banner1.png',
-      alt: 'Summer Sale Flat 50% Off - Baha Fashion',
+      alt: 'Summer Sale Flat 50% Off - Baha Kidz',
       tag: 'Special Drop 3',
       category: 'sale',
       promoCode: 'LITTLEJOY10',

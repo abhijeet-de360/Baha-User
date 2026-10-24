@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const Footer: React.FC = () => {
   return (
@@ -34,17 +34,23 @@ export const Footer: React.FC = () => {
           
           {/* Brand Info */}
           <div className="col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <span className="w-10 h-10 rounded-2xl bg-brand-yellow flex items-center justify-center text-text-main shadow-md">
-                <Sparkles className="w-5 h-5 fill-text-main text-text-main" />
-              </span>
-              <div>
-                <span className="font-heading text-2xl sm:text-3xl font-black text-white tracking-tight block leading-none">
-                  Baha <span className="text-brand-yellow">Fashion</span>
-                </span>
-              </div>
-            </div>
+            <Link
+              href="/"
+              className="inline-block group focus:outline-none transition-transform active:scale-98"
+              aria-label="Baha Kidz - Made for Mischief"
+            >
+              <Image
+                src="/images/logo-white.png"
+                alt="Baha Kidz - Made for Mischief"
+                width={160}
+                height={111}
+                className="h-12 sm:h-14 w-auto object-contain transition-transform group-hover:scale-105"
+              />
+            </Link>
             
+            <p className="text-xs font-black tracking-widest uppercase text-brand-yellow">
+              MADE FOR MISCHIEF
+            </p>
             <p className="text-xs sm:text-sm text-white/80 leading-relaxed max-w-sm font-normal">
               Mindfully designed children's apparel made from premium fabrics. Crafted with love for curious little dreamers and explorers across India.
             </p>
@@ -162,7 +168,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/70">
-          <p>© 2026 Baha Fashion, Inc. All rights reserved. <a className="" href="https://www.digitaledge360.com" target="_blank" rel="noopener noreferrer">Designed and Maintained by Digital EDGE 360</a></p>
+          <p>© 2026 Baha Kidz, Inc. All rights reserved. <a className="" href="https://www.digitaledge360.com" target="_blank" rel="noopener noreferrer">Designed and Maintained by Digital EDGE 360</a></p>
 
           <div className="flex items-center gap-2">
 

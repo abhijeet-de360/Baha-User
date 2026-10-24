@@ -93,7 +93,7 @@ export default function ReturnAndRefundPolicyPage() {
               </h2>
               <div className="space-y-3">
                 <p>
-                  At <strong>Baha Fashion</strong>, we stand behind the craftsmanship, gentleness, and durability of our organic baby and kidswear collections. If you are not completely satisfied with your order, you can initiate a return or exchange request within <strong>30 days of the recorded delivery date</strong>.
+                  At <strong>Baha Kidz</strong>, we stand behind the craftsmanship, gentleness, and durability of our organic baby and kidswear collections. If you are not completely satisfied with your order, you can initiate a return or exchange request within <strong>30 days of the recorded delivery date</strong>.
                 </p>
                 <p>
                   Our goal is to make shopping for growing children stress-free. Whether it is an unexpected growth spurt, a sizing change, or simply a change of heart, our customer-first policy is designed to assist you quickly.

@@ -74,7 +74,7 @@ export const Home: React.FC = () => {
       id: `toast-${Date.now()}`,
       type: 'promo',
       title: 'Welcome to Baha Family! 🎉',
-      message: 'Thank you for subscribing to Baha Fashion Club updates.',
+      message: 'Thank you for subscribing to Baha Kidz Club updates.',
     });
     setNewsletterEmail('');
   };
@@ -374,7 +374,7 @@ export const Home: React.FC = () => {
           >
             <img
               src="/images/offer.png"
-              alt="Special Offer Banner - Baha Fashion"
+              alt="Special Offer Banner - Baha Kidz"
               className="w-full object-center transform transition-transform duration-700 ease-out rounded-3xl"
               loading="lazy"
             />
@@ -801,7 +801,7 @@ export const Home: React.FC = () => {
                 {/* Left Column: Heading & Value Proposition */}
                 <div className="lg:col-span-7 space-y-4 text-left">
                   <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-text-main tracking-tight leading-tight">
-                    Join the <span className="text-brand-purple underline decoration-brand-yellow decoration-4 underline-offset-4">Baha Fashion</span> Club!
+                    Join the <span className="text-brand-purple underline decoration-brand-yellow decoration-4 underline-offset-4">Baha Kidz</span> Club!
                   </h2>
 
                   <p className="text-text-muted text-sm sm:text-base leading-relaxed max-w-xl">
@@ -841,7 +841,7 @@ export const Home: React.FC = () => {
                       </div>
 
                       <p className="text-[11px] text-text-muted text-left leading-tight ml-1">
-                        By joining, you agree to receive Baha Fashion updates & offers. Unsubscribe at any time.
+                        By joining, you agree to receive Baha Kidz updates & offers. Unsubscribe at any time.
                       </p>
                     </form>
                   </div>

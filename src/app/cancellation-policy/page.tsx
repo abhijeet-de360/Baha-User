@@ -93,7 +93,7 @@ export default function CancellationPolicyPage() {
               </h2>
               <div className="space-y-3">
                 <p>
-                  At <strong>Baha Fashion</strong>, we aim to offer maximum flexibility to parents. Whether you ordered the wrong size, selected an incorrect delivery address, or simply changed your mind, our cancellation process is designed to be swift, transparent, and hassle-free.
+                  At <strong>Baha Kidz</strong>, we aim to offer maximum flexibility to parents. Whether you ordered the wrong size, selected an incorrect delivery address, or simply changed your mind, our cancellation process is designed to be swift, transparent, and hassle-free.
                 </p>
                 <p>
                   Orders can be cancelled free of charge at any moment prior to hand-off to our third-party logistics courier. Once cancelled, 100% of your paid amount will be reversed to your account with zero deduction or restocking fees.
@@ -192,7 +192,7 @@ export default function CancellationPolicyPage() {
             {/* 6. Automatic Cancellations by Baha */}
             <section id="automatic-cancellations" className="scroll-mt-24">
               <h2 className="font-heading font-bold text-xl sm:text-2xl text-text-main mb-3">
-                6. Cancellations Initiated by Baha Fashion
+                6. Cancellations Initiated by Baha Kidz
               </h2>
               <p className="mb-3">
                 While exceptionally rare, Baha reserves the right to cancel an order under specific unforeseen circumstances:

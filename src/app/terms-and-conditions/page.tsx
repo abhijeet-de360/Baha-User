@@ -53,7 +53,7 @@ export default function TermsAndConditionsPage() {
               Terms &amp; Conditions
             </h1>
             <p className="mt-4 text-base sm:text-lg text-text-muted leading-relaxed">
-              These Terms &amp; Conditions govern your access to and use of Baha Fashion&apos;s website,
+              These Terms &amp; Conditions govern your access to and use of Baha Kidz&apos;s website,
               mobile services, parent concierge, and purchase of our organic kidswear collections.
             </p>
             <div className="mt-4 flex items-center gap-3 text-xs text-text-muted font-medium">
@@ -93,7 +93,7 @@ export default function TermsAndConditionsPage() {
               </h2>
               <div className="space-y-3">
                 <p>
-                  Welcome to <strong>Baha Fashion</strong> (&ldquo;we,&rdquo; &ldquo;our,&rdquo; or &ldquo;us&rdquo;), operated by <em>Baha Retail Lifestyle Private Limited</em>. By browsing our website (<strong className="text-text-main">www.bahafashion.com</strong>), registering an account, or purchasing garments, you expressly agree to be bound by these Terms &amp; Conditions, our <Link href="/privacy-policy" className="text-brand-purple font-medium hover:underline">Privacy Policy</Link>, and any referenced operational guidelines.
+                  Welcome to <strong>Baha Kidz</strong> (&ldquo;we,&rdquo; &ldquo;our,&rdquo; or &ldquo;us&rdquo;), operated by <em>Baha Retail Lifestyle Private Limited</em>. By browsing our website (<strong className="text-text-main">www.bahakidz.com</strong>), registering an account, or purchasing garments, you expressly agree to be bound by these Terms &amp; Conditions, our <Link href="/privacy-policy" className="text-brand-purple font-medium hover:underline">Privacy Policy</Link>, and any referenced operational guidelines.
                 </p>
                 <p>
                   If you disagree with any portion of these Terms, your sole remedy is to immediately discontinue your access to our boutique platform. We reserve the right to revise or update these terms at our discretion, and continuous use of the store constitutes acceptance of revised terms.
@@ -211,7 +211,7 @@ export default function TermsAndConditionsPage() {
                 7. Prohibited Website Use &amp; Conduct
               </h2>
               <p className="mb-3">
-                While interacting with Baha Fashion, you agree not to:
+                While interacting with Baha Kidz, you agree not to:
               </p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>Deploy automated scrapers, spiders, or bots to harvest product data or pricing information.</li>
@@ -232,7 +232,7 @@ export default function TermsAndConditionsPage() {
                 Our services and merchandise are delivered on an &ldquo;as is&rdquo; and &ldquo;as available&rdquo; basis. To the fullest extent permitted by Indian statutory law, Baha disclaims all warranties, express or implied, including merchantability and fitness for a particular purpose.
               </p>
               <p>
-                In no circumstance shall Baha Fashion, its directors, or employees be liable for indirect, incidental, or consequential damages resulting from website downtime, delivery delays by third-party couriers, or unauthorized account access. Our aggregate liability shall never exceed the purchase price paid for the specific order in question.
+                In no circumstance shall Baha Kidz, its directors, or employees be liable for indirect, incidental, or consequential damages resulting from website downtime, delivery delays by third-party couriers, or unauthorized account access. Our aggregate liability shall never exceed the purchase price paid for the specific order in question.
               </p>
             </section>
 

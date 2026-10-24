@@ -98,7 +98,7 @@ export default function ProductPage({ params }: PageProps) {
         if (navigator.share) {
             navigator.share({
                 title: product.name,
-                text: `Check out ${product.name} on Baha Fashion!`,
+                text: `Check out ${product.name} on Baha Kidz!`,
                 url: window.location.href,
             }).catch(() => { });
         } else {

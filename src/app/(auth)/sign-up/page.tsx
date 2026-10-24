@@ -15,6 +15,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const FLOATING_ICONS = [
@@ -135,10 +136,14 @@ const SignUp = () => {
       <div className="relative z-10 w-full max-w-lg">
         {/* Brand header */}
         <div className="text-center mb-7">
-          <Link href="/" className="inline-block">
-            <span className="font-heading text-4xl font-black text-brand-purple tracking-tight leading-none">
-              Baha <span className="text-brand-yellow">Fashion</span>
-            </span>
+          <Link href="/" className="inline-block" aria-label="Baha Kidz - Made for Mischief">
+            <Image
+              src="/images/logo.png"
+              alt="Baha Kidz - Made for Mischief"
+              width={160}
+              height={111}
+              className="h-14 sm:h-16 w-auto mx-auto object-contain"
+            />
           </Link>
           <div className="flex items-center justify-center gap-1.5 mt-2">
             {[...Array(5)].map((_, i) => (
@@ -419,7 +424,7 @@ const SignUp = () => {
                     Privacy Policy
                   </Link>
                   . I also agree to receive exclusive offers & updates from Baha
-                  Fashion.
+                  Kidz.
                 </span>
               </label>
               {errors.agreed && (

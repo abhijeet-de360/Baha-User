@@ -14,8 +14,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Baha Fashion - Kids Apparel & Toddler Store",
-  description: "Explore premium organic kids fashion, ethnic wear, party dresses and toddler clothing.",
+  title: "Baha Kidz - Made for Mischief | Kids Apparel & Toddler Store",
+  description: "Baha Kidz - Made for Mischief. Explore premium organic kids clothing, ethnic wear, party dresses and toddler apparel.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png" }
+    ],
+    apple: [
+      { url: "/apple-icon.png", type: "image/png" }
+    ]
+  }
 };
 
 export const viewport: Viewport = {

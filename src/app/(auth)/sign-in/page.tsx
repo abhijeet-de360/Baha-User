@@ -51,7 +51,7 @@ const SignIn = () => {
       <div className="absolute inset-0 z-0">
         <Image
           src="/images/baha-kids-bg.jpg"
-          alt="Baha Kids Fashion Brand Background"
+          alt="Baha Kidz Brand Background"
           fill
           priority
           className="object-cover object-center scale-100"

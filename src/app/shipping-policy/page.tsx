@@ -93,7 +93,7 @@ export default function ShippingPolicyPage() {
               </h2>
               <div className="space-y-3">
                 <p>
-                  <strong>Baha Fashion</strong> ships pan-India across <strong>19,000+ postal pin codes</strong> spanning all states and union territories. We partner with India&apos;s leading logistics networks—including Blue Dart, Delhivery, Shadowfax, and India Post Speed Post—to guarantee dependable doorstep delivery even in remote regions.
+                  <strong>Baha Kidz</strong> ships pan-India across <strong>19,000+ postal pin codes</strong> spanning all states and union territories. We partner with India&apos;s leading logistics networks—including Blue Dart, Delhivery, Shadowfax, and India Post Speed Post—to guarantee dependable doorstep delivery even in remote regions.
                 </p>
                 <p>
                   At this stage, we primarily cater to domestic deliveries within India. For international delivery requests to the UAE, UK, and US, please contact our parent concierge team directly.

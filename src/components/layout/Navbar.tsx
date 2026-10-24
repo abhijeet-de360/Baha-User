@@ -5,6 +5,7 @@ import { Search, ShoppingBag, Heart, User, Menu, X, Sparkles, ChevronRight } fro
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useShopState } from '@/hooks/useShopState';
 
 interface NavbarProps {
@@ -129,17 +130,17 @@ export const Navbar: React.FC = () => {
             {/* Brand Logo */}
             <Link
               href="/"
-              // onClick={() => {
-              //   onSelectCategory('all');
-              //   document.getElementById('featured-collection')?.scrollIntoView({ behavior: 'smooth' });
-              // }} 
-              className="group text-left cursor-pointer focus:outline-none transition-transform active:scale-98"
+              className="group text-left cursor-pointer focus:outline-none transition-transform active:scale-98 flex items-center"
+              aria-label="Baha Kidz - Made for Mischief"
             >
-              <div className="flex items-center gap-2">
-                <span className="font-heading text-2xl sm:text-3xl font-black text-brand-purple tracking-tight block leading-none">
-                  Baha <span className="text-brand-yellow">Fashion</span>
-                </span>
-              </div>
+              <Image
+                src="/images/logo.png"
+                alt="Baha Kidz - Made for Mischief"
+                width={160}
+                height={111}
+                priority
+                className="h-11 sm:h-12 md:h-14 w-auto object-contain"
+              />
             </Link>
           </div>
 
@@ -314,7 +315,7 @@ export const Navbar: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-[#EFECE6]">
               <div>
                 <p className="font-heading font-bold text-sm text-text-main">Parent Account</p>
-                <p className="text-[11px] text-text-muted">Welcome to Baha Fashion</p>
+                <p className="text-[11px] text-text-muted">Welcome to Baha Kidz</p>
               </div>
               <Button
                 type="button"
@@ -399,13 +400,17 @@ export const Navbar: React.FC = () => {
         <Link
           href="/"
           onClick={() => setMobileMenuOpen(false)}
-          className="group text-left cursor-pointer"
+          className="group text-left cursor-pointer flex items-center"
+          aria-label="Baha Kidz - Made for Mischief"
         >
-          <div className="flex items-center gap-1.5">
-            <span className="font-heading text-xl sm:text-2xl font-black text-brand-purple tracking-tight block leading-none">
-              Baha <span className="text-brand-yellow">Fashion</span>
-            </span>
-          </div>
+          <Image
+            src="/images/logo.png"
+            alt="Baha Kidz - Made for Mischief"
+            width={130}
+            height={90}
+            priority
+            className="h-10 sm:h-11 w-auto object-contain"
+          />
         </Link>
 
         <button

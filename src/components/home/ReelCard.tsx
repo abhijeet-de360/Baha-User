@@ -67,7 +67,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
     if (navigator.share) {
       navigator.share({
         title: reel.title,
-        text: `Check out ${reel.title} on Baha Fashion!`,
+        text: `Check out ${reel.title} on Baha Kidz!`,
         url: window.location.href,
       }).catch(() => { });
     } else {
