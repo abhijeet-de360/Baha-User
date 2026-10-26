@@ -145,7 +145,7 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Middle Desktop Navigation Menu */}
-          <nav className="hidden lg:flex items-center gap-6 xl:gap-7">
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
             {navLinks.map((link) => {
               const isActive = activeCategory === link.value;
               return (
@@ -153,11 +153,7 @@ export const Navbar: React.FC = () => {
                   key={link.label}
                   href={`/products/category/${encodeURIComponent(link.value)}`}
                   onClick={() => setActiveCategory(link.value)}
-                  // onClick={() => {
-                  //   onSelectCategory(link.value);
-                  //   document.getElementById('featured-collection')?.scrollIntoView({ behavior: 'smooth' });
-                  // }}
-                  className={`text-sm font-semibold transition-all relative py-1.5 cursor-pointer ${isActive
+                  className={`font-menu text-md xl:text-lg tracking-wide transition-all relative py-1.5 cursor-pointer ${isActive
                     ? 'text-brand-purple font-bold'
                     : link.isSale
                       ? 'text-brand-coral hover:text-brand-coral/80 font-bold'
@@ -166,7 +162,7 @@ export const Navbar: React.FC = () => {
                 >
                   <span>{link.label}</span>
                   {link.isSale && (
-                    <span className="ml-1.5 text-[10px] bg-brand-coral/10 text-brand-coral px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                    <span className="ml-1.5 font-body text-[10px] bg-brand-coral/10 text-brand-coral px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
                       Sale
                     </span>
                   )}
@@ -439,7 +435,7 @@ export const Navbar: React.FC = () => {
                   setActiveCategory(link.value);
                   setMobileMenuOpen(false);
                 }}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                className={`flex items-center justify-between px-3 py-2 rounded-xl font-menu text-lg sm:text-xl tracking-wide transition-all ${
                   isActive
                     ? 'bg-brand-purple-light text-brand-purple font-bold'
                     : link.isSale
@@ -450,7 +446,7 @@ export const Navbar: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <span>{link.label}</span>
                   {link.isSale && (
-                    <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold bg-brand-coral text-white">
+                    <span className="font-body text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold bg-brand-coral text-white">
                       Sale
                     </span>
                   )}

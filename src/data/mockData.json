@@ -99,6 +99,7 @@
       ],
       "sizes": ["2T", "3T", "4T", "5T", "6-7Y", "8-9Y"],
       "badges": ["bestseller"],
+      "videoUrl": "https://ik.imagekit.io/fhocinhtx/baha/8384711-hd_1080_1920_24fps.mp4",
       "description": "Textured breathable waffle knit designed for playground adventures. Pre-washed for zero shrinkage and maximum cuddle-softness.",
       "fabric": "100% Combed Slub Cotton",
       "inStock": true,
@@ -163,6 +164,7 @@
       "price": 36.00,
       "rating": 4.7,
       "reviewsCount": 68,
+      "videoUrl": "https://ik.imagekit.io/fhocinhtx/baha/8384711-hd_1080_1920_24fps.mp4",
       "colors": [
         { "name": "French Navy & Cream", "hex": "#292936", "image": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=800&q=80" },
         { "name": "Mustard Stripe", "hex": "#FFD66B", "image": "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=800&q=80" }
@@ -216,6 +218,7 @@
       ],
       "sizes": ["EU 22 (US 6)", "EU 24 (US 7.5)", "EU 26 (US 9)", "EU 28 (US 11)", "EU 30 (US 12.5)"],
       "badges": ["new"],
+      "videoUrl": "https://ik.imagekit.io/fhocinhtx/baha/8384711-hd_1080_1920_24fps.mp4",
       "description": "Flexible, wide-toe-box sneakers engineered for natural foot development with easy Velcro double straps for independent kids.",
       "fabric": "Organic Washed Canvas & Natural Rubber Outsole",
       "inStock": true,
@@ -596,6 +599,34 @@
     "membershipTier": "VIP Gold",
     "vipPoints": 2450,
     "wishlistIds": ["prod-3", "prod-6", "prod-9"],
+    "children": [
+      {
+        "id": "child-1",
+        "nickname": "Aarav",
+        "fullName": "Aarav Sharma",
+        "gender": "boy",
+        "dob": "2021-06-15",
+        "age": "3 Years",
+        "clothingSize": "3T",
+        "shoeSize": "EU 26 (US 9)",
+        "favoriteCategory": "Everyday Cotton & Tees",
+        "sensitivities": "Prefers tagless, 100% organic cotton",
+        "avatar": "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=200&q=80"
+      },
+      {
+        "id": "child-2",
+        "nickname": "Diya",
+        "fullName": "Diya Sharma",
+        "gender": "girl",
+        "dob": "2023-09-20",
+        "age": "1 Year",
+        "clothingSize": "12-18M",
+        "shoeSize": "EU 20 (US 4.5)",
+        "favoriteCategory": "Party & Twirl Dresses",
+        "sensitivities": "Sensitive skin, prefers soft organic voile",
+        "avatar": "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=200&q=80"
+      }
+    ],
     "savedAddresses": [
       {
         "id": "addr-1",

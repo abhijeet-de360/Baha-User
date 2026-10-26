@@ -56,7 +56,7 @@ export const TopAnnouncement: React.FC = () => {
       <button 
         type="button"
         onClick={() => onPromoClick('LITTLEJOY10')}
-        className="h-5.5 px-2.5 py-0 rounded-md bg-[#FFD66B] hover:bg-brand-yellow-dark text-[#292936] text-[11px] font-bold inline-flex items-center gap-1 cursor-pointer transition-transform active:scale-95 shadow-xs shrink-0"
+        className="h-5.5 px-2.5 py-0 rounded-md bg-brand-yellow hover:bg-brand-yellow-dark text-[#292936] text-[11px] font-bold inline-flex items-center gap-1 cursor-pointer transition-transform active:scale-95 shadow-xs shrink-0"
         title="Click to apply promo code"
       >
         <Gift className="w-3 h-3" />

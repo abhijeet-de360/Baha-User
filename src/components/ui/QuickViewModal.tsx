@@ -82,11 +82,29 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
           {/* Left: Product Images */}
           <div className="md:col-span-6 space-y-3">
             <div className="relative aspect-square rounded-3xl overflow-hidden bg-background border border-[#EFECE6]">
-              <img
-                src={currentMainImage}
-                alt={product.name}
-                className="w-full h-full object-cover object-center"
-              />
+              {product.videoUrl && currentMainImage === (product.colors[0]?.image || product.featuredImage) ? (
+                <video
+                  src={product.videoUrl}
+                  poster={currentMainImage}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover object-center"
+                />
+              ) : (
+                <img
+                  src={currentMainImage}
+                  alt={product.name}
+                  className="w-full h-full object-cover object-center"
+                />
+              )}
+              {product.videoUrl && currentMainImage === (product.colors[0]?.image || product.featuredImage) && (
+                <span className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs inline-flex items-center gap-1.5 pointer-events-none">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Product Video
+                </span>
+              )}
               {product.badges?.includes('sale') && product.discountPercent && (
                 <span className="absolute top-3 left-3 bg-brand-coral text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                   {product.discountPercent}% OFF

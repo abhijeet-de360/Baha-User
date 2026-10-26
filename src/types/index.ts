@@ -29,6 +29,7 @@ export interface Product {
   featuredImage: string;
   secondaryImage?: string;
   galleryImages?: string[];
+  videoUrl?: string;
   tags: string[];
   // Enhanced Details for Product Page
   sku?: string;
@@ -108,6 +109,20 @@ export interface ProductReel {
   productId: string;
   kidName?: string;
   age?: string;
+}
+
+export interface ChildProfile {
+  id: string;
+  nickname: string;
+  fullName?: string;
+  gender: 'boy' | 'girl' | 'unisex';
+  dob?: string;
+  age: string;
+  clothingSize: string;
+  shoeSize?: string;
+  favoriteCategory?: string;
+  sensitivities?: string;
+  avatar?: string;
 }
 
 export type ActiveFilterTab = 'all' | 'bestsellers' | 'organic' | 'party' | 'sale';

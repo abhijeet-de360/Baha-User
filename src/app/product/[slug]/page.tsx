@@ -126,19 +126,38 @@ export default function ProductPage({ params }: PageProps) {
                         <div className="lg:col-span-5 w-full max-w-[440px] sm:max-w-[460px] mx-auto lg:mx-0 space-y-4">
                             {/* Main Featured Image Box */}
                             <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#FAF8F3] border border-[#EFECE6] shadow-xs group">
-                                <Image
-                                    src={galleryImages[activeImageIndex] || product.featuredImage}
-                                    alt={product.name}
-                                    fill
-                                    priority
-                                    sizes="(max-width: 1024px) 100vw, 460px"
-                                    className="object-cover object-center transition-transform duration-500 ease-out"
-                                />
+                                {product.videoUrl && activeImageIndex === 0 ? (
+                                    <video
+                                        src={product.videoUrl}
+                                        poster={galleryImages[0] || product.featuredImage}
+                                        autoPlay
+                                        loop
+                                        muted
+                                        playsInline
+                                        className="w-full h-full object-cover object-center"
+                                    />
+                                ) : (
+                                    <Image
+                                        src={galleryImages[activeImageIndex] || product.featuredImage}
+                                        alt={product.name}
+                                        fill
+                                        priority
+                                        sizes="(max-width: 1024px) 100vw, 460px"
+                                        className="object-cover object-center transition-transform duration-500 ease-out"
+                                    />
+                                )}
 
                                 {/* Discount Badge Overlay (Top Left) */}
                                 {product.discountPercent && (
                                     <div className="absolute top-4 left-4 bg-[#00BBA7] text-white text-xs font-bold px-3 py-1 rounded-sm shadow-xs uppercase tracking-wider">
                                         -{product.discountPercent}%
+                                    </div>
+                                )}
+
+                                {product.videoUrl && activeImageIndex === 0 && (
+                                    <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full shadow-xs inline-flex items-center gap-1.5">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                        <span>Product Video</span>
                                     </div>
                                 )}
                             </div>
@@ -164,6 +183,11 @@ export default function ProductPage({ params }: PageProps) {
                                                 sizes="120px"
                                                 className="object-cover object-top"
                                             />
+                                            {product.videoUrl && idx === 0 && (
+                                                <div className="absolute bottom-1 right-1 bg-brand-purple/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm">
+                                                    ▶ Video
+                                                </div>
+                                            )}
                                         </button>
                                     );
                                 })}

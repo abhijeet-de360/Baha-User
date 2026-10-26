@@ -6,13 +6,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useShopState } from '@/hooks/useShopState';
-import type { Product } from '@/types';
+import type { Product, ChildProfile } from '@/types';
 import {
   User, Mail, Phone, MapPin, Star, Sparkles, Heart,
   Package, ChevronRight, CheckCircle2, Clock, Truck,
   Bell, Edit, LogOut, Crown, Gift, Plus, Trash2, Check,
   X, ExternalLink, ShoppingBag, ShieldCheck, Copy, ArrowRight, ArrowLeft,
-  SlidersHorizontal, CheckCircle, Camera, Upload, ChevronDown
+  SlidersHorizontal, CheckCircle, Camera, Upload, ChevronDown,
+  Baby, Cake, Smile, Tag, Shirt, Footprints, AlertCircle
 } from 'lucide-react';
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; dot: string; label: string }> = {
@@ -71,7 +72,77 @@ const INDIAN_STATES = [
   'West Bengal',
 ];
 
-type Tab = 'orders' | 'addresses' | 'wishlist' | 'rewards' | 'settings';
+type Tab = 'orders' | 'addresses' | 'wishlist' | 'rewards' | 'settings' | 'children';
+
+const KID_AVATARS = [
+  { id: 'av-1', label: 'Little Adventurer', url: 'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=200&q=80', gender: 'boy' },
+  { id: 'av-2', label: 'Pastel Twirl', url: 'https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=200&q=80', gender: 'girl' },
+  { id: 'av-3', label: 'Sunny Romper', url: 'https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=200&q=80', gender: 'unisex' },
+  { id: 'av-4', label: 'Dino Explorer', url: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=200&q=80', gender: 'boy' },
+  { id: 'av-5', label: 'Sweet Strawberry', url: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=200&q=80', gender: 'girl' },
+  { id: 'av-6', label: 'Cozy Bear', url: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=200&q=80', gender: 'unisex' },
+];
+
+const CLOTHING_SIZES = [
+  '0-3M (Newborn)',
+  '3-6M',
+  '6-12M',
+  '12-18M',
+  '18-24M',
+  '2T (2 Years)',
+  '3T (3 Years)',
+  '4T (4 Years)',
+  '5T / 5-6Y',
+  '6-7Y',
+  '8-9Y',
+  '10-12Y',
+];
+
+const SHOE_SIZES = [
+  'EU 18 (0-6M)',
+  'EU 20 (US 4.5)',
+  'EU 22 (US 6)',
+  'EU 24 (US 7.5)',
+  'EU 26 (US 9)',
+  'EU 28 (US 11)',
+  'EU 30 (US 12.5)',
+  'EU 32 (US 13.5)',
+];
+
+const STYLE_PREFERENCES = [
+  'Everyday Cotton & Tees',
+  'Organic Linen Rompers',
+  'Ethnic & Festive Wear',
+  'Party & Twirl Dresses',
+  'Sleepwear & Loungewear',
+  'Outerwear & Jackets',
+  'All Styles',
+];
+
+const calculateAgeFromDob = (dobString: string): string => {
+  if (!dobString) return '';
+  const dob = new Date(dobString);
+  if (isNaN(dob.getTime())) return '';
+  const now = new Date();
+
+  let years = now.getFullYear() - dob.getFullYear();
+  let months = now.getMonth() - dob.getMonth();
+
+  if (months < 0 || (months === 0 && now.getDate() < dob.getDate())) {
+    years--;
+    months += 12;
+  }
+
+  if (years < 1) {
+    const totalMonths = (now.getFullYear() - dob.getFullYear()) * 12 + (now.getMonth() - dob.getMonth());
+    return totalMonths <= 1 ? '1 Month' : `${totalMonths} Months`;
+  }
+
+  if (months === 0) {
+    return years === 1 ? '1 Year' : `${years} Years`;
+  }
+  return years === 1 ? `1 Year ${months}M` : `${years} Years`;
+};
 
 interface Address {
   id: string;
@@ -93,6 +164,126 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState<Tab>('settings');
   const [orderFilter, setOrderFilter] = useState<'all' | 'In Transit' | 'Delivered'>('all');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Child Profiles State
+  const [children, setChildren] = useState<ChildProfile[]>([]);
+  const [isChildFormOpen, setIsChildFormOpen] = useState(false);
+  const [editingChild, setEditingChild] = useState<ChildProfile | null>(null);
+  const [childForm, setChildForm] = useState<Omit<ChildProfile, 'id'>>({
+    nickname: '',
+    fullName: '',
+    gender: 'boy',
+    dob: '',
+    age: '',
+    clothingSize: '3T (3 Years)',
+    shoeSize: 'EU 24 (US 7.5)',
+    favoriteCategory: 'Everyday Cotton & Tees',
+    sensitivities: '',
+    avatar: KID_AVATARS[0].url,
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const storedKids = localStorage.getItem('baha_child_profiles');
+        if (storedKids) {
+          const parsed = JSON.parse(storedKids) as ChildProfile[];
+          if (parsed && parsed.length > 0) {
+            setChildren(parsed);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      if (mockData.userProfile && (mockData.userProfile as any).children) {
+        setChildren((mockData.userProfile as any).children as ChildProfile[]);
+      }
+    }
+  }, []);
+
+  const saveChildrenToStorage = (updated: ChildProfile[]) => {
+    setChildren(updated);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('baha_child_profiles', JSON.stringify(updated));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
+  const handleOpenAddChild = () => {
+    setEditingChild(null);
+    setChildForm({
+      nickname: '',
+      fullName: '',
+      gender: 'boy',
+      dob: '',
+      age: '',
+      clothingSize: '3T (3 Years)',
+      shoeSize: 'EU 24 (US 7.5)',
+      favoriteCategory: 'Everyday Cotton & Tees',
+      sensitivities: '',
+      avatar: KID_AVATARS[0].url,
+    });
+    setIsChildFormOpen(true);
+  };
+
+  const handleOpenEditChild = (child: ChildProfile) => {
+    setEditingChild(child);
+    setChildForm({
+      nickname: child.nickname,
+      fullName: child.fullName || '',
+      gender: child.gender,
+      dob: child.dob || '',
+      age: child.age,
+      clothingSize: child.clothingSize,
+      shoeSize: child.shoeSize || '',
+      favoriteCategory: child.favoriteCategory || 'Everyday Cotton & Tees',
+      sensitivities: child.sensitivities || '',
+      avatar: child.avatar || KID_AVATARS[0].url,
+    });
+    setIsChildFormOpen(true);
+  };
+
+  const handleSaveChild = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!childForm.nickname.trim()) {
+      showToast('Please enter your child\'s nickname! 👶');
+      return;
+    }
+    const finalAge = childForm.age.trim() || (childForm.dob ? calculateAgeFromDob(childForm.dob) : 'Child');
+
+    if (editingChild) {
+      const updated = children.map((c) => {
+        if (c.id === editingChild.id) {
+          return { ...c, ...childForm, age: finalAge };
+        }
+        return c;
+      });
+      saveChildrenToStorage(updated);
+      showToast(`${childForm.nickname}'s profile updated! 🌟`);
+    } else {
+      const newChild: ChildProfile = {
+        ...childForm,
+        age: finalAge,
+        id: `child-${Date.now()}`,
+      };
+      const updated = [...children, newChild];
+      saveChildrenToStorage(updated);
+      showToast(`${childForm.nickname}'s profile added! 🎈`);
+    }
+    setIsChildFormOpen(false);
+  };
+
+  const handleDeleteChild = (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to remove ${name}'s profile?`)) {
+      const remaining = children.filter((c) => c.id !== id);
+      saveChildrenToStorage(remaining);
+      showToast(`${name}'s profile removed.`);
+    }
+  };
 
   // Address state
   const [addresses, setAddresses] = useState<Address[]>([]);

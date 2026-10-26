@@ -1,40 +1,94 @@
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'BrightChalk';
+  src: url('/fonts/BrightChalk.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BrightChalk';
+  src: url('/fonts/BrightChalk.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BrightChalk';
+  src: url('/fonts/BrightChalk.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kittencutes';
+  src: url('/fonts/BrightChalk.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kittencutes';
+  src: url('/fonts/BrightChalk.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kittencutes';
+  src: url('/fonts/BrightChalk.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
-  --color-background: #FFFDF8;
+  --color-background: #FFFFFF;
   --color-card: #FFFFFF;
   --color-text-main: #292936;
   --color-text-muted: #686777;
   --color-text-light: #9B99A9;
 
-  --color-brand-purple: #6C63A8;
-  --color-brand-purple-light: #F0EEF8;
-  --color-brand-purple-dark: #554E87;
-  --color-brand-blue: #A8D8E8;
-  --color-brand-blue-light: #EDF7FA;
-  --color-brand-yellow: #FFD66B;
-  --color-brand-yellow-light: #FFF8E7;
-  --color-brand-yellow-dark: #E5BD52;
-  --color-brand-mint: #A9D8B8;
-  --color-brand-mint-light: #EEF8F1;
-  --color-brand-coral: #F28C82;
+  --color-brand-purple: #09017D;
+  --color-brand-purple-light: #EBEAFF;
+  --color-brand-purple-dark: #060155;
+  --color-brand-blue: #09017D;
+  --color-brand-blue-light: #EBEAFF;
+  --color-brand-yellow: #FED174;
+  --color-brand-yellow-light: #FFF6E0;
+  --color-brand-yellow-dark: #EAA738;
+  --color-brand-mint: #8F7F3C;
+  --color-brand-mint-light: #F4F1E5;
+  --color-brand-coral: #DC5513;
   --color-brand-coral-light: #FDEEEB;
-  --color-brand-coral-dark: #D96F65;
+  --color-brand-coral-dark: #B94209;
+  --color-brand-earth: #793A20;
+  --color-brand-earth-light: #F9EFEB;
+  --color-brand-sand: #E8DE93;
+  --color-brand-sand-light: #FAF7EA;
 
-  --font-heading: 'Baloo 2', cursive, sans-serif;
+  --font-heading: 'BrightChalk', 'Kittencutes', var(--font-kittencutes, 'BrightChalk'), cursive, sans-serif;
   --font-body: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-menu: 'BrightChalk', 'Kittencutes', var(--font-kittencutes, 'BrightChalk'), cursive, sans-serif;
+  --font-chalk: 'BrightChalk', 'Kittencutes', var(--font-kittencutes, 'BrightChalk'), cursive, sans-serif;
 
   --radius-xl: 16px;
   --radius-2xl: 20px;
   --radius-3xl: 28px;
   --radius-4xl: 36px;
 
-  --shadow-soft: 0 8px 30px -4px rgba(108, 99, 168, 0.08);
-  --shadow-soft-hover: 0 16px 36px -6px rgba(108, 99, 168, 0.16);
+  --shadow-soft: 0 8px 30px -4px rgba(9, 1, 125, 0.08);
+  --shadow-soft-hover: 0 16px 36px -6px rgba(9, 1, 125, 0.16);
   --shadow-card: 0 4px 20px -2px rgba(41, 41, 54, 0.05);
-  --shadow-glow-yellow: 0 0 25px rgba(255, 214, 107, 0.45);
-  --shadow-glow-purple: 0 0 25px rgba(108, 99, 168, 0.35);
+  --shadow-glow-yellow: 0 0 25px rgba(254, 209, 116, 0.45);
+  --shadow-glow-purple: 0 0 25px rgba(9, 1, 125, 0.35);
 
   --animate-float: float 4s ease-in-out infinite;
   --animate-float-delayed: float 4s ease-in-out 2s infinite;
@@ -76,12 +130,13 @@
 }
 
 :root {
-  --bg-main: #FFFDF8;
-  --primary: #6C63A8;
-  --secondary: #A8D8E8;
-  --accent: #FFD66B;
-  --mint: #A9D8B8;
-  --coral: #F28C82;
+  --bg-main: #FFFFFF;
+  --primary: #09017D;
+  --secondary: #E8DE93;
+  --accent: #FED174;
+  --mint: #8F7F3C;
+  --coral: #DC5513;
+  --earth: #793A20;
   --text-color: #292936;
 }
 
@@ -90,7 +145,7 @@ html {
 }
 
 body {
-  background-color: #FFFDF8;
+  background-color: #FFFFFF;
   color: #292936;
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
@@ -103,13 +158,14 @@ h3,
 h4,
 h5,
 h6,
-.font-heading {
-  font-family: 'Baloo 2', cursive, sans-serif;
-  letter-spacing: -0.01em;
+.font-heading,
+.font-menu,
+.font-chalk {
+  font-family: 'BrightChalk', 'Kittencutes', var(--font-kittencutes, 'BrightChalk'), cursive, sans-serif !important;
 }
 
 ::selection {
-  background-color: #FFD66B;
+  background-color: #FED174;
   color: #292936;
 }
 
@@ -154,5 +210,13 @@ html, body, * {
 @layer components {
   .container {
     @apply max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+@layer utilities {
+  .font-menu,
+  .font-heading,
+  .font-chalk {
+    font-family: 'BrightChalk', 'Kittencutes', var(--font-kittencutes, 'BrightChalk'), cursive, sans-serif !important;
   }
 }

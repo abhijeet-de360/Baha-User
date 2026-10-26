@@ -6,24 +6,24 @@ import Image from 'next/image';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="relative bg-[#484178] text-white pt-16 pb-12 overflow-hidden border-t border-white/10">
+    <footer className="relative bg-[#09017D] text-white pt-16 pb-12 overflow-hidden border-t border-white/10">
       
       {/* Ambient Splash Light Blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden z-0">
-        {/* Top-Right Yellow Glow */}
+        {/* Top-Right Golden Marigold Glow */}
         <div
           className="absolute -top-28 -right-28 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl"
-          style={{ background: 'radial-gradient(circle, #FFD66B 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, #FED174 0%, transparent 70%)' }}
         />
-        {/* Bottom-Left Coral & Mint Glow */}
+        {/* Bottom-Left Rust Orange & Olive Glow */}
         <div
           className="absolute -bottom-36 -left-28 w-[550px] h-[550px] rounded-full opacity-25 blur-3xl"
-          style={{ background: 'radial-gradient(circle, #ff9500ff 0%, #86d98aff 50%, transparent 75%)' }}
+          style={{ background: 'radial-gradient(circle, #DC5513 0%, #8F7F3C 50%, transparent 75%)' }}
         />
-        {/* Center Blue Glow */}
+        {/* Center Wheat Sand Glow */}
         <div
           className="absolute top-1/2 left-1/3 w-[600px] h-[350px] rounded-full opacity-15 blur-3xl"
-          style={{ background: 'radial-gradient(ellipse, #A8D8E8 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(ellipse, #E8DE93 0%, transparent 70%)' }}
         />
       </div>
 

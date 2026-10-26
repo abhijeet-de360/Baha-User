@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Sparkles, ArrowRight, Heart, Leaf, Star, ShoppingBag, Smile, RefreshCw, PackageCheck, Quote, CheckCircle, Camera, X, ChevronLeft, ChevronRight, PlayCircle, Mail, Send, Gift } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -15,7 +16,6 @@ import 'swiper/css/navigation';
 // Layout & UI Components
 import { HeroBannerSlider } from '@/components/home/HeroBannerSlider';
 import { ProductCard } from '@/components/ui/ProductCard';
-import { QuickViewModal } from '@/components/ui/QuickViewModal';
 import { Button } from '@/components/ui/button';
 import { ReelCard } from '@/components/home/ReelCard';
 
@@ -51,8 +51,7 @@ export const Home: React.FC = () => {
     handleApplyPromo,
   } = useShopState();
 
-  // Local State: Quick View & Filters
-  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  // Local State: Filters
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'rating'>('featured');
@@ -165,13 +164,21 @@ export const Home: React.FC = () => {
 
         {/*============================ CATEGORY & DEPARTMENT SECTION ========================        */}
         <section className="py-5 sm:py-12 border-[#F3EFE8] relative overflow-hidden">
-          {/* Ambient Background Splashes */}
-          <div className="absolute top-0 left-[-5%] w-72 h-72 sm:w-96 sm:h-96 bg-purple-200/40 rounded-full blur-3xl pointer-events-none -z-0" />
-          <div className="absolute bottom-0 right-[-5%] w-80 h-80 sm:w-[28rem] sm:h-[28rem] bg-amber-200/40 rounded-full blur-3xl pointer-events-none -z-0" />
-          <div className="container relative z-10">
+          {/* Subtle Brand Logo Watermark */}
+          <div className="pointer-events-none absolute -top-12 -right-12 w-64 h-64 sm:w-80 sm:h-80 opacity-[0.05] select-none -z-0">
+            <Image
+              src="/images/baha-watermark.png"
+              alt=""
+              width={350}
+              height={340}
+              className="w-full h-full object-contain transform rotate-12"
+              aria-hidden="true"
+            />
+          </div>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-3 gap-4">
               <div>
-                <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight">
+                <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-text-main tracking-wide">
                   Shop by Age &amp; Category
                 </h2>
               </div>
@@ -206,15 +213,23 @@ export const Home: React.FC = () => {
 
         {/*============================ NEW ARRIVALS PRODUCTS SECTION ========================        */}
         <section id="featured-collection" className="py-12 bg-background relative overflow-hidden">
-          {/* Ambient Background Splashes */}
-          <div className="absolute top-1/4 right-[-8%] w-80 h-80 sm:w-96 sm:h-96 bg-sky-200/35 rounded-full blur-3xl pointer-events-none -z-0" />
-          <div className="absolute bottom-0 left-[-8%] w-96 h-96 bg-emerald-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
+          {/* Subtle Brand Logo Watermark */}
+          <div className="pointer-events-none absolute -bottom-16 -left-12 w-72 h-72 sm:w-96 sm:h-96 opacity-[0.05] select-none -z-0">
+            <Image
+              src="/images/baha-watermark.png"
+              alt=""
+              width={400}
+              height={390}
+              className="w-full h-full object-contain transform -rotate-12"
+              aria-hidden="true"
+            />
+          </div>
           <div className="container relative z-10">
 
             {/* Header */}
             <div className="flex items-center justify-between gap-3 mb-4 sm:mb-6">
               <div className="min-w-0 flex-1">
-                <h2 className="font-heading text-xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight truncate">
+                <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-text-main tracking-wide truncate">
                   New Arrivals
                 </h2>
               </div>
@@ -238,7 +253,6 @@ export const Home: React.FC = () => {
                     isWishlisted={wishlistIds.includes(product.id)}
                     isAdded={addedItemAnimationId === product.id}
                     onToggleWishlist={handleToggleWishlist}
-                    onQuickView={setQuickViewProduct}
                     onAddToCart={onAddToCart}
                     selectedColor={cardSelectedColors[product.id]}
                     onSelectColor={(colorName) => setCardSelectedColors(prev => ({ ...prev, [product.id]: colorName }))}
@@ -276,13 +290,21 @@ export const Home: React.FC = () => {
 
         {/*============================ TRENDING PRODUCTS SECTION ========================        */}
         <section id="trending-products" className="py-14 bg-white border-t border-[#F3EFE8] relative overflow-hidden">
-          {/* Ambient Background Splashes */}
-          <div className="absolute top-0 left-[15%] w-96 h-96 bg-rose-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
-          <div className="absolute bottom-0 right-[10%] w-96 h-96 bg-purple-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
+          {/* Subtle Brand Logo Watermark */}
+          <div className="pointer-events-none absolute -top-16 -right-12 w-72 h-72 sm:w-96 sm:h-96 opacity-[0.05] select-none -z-0">
+            <Image
+              src="/images/baha-watermark.png"
+              alt=""
+              width={400}
+              height={390}
+              className="w-full h-full object-contain transform rotate-6"
+              aria-hidden="true"
+            />
+          </div>
           <div className="container relative z-10">
             <div className="flex items-center justify-between gap-3 mb-6 sm:mb-8 pb-4 border-b border-[#EAE5DC]">
               <div className="min-w-0 flex-1">
-                <h2 className="font-heading text-xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight truncate">
+                <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-text-main tracking-wide truncate">
                   Trending Products
                 </h2>
               </div>
@@ -310,7 +332,6 @@ export const Home: React.FC = () => {
                   isWishlisted={wishlistIds.includes(product.id)}
                   isAdded={addedItemAnimationId === product.id}
                   onToggleWishlist={handleToggleWishlist}
-                  onQuickView={setQuickViewProduct}
                   onAddToCart={onAddToCart}
                   selectedColor={cardSelectedColors[product.id]}
                   onSelectColor={(colorName) => setCardSelectedColors(prev => ({ ...prev, [product.id]: colorName }))}
@@ -322,13 +343,21 @@ export const Home: React.FC = () => {
 
         {/*============================ FEATURED PRODUCTS SECTION ========================        */}
         <section id="featured-products" className="py-14 bg-background border-t border-[#F3EFE8] relative overflow-hidden">
-          {/* Ambient Background Splashes */}
-          <div className="absolute top-1/3 left-[-5%] w-96 h-96 bg-amber-200/35 rounded-full blur-3xl pointer-events-none -z-0" />
-          <div className="absolute bottom-0 right-[-5%] w-96 h-96 bg-sky-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
+          {/* Subtle Brand Logo Watermark */}
+          <div className="pointer-events-none absolute -bottom-16 -right-12 w-72 h-72 sm:w-96 sm:h-96 opacity-[0.05] select-none -z-0">
+            <Image
+              src="/images/baha-watermark.png"
+              alt=""
+              width={400}
+              height={390}
+              className="w-full h-full object-contain transform rotate-12"
+              aria-hidden="true"
+            />
+          </div>
           <div className="container relative z-10">
             <div className="flex items-center justify-between gap-3 mb-6 sm:mb-8 pb-4 border-b border-[#EAE5DC]">
               <div className="min-w-0 flex-1">
-                <h2 className="font-heading text-xl sm:text-3xl lg:text-4xl font-extrabold text-text-main tracking-tight truncate">
+                <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-text-main tracking-wide truncate">
                   Featured Products
                 </h2>
               </div>
@@ -356,7 +385,6 @@ export const Home: React.FC = () => {
                   isWishlisted={wishlistIds.includes(product.id)}
                   isAdded={addedItemAnimationId === product.id}
                   onToggleWishlist={handleToggleWishlist}
-                  onQuickView={setQuickViewProduct}
                   onAddToCart={onAddToCart}
                   selectedColor={cardSelectedColors[product.id]}
                   onSelectColor={(colorName) => setCardSelectedColors(prev => ({ ...prev, [product.id]: colorName }))}
@@ -390,7 +418,7 @@ export const Home: React.FC = () => {
               <div className="inline-flex items-center gap-2 bg-brand-yellow px-3.5 py-1 rounded-full text-xs font-bold text-text-main uppercase tracking-wider mb-2 shadow-xs">
                 <span>Mix & Match Stylist Pick</span>
               </div>
-              <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-text-main mb-3">
+              <h2 className="font-menu text-3xl sm:text-4xl font-bold text-text-main mb-3 tracking-wide">
                 Shop the Complete Adventure Look
               </h2>
               <p className="text-text-muted text-sm sm:text-base">
@@ -500,15 +528,23 @@ export const Home: React.FC = () => {
 
         {/*============================ VALUE PROPOSITIONS SECTION ========================        */}
         <section className="py-16 bg-background border-t border-[#F3EFE8] relative overflow-hidden">
-          {/* Ambient Background Splashes */}
-          <div className="absolute top-0 left-1/4 w-[30rem] h-[30rem] bg-gradient-to-r from-emerald-200/30 via-sky-200/30 to-purple-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
-          <div className="absolute bottom-0 right-1/4 w-[30rem] h-[30rem] bg-gradient-to-l from-amber-200/35 via-rose-200/25 to-transparent rounded-full blur-3xl pointer-events-none -z-0" />
+          {/* Subtle Brand Logo Watermark */}
+          <div className="pointer-events-none absolute -top-16 -left-12 w-72 h-72 sm:w-96 sm:h-96 opacity-[0.05] select-none -z-0">
+            <Image
+              src="/images/baha-watermark.png"
+              alt=""
+              width={400}
+              height={390}
+              className="w-full h-full object-contain transform -rotate-12"
+              aria-hidden="true"
+            />
+          </div>
           <div className="container relative z-10">
             <div className="text-center max-w-xl mx-auto mb-12">
               <div className="inline-flex items-center gap-2 text-brand-purple font-semibold text-xs tracking-wider uppercase mb-1">
                 <span>Why Parents Choose Us</span>
               </div>
-              <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-text-main">
+              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-text-main tracking-wide">
                 Made for Real Kids & Real Messes
               </h2>
             </div>
@@ -587,16 +623,24 @@ export const Home: React.FC = () => {
 
         {/*============================ PARENT REVIEWS & TESTIMONIALS SECTION ========================        */}
         <section className="py-16 bg-white border-y border-[#EFECE6] relative overflow-hidden">
-          {/* Ambient Background Splashes */}
-          <div className="absolute -top-12 -right-10 w-96 h-96 bg-purple-200/35 rounded-full blur-3xl pointer-events-none -z-0" />
-          <div className="absolute -bottom-10 -left-10 w-96 h-96 bg-amber-200/30 rounded-full blur-3xl pointer-events-none -z-0" />
+          {/* Subtle Brand Logo Watermark */}
+          <div className="pointer-events-none absolute -bottom-16 -right-12 w-72 h-72 sm:w-96 sm:h-96 opacity-[0.05] select-none -z-0">
+            <Image
+              src="/images/baha-watermark.png"
+              alt=""
+              width={400}
+              height={390}
+              className="w-full h-full object-contain transform rotate-12"
+              aria-hidden="true"
+            />
+          </div>
           <div className="container relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
               <div>
                 <div className="flex items-center gap-2 text-brand-purple font-semibold text-xs tracking-wider uppercase mb-1">
                   <span>Real Parent Stories</span>
                 </div>
-                <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-text-main">
+                <h2 className="font-heading text-3xl sm:text-4xl font-bold text-text-main tracking-wide">
                   Loved by Little Ones, <br className="hidden sm:inline" />
                   Approved by Parents
                 </h2>
@@ -696,16 +740,24 @@ export const Home: React.FC = () => {
 
         {/*============================ PRODUCT REELS & VIDEO SHOPPING SECTION ========================        */}
         <section className="py-16 bg-background border-t border-[#EFECE6] relative overflow-hidden">
-          {/* Ambient Background Splashes */}
-          <div className="absolute top-10 left-10 w-[28rem] h-[28rem] bg-purple-500/10 rounded-full blur-3xl pointer-events-none -z-0" />
-          <div className="absolute bottom-10 right-10 w-[28rem] h-[28rem] bg-amber-400/15 rounded-full blur-3xl pointer-events-none -z-0" />
+          {/* Subtle Brand Logo Watermark */}
+          <div className="pointer-events-none absolute -top-16 -left-12 w-72 h-72 sm:w-96 sm:h-96 opacity-[0.05] select-none -z-0">
+            <Image
+              src="/images/baha-watermark.png"
+              alt=""
+              width={400}
+              height={390}
+              className="w-full h-full object-contain transform -rotate-6"
+              aria-hidden="true"
+            />
+          </div>
           <div className="container relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
               <div>
                 <div className="inline-flex items-center gap-2 text-brand-purple font-semibold text-xs tracking-wider uppercase mb-1">
                   <span>#BahaKids in Motion</span>
                 </div>
-                <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-text-main">
+                <h2 className="font-heading text-3xl sm:text-4xl font-bold text-text-main tracking-wide">
                   Watch, Play & Shop the Look
                 </h2>
                 <p className="text-text-muted text-sm mt-1 max-w-xl">
@@ -779,7 +831,7 @@ export const Home: React.FC = () => {
                     <ReelCard
                       reel={reel}
                       product={linkedProduct}
-                      onQuickView={(prod) => setQuickViewProduct(prod)}
+                      onQuickView={(prod) => router.push(`/product/${prod.id}`)}
                       onAddToCart={(prod, color, size) => handleAddToCart(prod, color, size)}
                     />
                   </SwiperSlide>
@@ -790,17 +842,24 @@ export const Home: React.FC = () => {
         </section>
 
         {/*============================ VIP NEWSLETTER DUAL-COLUMN CARD SECTION  ========================        */}
-        <section className=" bg-background py-16">
+        <section className=" bg-background py-16 relative overflow-hidden">
+          {/* Subtle Brand Logo Watermark */}
+          <div className="pointer-events-none absolute -bottom-10 -right-8 w-64 h-64 sm:w-80 sm:h-80 opacity-[0.05] select-none -z-0">
+            <Image
+              src="/images/baha-watermark.png"
+              alt=""
+              width={350}
+              height={340}
+              className="w-full h-full object-contain transform rotate-12"
+              aria-hidden="true"
+            />
+          </div>
           <div className="container">
             <div className="relative overflow-hidden rounded-3xl sm:rounded-4xl bg-gradient-to-br from-[#FFFBF5] via-white to-[#F5F2FF] border border-[#EBE6DC] shadow-card p-6 sm:p-12">
-              {/* Subtle Decorative Ambient Background Blobs */}
-              <div className="absolute -top-16 -right-16 w-80 h-80 bg-brand-yellow/20 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-16 -left-16 w-80 h-80 bg-brand-purple/10 rounded-full blur-3xl pointer-events-none" />
-
               <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                 {/* Left Column: Heading & Value Proposition */}
                 <div className="lg:col-span-7 space-y-4 text-left">
-                  <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-text-main tracking-tight leading-tight">
+                  <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-text-main tracking-wide leading-tight">
                     Join the <span className="text-brand-purple underline decoration-brand-yellow decoration-4 underline-offset-4">Baha Kidz</span> Club!
                   </h2>
 
@@ -826,7 +885,7 @@ export const Home: React.FC = () => {
                               placeholder="e.g. parent@gmail.com"
                               value={newsletterEmail}
                               onChange={(e) => setNewsletterEmail(e.target.value)}
-                              className="w-full bg-background border border-[#EAE5DC] focus:border-brand-purple text-text-main text-sm font-medium pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all"
+                              className="w-full border border-[#EAE5DC] focus:border-brand-purple text-text-main text-sm font-medium pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all"
                             />
                           </div>
                         </div>
@@ -857,14 +916,7 @@ export const Home: React.FC = () => {
       {/* 4. INTERACTIVE OVERLAYS & MODALS          */}
       {/* ========================================== */}
 
-      {/* QUICK VIEW MODAL COMPONENT */}
-      <QuickViewModal
-        product={quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-        isWishlisted={quickViewProduct ? wishlistIds.includes(quickViewProduct.id) : false}
-        onToggleWishlist={handleToggleWishlist}
-        onAddToCart={handleAddToCart}
-      />
+
 
       {/* TOAST ALERT NOTIFICATION */}
       {toast && (
