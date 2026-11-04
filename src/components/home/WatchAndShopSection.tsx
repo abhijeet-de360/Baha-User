@@ -246,6 +246,7 @@ export default function WatchAndShopSection({
 
   return (
     <section
+      id="reels"
       ref={sectionRef}
       className="relative w-full bg-white py-12 sm:py-16 md:py-20 overflow-hidden"
     >

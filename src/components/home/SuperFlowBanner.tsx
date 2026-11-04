@@ -105,7 +105,7 @@ export default function SuperFlowBanner({
   const [previous, setPrevious] = useState<number | null>(null);
   const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
-  const [reduced, setReduced] = useState(true);
+  const [reduced, setReduced] = useState(false);
   const [visible, setVisible] = useState(true);
   const locked = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -143,7 +143,7 @@ export default function SuperFlowBanner({
     setPrevious(active);
     setIndex(next);
     locked.current = true;
-    timer.current = setTimeout(() => { setPrevious(null); locked.current = false; }, reduced ? 0 : 2000);
+    timer.current = setTimeout(() => { setPrevious(null); locked.current = false; }, reduced ? 0 : 1800);
   }, [active, slides.length, reduced]);
 
   useEffect(() => {
@@ -155,7 +155,7 @@ export default function SuperFlowBanner({
   if (!slides.length) return null;
   const layers = previous !== null && slides[previous] ? [previous, active] : [active];
   return (
-    <section className={`relative isolate w-full sm:aspect-[20/9] max-sm:aspect-[1086/1448] overflow-hidden bg-[#172125] text-white font-secondary touch-pan-y focus-visible:outline-[3px] focus-visible:outline-white focus-visible:outline-offset-[-5px] motion-reduce:[&_*]:animate-none motion-reduce:[&_*]:transition-none ${className}`} style={{ height, "--direction": direction } as CSSProperties}
+    <section className={`relative isolate w-full md:aspect-[20/9] max-md:aspect-[1086/1448] overflow-hidden bg-[#172125] text-white font-secondary touch-pan-y focus-visible:outline-[3px] focus-visible:outline-white focus-visible:outline-offset-[-5px] motion-reduce:[&_*]:animate-none motion-reduce:[&_*]:transition-none ${className}`} style={{ height, "--direction": direction } as CSSProperties}
       aria-label={label} aria-roledescription="carousel" tabIndex={0}
       onKeyDown={e => {
         if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
@@ -173,33 +173,121 @@ export default function SuperFlowBanner({
       }}>
       {layers.map((slideIndex, layer) => {
         const slide = slides[slideIndex];
-        const activeImg = (isMobile && slide.mobileImage) ? slide.mobileImage : slide.image;
         const entering = previous !== null && layer === 1;
-        return <div key={slideIndex} className={`absolute inset-0 overflow-hidden ${entering ? "animate-[bahaFlow-reveal_1.6s_cubic-bezier(.45,0,.15,1)_both]" : ""}`}
-          aria-hidden={slideIndex !== active} inert={slideIndex !== active} role="group" aria-roledescription="slide"
-          aria-label={`${slideIndex + 1} of ${slides.length}: ${slide.title}`}>
-          <div className={`absolute inset-0 bg-cover max-sm:bg-contain max-sm:bg-top bg-no-repeat sm:[transform:scale(1.06)] ${entering ? "animate-[bahaFlow-imageIn_1.8s_cubic-bezier(.2,.65,.2,1)_both]" : ""}`} style={{ backgroundImage: `url(${JSON.stringify(activeImg)})`, backgroundPosition: isMobile ? "top center" : (slide.imagePosition || "center") }} />
-          {entering && !reduced && [0, 1, 2, 3, 4, 5].map(fragment => <div aria-hidden="true" data-transition-fragment key={fragment} className={`absolute inset-0 bg-cover max-sm:bg-contain max-sm:bg-top bg-no-repeat sm:[transform:scale(1.085)] [clip-path:polygon(calc(var(--fragment)*20%_-_12%)_0,calc(var(--fragment)*20%_-_11.8%)_0,calc(var(--fragment)*20%_+_8.2%)_100%,calc(var(--fragment)*20%_+_8%)_100%)] pointer-events-none animate-[bahaFlow-shardIn_1.6s_cubic-bezier(.2,.65,.2,1)_both] [animation-delay:calc(var(--fragment)*20ms)]`}
-            style={{ "--fragment": fragment, backgroundImage: `url(${JSON.stringify(activeImg)})`, backgroundPosition: isMobile ? "top center" : (slide.imagePosition || "center") } as CSSProperties} />)}
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#fffdf566_0%,#fffdf51a_45%,transparent_70%)] sm:block hidden" />
-          <div className={`hidden sm:flex flex-col items-center absolute top-[44%] sm:top-[45%] lg:top-[46%] left-1/2 w-[92%] max-w-[1000px] [transform:translate(-50%,-50%)] text-center will-change-[transform,opacity] sm:w-[84%] lg:w-[80%] ${slideIndex !== active ? "animate-[bahaFlow-titleOut_.35s_ease-out_both]" : "animate-[bahaFlow-titleIn_1.1s_.65s_cubic-bezier(.16,1,.3,1)_both]"}`}>
-            <h2 className="m-0 whitespace-pre-line font-primary text-[clamp(1.75rem,3.4vw,3.75rem)] leading-[1.15] font-medium text-brand-primary text-balance">
-              {slide.headline ? slide.headline.map((part, partIndex) => (
-                <span key={partIndex} className={part.accent ? "text-brand-accent" : undefined}>{part.text}</span>
-              )) : slide.title}
-            </h2>
-            {slide.description && <p className="mx-auto mt-3 max-w-[560px] font-secondary text-xs sm:text-sm lg:text-base leading-relaxed text-[#151515]">{slide.description}</p>}
-            <a href={slide.ctaHref || "/products"}
-              className="group mt-5 sm:mt-6 lg:mt-7 inline-flex min-h-10 sm:min-h-11 lg:min-h-12 items-center gap-3 lg:gap-3.5 rounded-full bg-brand-primary border-2 border-brand-primary py-1 pr-1 pl-5 sm:py-1.5 sm:pr-1.5 sm:pl-6 lg:py-1.5 lg:pr-1.5 lg:pl-7 font-secondary text-xs sm:text-sm font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-accent hover:border-brand-accent hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary">
-              {slide.ctaText || "Shop Now"}
-              <span aria-hidden="true" className="grid h-7 w-7 sm:h-8 sm:w-8 lg:h-9 lg:w-9 place-items-center rounded-full bg-white text-brand-primary transition-transform duration-300 group-hover:rotate-45 shrink-0">
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H9M17 7V15" />
-                </svg>
-              </span>
-            </a>
+        const desktopImg = slide.image;
+        const mobileImg = slide.mobileImage || slide.image;
+
+        return (
+          <div
+            key={`${slideIndex}-${layer}`}
+            className={`absolute inset-0 overflow-hidden ${
+              entering
+                ? "animate-[bahaFlow-reveal_1.6s_cubic-bezier(.45,0,.15,1)_both] z-1"
+                : "z-0"
+            }`}
+            aria-hidden={slideIndex !== active}
+            inert={slideIndex !== active}
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`${slideIndex + 1} of ${slides.length}: ${slide.title}`}
+          >
+            {/* Mobile Banner: Rendered below 768px (md:) via CSS media queries */}
+            <div
+              className={`block md:hidden absolute inset-0 bg-contain bg-top bg-no-repeat ${
+                entering
+                  ? "animate-[bahaFlow-mobileImageIn_1.8s_cubic-bezier(.2,.65,.2,1)_both]"
+                  : ""
+              }`}
+              style={{
+                backgroundImage: `url(${JSON.stringify(mobileImg)})`,
+              }}
+            />
+
+            {/* Desktop Banner: Rendered on 768px (md:) and above */}
+            <div
+              className={`hidden md:block absolute inset-0 bg-cover bg-no-repeat md:[transform:scale(1.06)] ${
+                entering
+                  ? "animate-[bahaFlow-imageIn_1.8s_cubic-bezier(.2,.65,.2,1)_both]"
+                  : ""
+              }`}
+              style={{
+                backgroundImage: `url(${JSON.stringify(desktopImg)})`,
+                backgroundPosition: slide.imagePosition || "center",
+              }}
+            />
+
+            {/* Shard Fragment Animation (Desktop only) */}
+            {entering &&
+              !reduced &&
+              [0, 1, 2, 3, 4, 5].map((fragment) => (
+                <div
+                  aria-hidden="true"
+                  data-transition-fragment
+                  key={fragment}
+                  className="hidden md:block absolute inset-0 bg-cover bg-no-repeat md:[transform:scale(1.085)] [clip-path:polygon(calc(var(--fragment)*20%_-_12%)_0,calc(var(--fragment)*20%_-_11.8%)_0,calc(var(--fragment)*20%_+_8.2%)_100%,calc(var(--fragment)*20%_+_8%)_100%)] pointer-events-none animate-[bahaFlow-shardIn_1.6s_cubic-bezier(.2,.65,.2,1)_both] [animation-delay:calc(var(--fragment)*20ms)]"
+                  style={
+                    {
+                      "--fragment": fragment,
+                      backgroundImage: `url(${JSON.stringify(desktopImg)})`,
+                      backgroundPosition: slide.imagePosition || "center",
+                    } as CSSProperties
+                  }
+                />
+              ))}
+
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#fffdf566_0%,#fffdf51a_45%,transparent_70%)] md:block hidden" />
+            <div
+              className={`hidden md:flex flex-col items-center absolute top-[44%] md:top-[45%] lg:top-[46%] left-1/2 w-[92%] max-w-[1000px] [transform:translate(-50%,-50%)] text-center will-change-[transform,opacity] md:w-[84%] lg:w-[80%] ${
+                slideIndex !== active
+                  ? "animate-[bahaFlow-titleOut_.35s_ease-out_both]"
+                  : "animate-[bahaFlow-titleIn_1.1s_.65s_cubic-bezier(.16,1,.3,1)_both]"
+              }`}
+            >
+              <h2 className="m-0 whitespace-pre-line font-primary text-[clamp(1.75rem,3.4vw,3.75rem)] leading-[1.15] font-medium text-brand-primary text-balance">
+                {slide.headline
+                  ? slide.headline.map((part, partIndex) => (
+                      <span
+                        key={partIndex}
+                        className={
+                          part.accent ? "text-brand-accent" : undefined
+                        }
+                      >
+                        {part.text}
+                      </span>
+                    ))
+                  : slide.title}
+              </h2>
+              {slide.description && (
+                <p className="mx-auto mt-3 max-w-[560px] font-secondary text-xs sm:text-sm lg:text-base leading-relaxed text-[#151515]">
+                  {slide.description}
+                </p>
+              )}
+              <a
+                href={slide.ctaHref || "/products"}
+                className="group mt-5 sm:mt-6 lg:mt-7 inline-flex min-h-10 sm:min-h-11 lg:min-h-12 items-center gap-3 lg:gap-3.5 rounded-full bg-brand-primary border-2 border-brand-primary py-1 pr-1 pl-5 sm:py-1.5 sm:pr-1.5 sm:pl-6 lg:py-1.5 lg:pr-1.5 lg:pl-7 font-secondary text-xs sm:text-sm font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-accent hover:border-brand-accent hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
+              >
+                {slide.ctaText || "Shop Now"}
+                <span
+                  aria-hidden="true"
+                  className="grid h-7 w-7 sm:h-8 sm:w-8 lg:h-9 lg:w-9 place-items-center rounded-full bg-white text-brand-primary transition-transform duration-300 group-hover:rotate-45 shrink-0"
+                >
+                  <svg
+                    className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M7 17L17 7M17 7H9M17 7V15"
+                    />
+                  </svg>
+                </span>
+              </a>
+            </div>
           </div>
-        </div>;
+        );
       })}
       {slides.length > 1 && (
         <div className="absolute z-[3] bottom-[max(36px,calc(env(safe-area-inset-bottom)+20px))] left-1/2 -translate-x-1/2 flex max-w-[95%] items-center gap-2">

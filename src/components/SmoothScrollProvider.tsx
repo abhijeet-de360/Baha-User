@@ -1,10 +1,39 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import React, { Suspense, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+/**
+ * Isolated inner listener wrapped in Suspense so that Next.js prerendering
+ * does not fail due to usePathname() outside Suspense boundaries.
+ */
+function ScrollResetOnNavigate({ lenisRef }: { lenisRef: React.RefObject<Lenis | null> }) {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
+    // Refresh ScrollTrigger and Lenis dimensions for the new page layout
+    const timer = setTimeout(() => {
+      if (lenisRef.current) {
+        lenisRef.current.resize();
+      }
+      ScrollTrigger.refresh();
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [pathname, lenisRef]);
+
+  return null;
+}
 
 export function SmoothScrollProvider({
   children,
@@ -12,7 +41,6 @@ export function SmoothScrollProvider({
   children: React.ReactNode;
 }) {
   const lenisRef = useRef<Lenis | null>(null);
-  const pathname = usePathname();
 
   useEffect(() => {
     // Disable native browser scroll restoration so page transitions always start at top
@@ -86,26 +114,13 @@ export function SmoothScrollProvider({
     };
   }, []);
 
-  // Always scroll to top immediately whenever the route / page changes
-  useEffect(() => {
-    if (lenisRef.current) {
-      lenisRef.current.scrollTo(0, { immediate: true });
-    }
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-
-    // Refresh ScrollTrigger and Lenis dimensions for the new page layout
-    const timer = setTimeout(() => {
-      if (lenisRef.current) {
-        lenisRef.current.resize();
-      }
-      ScrollTrigger.refresh();
-    }, 50);
-
-    return () => clearTimeout(timer);
-  }, [pathname]);
-
-  return <>{children}</>;
+  return (
+    <>
+      <Suspense fallback={null}>
+        <ScrollResetOnNavigate lenisRef={lenisRef} />
+      </Suspense>
+      {children}
+    </>
+  );
 }
 

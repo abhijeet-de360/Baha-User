@@ -166,6 +166,7 @@ export default function ReviewsClotheslineSection() {
                 src="/assets/temp/rope-heart-left.webp"
                 alt="Heart Pin"
                 fill
+                sizes="(max-width: 640px) 44px, 56px"
                 className="object-contain"
               />
             </div>
@@ -176,6 +177,7 @@ export default function ReviewsClotheslineSection() {
                 src="/assets/temp/rope-heart-right.webp"
                 alt="Heart Pin"
                 fill
+                sizes="(max-width: 640px) 44px, 56px"
                 className="object-contain"
               />
             </div>

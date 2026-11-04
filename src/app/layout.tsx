@@ -6,6 +6,7 @@ import "./index.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 
 const jost = Jost({
   subsets: ["latin"],
@@ -42,8 +43,10 @@ export default function RootLayout({
         <SmoothScrollProvider>
           {/* Header */}
           <Header />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 pb-16 lg:pb-0">{children}</main>
           <Footer />
+          {/* Mobile Bottom Navigation Bar */}
+          <MobileBottomNav />
         </SmoothScrollProvider>
       </body>
     </html>

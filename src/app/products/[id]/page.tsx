@@ -1,7 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { PRODUCTS, getProductById, getRelatedProducts } from "@/data/products";
+import { PRODUCTS, getRelatedProducts } from "@/data/products";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductInfo } from "@/components/product/ProductInfo";
 import { CompleteTheLook } from "@/components/product/CompleteTheLook";
@@ -9,38 +8,21 @@ import { ProductReviews } from "@/components/product/ProductReviews";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { StickyMobileCart } from "@/components/product/StickyMobileCart";
 
-export function generateStaticParams() {
-  return PRODUCTS.map((product) => ({
-    id: product.id,
-  }));
-}
+// Static fallback single product
+const SINGLE_PRODUCT = PRODUCTS[0];
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}): Promise<Metadata> {
-  const { id } = await params;
-  const product = getProductById(id) || PRODUCTS[0];
+export const metadata: Metadata = {
+  title: `${SINGLE_PRODUCT.name} — Baha Kids`,
+  description: SINGLE_PRODUCT.tagline,
+  openGraph: {
+    title: `${SINGLE_PRODUCT.name} | Baha Kids`,
+    description: SINGLE_PRODUCT.tagline,
+    images: [{ url: SINGLE_PRODUCT.images[0] }],
+  },
+};
 
-  return {
-    title: `${product.name} — Baha Kids`,
-    description: product.tagline,
-    openGraph: {
-      title: `${product.name} | Baha Kids`,
-      description: product.tagline,
-      images: [{ url: product.images[0] }],
-    },
-  };
-}
-
-export default async function ProductDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const product = getProductById(id) || PRODUCTS[0];
+export default function ProductDetailPage() {
+  const product = SINGLE_PRODUCT;
   const relatedProducts = getRelatedProducts(product.id, 4);
 
   return (

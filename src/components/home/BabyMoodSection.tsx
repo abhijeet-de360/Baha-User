@@ -102,7 +102,7 @@ export default function BabyMoodSection() {
               </div>
 
               {/* Lavender Box */}
-              <div className="absolute inset-x-0 bottom-0 h-[36%] sm:h-[37%] rounded-2xl sm:rounded-3xl bg-[#8E97E8] shadow-md transition-all duration-300 group-hover:shadow-lg" />
+              <div className="absolute inset-x-0 bottom-0 h-[36%] sm:h-[37%] rounded-t-2xl sm:rounded-t-3xl bg-[#8E97E8] shadow-md transition-all duration-300 group-hover:shadow-lg" />
 
               {/* Character 2 */}
               <div className="relative z-10 w-[96%] sm:w-[102%] h-[98%] sm:h-[104%] flex items-end justify-center pb-0 origin-bottom scale-[1.08]">
@@ -138,7 +138,7 @@ export default function BabyMoodSection() {
               </div>
 
               {/* Lilac Box */}
-              <div className="absolute inset-x-0 bottom-0 h-[36%] sm:h-[37%] rounded-2xl sm:rounded-3xl bg-[#E28FF6] shadow-md transition-all duration-300 group-hover:shadow-lg" />
+              <div className="absolute inset-x-0 bottom-0 h-[36%] sm:h-[37%] rounded-t-2xl sm:rounded-t-3xl bg-[#E28FF6] shadow-md transition-all duration-300 group-hover:shadow-lg" />
 
               {/* Character 3 */}
               <div className="relative z-10 w-[70%] sm:w-[72%] h-[71%] sm:h-[73%] flex items-end justify-center pb-0">
