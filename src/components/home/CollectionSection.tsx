@@ -335,6 +335,7 @@ export default function CollectionSection({
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
           {products.map((item, index) => {
             const visibilityClass = index >= 10 ? "lg:hidden" : "";
+            const productHref = item.link && item.link !== "/products" ? item.link : `/products/${item.id}`;
 
             return (
               <div
@@ -342,7 +343,7 @@ export default function CollectionSection({
                 className={`collection-product-card group relative flex flex-col bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-black/5 transition-all duration-300 hover:-translate-y-1 opacity-0 ${visibilityClass}`}
               >
                 {/* Product Photo: Locked to 1:1 Aspect Ratio on ALL screens */}
-                <Link href={item.link} className="block">
+                <Link href={productHref} className="block">
                   <ProductCardMedia item={item} />
                 </Link>
 
@@ -356,7 +357,7 @@ export default function CollectionSection({
 
                     {/* Product Title in Brand Font */}
                     <Link
-                      href={item.link}
+                      href={productHref}
                       className="font-primary text-xs sm:text-[13px] text-text-black line-clamp-2 leading-snug hover:text-brand-primary transition-colors mt-0.5 block"
                     >
                       {item.name}

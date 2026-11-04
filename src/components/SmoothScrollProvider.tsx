@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -10,7 +11,15 @@ export function SmoothScrollProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
+
   useEffect(() => {
+    // Disable native browser scroll restoration so page transitions always start at top
+    if (typeof window !== "undefined" && "scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
     gsap.registerPlugin(ScrollTrigger);
 
     const lenis = new Lenis({
@@ -23,7 +32,13 @@ export function SmoothScrollProvider({
       touchMultiplier: 2,
       naiveDimensions: true,
       autoResize: true,
+      stopInertiaOnNavigate: true,
     });
+
+    lenisRef.current = lenis;
+    if (typeof window !== "undefined") {
+      window.__lenis = lenis;
+    }
 
     // Synchronize Lenis with GSAP ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update);
@@ -64,8 +79,32 @@ export function SmoothScrollProvider({
       resizeObserver?.disconnect();
       gsap.ticker.remove(tickerCallback);
       lenis.destroy();
+      lenisRef.current = null;
+      if (typeof window !== "undefined") {
+        window.__lenis = undefined;
+      }
     };
   }, []);
+
+  // Always scroll to top immediately whenever the route / page changes
+  useEffect(() => {
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
+    // Refresh ScrollTrigger and Lenis dimensions for the new page layout
+    const timer = setTimeout(() => {
+      if (lenisRef.current) {
+        lenisRef.current.resize();
+      }
+      ScrollTrigger.refresh();
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   return <>{children}</>;
 }

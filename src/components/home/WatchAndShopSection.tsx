@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Play, ShoppingBag, X, Volume2, VolumeX } from "lucide-react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { useScrollLock } from "@/lib/scroll-lock";
 
 export interface ReelItem {
   id: string | number;
@@ -27,7 +28,7 @@ const DEFAULT_REELS: ReelItem[] = [
     originalPrice: 499,
     image: "/assets/temp/reel1.webp",
     video: "/assets/temp/reel1.mp4",
-    link: "/products",
+    link: "/products/1",
   },
   {
     id: 2,
@@ -37,7 +38,7 @@ const DEFAULT_REELS: ReelItem[] = [
     originalPrice: 499,
     image: "/assets/temp/reel2.webp",
     video: "/assets/temp/reel2.mp4",
-    link: "/products",
+    link: "/products/2",
   },
   {
     id: 3,
@@ -47,7 +48,7 @@ const DEFAULT_REELS: ReelItem[] = [
     originalPrice: 499,
     image: "/assets/temp/reel3.webp",
     video: "/assets/temp/reel1.mp4",
-    link: "/products",
+    link: "/products/3",
   },
   {
     id: 4,
@@ -57,7 +58,7 @@ const DEFAULT_REELS: ReelItem[] = [
     originalPrice: 499,
     image: "/assets/temp/reel4.webp",
     video: "/assets/temp/pr1.mp4",
-    link: "/products",
+    link: "/products/4",
   },
   {
     id: 5,
@@ -67,7 +68,7 @@ const DEFAULT_REELS: ReelItem[] = [
     originalPrice: 499,
     image: "/assets/temp/reel5.webp",
     video: "/assets/temp/reel2.mp4",
-    link: "/products",
+    link: "/products/5",
   },
 ];
 
@@ -202,6 +203,8 @@ export default function WatchAndShopSection({
   const sectionRef = useRef<HTMLElement>(null);
   const [activeReel, setActiveReel] = useState<ReelItem | null>(null);
 
+  useScrollLock(!!activeReel);
+
   useGSAP(
     () => {
       // Header Animation
@@ -276,6 +279,7 @@ export default function WatchAndShopSection({
           onClick={() => setActiveReel(null)}
         >
           <div
+            data-lenis-prevent="true"
             className="relative w-full max-w-sm sm:max-w-md aspect-[9/16] max-h-[90vh] bg-neutral-900 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between"
             onClick={(e) => e.stopPropagation()}
           >

@@ -164,6 +164,7 @@ function SummerProductCard({
   className?: string;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const productHref = item.link && item.link !== "/products" ? item.link : `/products/${item.id}`;
 
   const handleMouseEnter = () => {
     if (videoRef.current) {
@@ -184,7 +185,7 @@ function SummerProductCard({
     >
       {/* Product Image Container */}
       <Link
-        href={item.link}
+        href={productHref}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className="relative aspect-square w-full rounded-xl sm:rounded-2xl overflow-hidden bg-[#f8f6f0] block transition-transform duration-300 group-hover:scale-[1.02] shadow-xs group-hover:shadow-md"
@@ -227,7 +228,7 @@ function SummerProductCard({
           {item.category}
         </span>
 
-        <Link href={item.link}>
+        <Link href={productHref}>
           <h3 className="font-primary text-xs sm:text-sm text-black font-semibold mt-1 leading-snug line-clamp-2 hover:text-[#DC5513] transition-colors">
             {item.name}
           </h3>
