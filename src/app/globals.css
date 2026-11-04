@@ -56,3 +56,54 @@ html.lenis body {
 html {
   scroll-behavior: auto !important;
 }
+
+/* ==========================================================================
+   Custom Scrollbar Styling (Modern Web Guidance Compliant)
+   ========================================================================== */
+
+:root {
+  /* Scrollbar Theme Variables */
+  --scrollbar-thumb: var(--brand-accent);             /* #DC5513 Warm Orange */
+  --scrollbar-thumb-hover: var(--brand-primary);       /* #0D03AE Royal Navy */
+  --scrollbar-thumb-active: #B83E08;                  /* Rich Deepened Orange */
+  --scrollbar-track: #FFF8E0;                         /* Soft Ivory Canvas */
+  --scrollbar-track-border: rgba(121, 58, 32, 0.08);  /* Subtle Warm Border */
+}
+
+/* Standard CSS scrollbar properties for Firefox & standards-compliant engines */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* WebKit / Chromium custom scrollbar styling (Chrome, Safari, Edge, Arc, Brave) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-left: 1px solid var(--scrollbar-track-border);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 9999px;
+  border: 2px solid var(--scrollbar-track);
+  background-clip: padding-box;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  border: 2px solid var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--scrollbar-thumb-active);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
+}

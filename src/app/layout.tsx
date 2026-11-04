@@ -6,6 +6,7 @@ import "./index.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
+import { ScrollProgressBar } from "@/components/ui/ScrollProgressBar";
 
 const jost = Jost({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning className="min-h-screen flex flex-col font-secondary bg-white text-brand-accent-2">
+        <ScrollProgressBar />
         <SmoothScrollProvider>
           {/* Header */}
           <Header />
