@@ -42,6 +42,16 @@ const WatchAndShopSection = dynamic(
   { ssr: true }
 );
 
+const NewsletterSection = dynamic(
+  () => import("@/components/home/NewsletterSection"),
+  { ssr: true }
+);
+
+const TrustCountBar = dynamic(
+  () => import("@/components/home/TrustCountBar"),
+  { ssr: true }
+);
+
 const FeaturedCategories = dynamic(
   () =>
     import("@/components/home/FeaturedCategories").then(
@@ -90,6 +100,12 @@ export default function Home() {
 
       {/* Watch, Play & Shop The Look Reels Section */}
       <WatchAndShopSection />
+
+      {/* Whimsical Newsletter Section: Join Our Little Family */}
+      <NewsletterSection />
+
+      {/* Trust & Guarantee Count Bar */}
+      <TrustCountBar />
 
       {/* Featured Categories Carousel with ScrollTrigger animations */}
     </div>

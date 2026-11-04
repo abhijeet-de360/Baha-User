@@ -1,87 +1,42 @@
 "use client";
 
-import React, { useRef } from "react";
+import { useRef } from "react";
 import Image from "next/image";
-import { Star, Heart } from "lucide-react";
+import { Star, Heart, Sparkles } from "lucide-react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
-function WoodenClothespin({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 50"
-      className={`w-4 sm:w-5 h-8 sm:h-10 drop-shadow-md select-none pointer-events-none ${className}`}
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="woodGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#C98B4B" />
-          <stop offset="35%" stopColor="#E3A868" />
-          <stop offset="70%" stopColor="#D49453" />
-          <stop offset="100%" stopColor="#B37537" />
-        </linearGradient>
-        <linearGradient id="springMetal" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#E5E7EB" />
-          <stop offset="50%" stopColor="#9CA3AF" />
-          <stop offset="100%" stopColor="#4B5563" />
-        </linearGradient>
-      </defs>
-      {/* Clothespin Back Shadow */}
-      <rect x="7" y="10" width="10" height="36" rx="2" fill="#8C5320" opacity="0.6" />
-      {/* Front Wooden Clamp Body */}
-      <path
-        d="M8,2 C8,0.9 8.9,0 10,0 L14,0 C15.1,0 16,0.9 16,2 L16.5,20 L15.5,22 L16.5,46 C16.5,47.7 15.2,49 13.5,49 L10.5,49 C8.8,49 7.5,47.7 7.5,46 L8.5,22 L7.5,20 Z"
-        fill="url(#woodGrad)"
-      />
-      {/* Center Joint Cutout */}
-      <rect x="7" y="21" width="10" height="4" fill="#784212" opacity="0.4" />
-      {/* Spring Clip */}
-      <rect x="6" y="22" width="12" height="3" rx="1.5" fill="url(#springMetal)" />
-      <circle cx="12" cy="23.5" r="2.5" fill="url(#springMetal)" stroke="#374151" strokeWidth="0.8" />
-      {/* Natural Wood Highlight */}
-      <line x1="10" y1="2" x2="10" y2="47" stroke="#FEF3C7" strokeWidth="0.8" opacity="0.4" />
-    </svg>
-  );
-}
+const reviews = [
+  { photo: "/assets/temp/baby1.webp", alt: "Happy baby in green onesie", quote: "Finally, something she doesn’t want to take off!", author: "Rhea’s Mom", note: "The everyday favourite", colour: "bg-[#F1EAFB]", ink: "text-[#66518B]", shape: "rounded-t-[48%] rounded-b-[20%]", tilt: "-rotate-6" },
+  { photo: "/assets/temp/baby2.webp", alt: "Happy girl hugging teddy bear", quote: "Super soft even after multiple washes.", author: "Aarav’s Mom", note: "Softness that stays", colour: "bg-[#FFE9D9]", ink: "text-[#AD542D]", shape: "rounded-[44%_44%_22%_44%]", tilt: "rotate-3" },
+  { photo: "/assets/temp/baby3.webp", alt: "Smiling boy in patterned t-shirt", quote: "Perfect for running around all day.", author: "Kabir’s Dad", note: "Made for little adventures", colour: "bg-[#E8EFDE]", ink: "text-[#526744]", shape: "rounded-t-[48%] rounded-b-[35%]", tilt: "-rotate-3" },
+];
 
 export default function ReviewsClotheslineSection() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useGSAP(
     () => {
-      // Header Animation
+      if (typeof window === "undefined") return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      gsap.registerPlugin(ScrollTrigger);
+
       gsap.fromTo(
-        ".reviews-header",
-        { opacity: 0, y: 25 },
+        ".parent-story",
+        { opacity: 0, y: 35 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.8,
+          duration: 0.9,
+          delay: 0.15,
+          stagger: 0.15,
           ease: "power2.out",
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 80%",
-          },
-        }
-      );
-
-      // Stagger Cards with subtle swing entrance
-      gsap.fromTo(
-        ".hanging-card",
-        { opacity: 0, y: -25, scale: 0.94 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.9,
-          stagger: 0.08,
-          delay: 0.2,
-          ease: "back.out(1.2)",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 72%",
+            start: "top 85%",
+            once: true,
           },
         }
       );
@@ -90,268 +45,85 @@ export default function ReviewsClotheslineSection() {
   );
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative w-full bg-white pt-12 sm:pt-16 md:pt-20 pb-16 sm:pb-20 md:pb-24 overflow-hidden"
-    >
-      <div className="w-full max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Headline */}
-        <div className="reviews-header text-center mb-10 sm:mb-14 md:mb-16 flex flex-col items-center justify-center opacity-0">
-          <span className="font-['Didot',_'Playfair_Display',_'Times_New_Roman',_Georgia,_serif] italic font-semibold text-2xl sm:text-3xl md:text-4xl text-[#0D03AE] leading-tight tracking-tight">
-            What Happens
-          </span>
-          <h2 className="font-primary text-3xl sm:text-4xl md:text-5xl lg:text-[52px] text-[#DC5513] font-normal leading-none -mt-1 sm:-mt-1.5">
-            After Buying Baha Products
-          </h2>
+    <section ref={sectionRef} aria-labelledby="reviews-heading" className="relative isolate overflow-hidden bg-[#FFFCF6] py-14 text-[#292240] sm:py-20 lg:py-24">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-35 [background-image:radial-gradient(#C8BBA4_0.7px,transparent_0.7px)] [background-size:18px_18px]" />
+      <div className="relative mx-auto max-w-[1380px] px-5 sm:px-8 lg:px-12">
+        <div className="mb-10 flex flex-col items-center gap-5 text-center lg:mb-14 lg:flex-row lg:items-end lg:justify-between lg:text-left">
+          <div>
+            <p className="mb-4 flex items-center justify-center gap-2.5 font-secondary text-[11px] font-semibold uppercase tracking-[0.2em] text-[#786C65] lg:justify-start">
+              <span className="h-px w-7 bg-[#DC5513]" /> The parent diaries
+            </p>
+            <h2 id="reviews-heading" className="font-primary text-[38px] leading-[1.15] tracking-tight text-[#0D03AE] sm:text-5xl lg:text-[58px]">
+              Little moments.<br />
+              <span className="relative inline-block text-[#DC5513]">Big, big love.
+                <svg aria-hidden="true" viewBox="0 0 360 16" className="absolute -bottom-3 left-0 h-4 w-full fill-none text-[#F3BC63]"><path d="M5 9 Q170 -2 354 8 M45 14 Q200 4 320 13" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg>
+              </span>
+            </h2>
+          </div>
+          <p className="max-w-[260px] pt-4 font-secondary text-sm leading-7 text-[#786C65] lg:pb-1">The cuddles, the playdays, the can’t-take-it-off favourites.<br /><span className="font-medium text-[#292240]">A few words from our Baha families.</span></p>
         </div>
 
-        {/* Clothesline Stage */}
-        <div className="relative w-full min-h-[320px] sm:min-h-[350px] md:min-h-[380px] flex items-center justify-center">
-          {/* Curved Twisted Clothesline Rope (Desktop & Tablet) */}
-          <div className="hidden sm:block absolute inset-x-0 top-6 md:top-8 h-24 sm:h-28 md:h-32 pointer-events-none z-10">
-            <svg
-              viewBox="0 0 1200 120"
-              preserveAspectRatio="none"
-              className="w-full h-full"
+        <div className="grid gap-5 md:grid-cols-3 lg:gap-7">
+          {reviews.map((review, index) => (
+            <figure
+              key={review.author}
+              className={`parent-story group relative flex flex-col rounded-[32px] p-6 sm:p-8 ${review.colour} ${
+                index === 1 ? "md:mt-8" : "md:mb-8"
+              } transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(41,34,64,0.15)] cursor-pointer`}
             >
-              <defs>
-                <linearGradient id="ropeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#B37C3E" />
-                  <stop offset="50%" stopColor="#D59B56" />
-                  <stop offset="100%" stopColor="#B37C3E" />
-                </linearGradient>
-                <pattern
-                  id="ropePattern"
-                  width="10"
-                  height="10"
-                  patternUnits="userSpaceOnUse"
-                  patternTransform="rotate(45)"
+              <div className="mb-7 flex items-center justify-between">
+                <span className={`font-secondary text-[10px] font-semibold uppercase tracking-[0.14em] ${review.ink}`}>
+                  Happy little chapter
+                </span>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Heart className="size-3.5 fill-[#DC5513] text-[#DC5513]" />
+                </span>
+              </div>
+              <div className="relative mx-auto mb-7 w-36 sm:w-40">
+                <div
+                  aria-hidden="true"
+                  className={`absolute -inset-2 border border-current opacity-35 ${review.shape} ${review.ink} rotate-6 transition-transform duration-500 ease-out group-hover:rotate-12 group-hover:scale-105`}
+                />
+                <div
+                  className={`relative aspect-[1/1.08] overflow-hidden border-[5px] border-[#FFFCF6] shadow-[0_5px_12px_#30234415] ${review.shape} ${review.tilt} transition-transform duration-500 ease-out group-hover:rotate-0 group-hover:scale-105`}
                 >
-                  <line x1="0" y1="0" x2="0" y2="10" stroke="#8E5E2A" strokeWidth="2.2" />
-                  <line x1="5" y1="0" x2="5" y2="10" stroke="#F6D8A8" strokeWidth="2.2" />
-                </pattern>
-              </defs>
-
-              {/* Rope Cast Shadow */}
-              <path
-                d="M 25,28 Q 600,105 1175,28"
-                fill="none"
-                stroke="rgba(0,0,0,0.06)"
-                strokeWidth="6"
-                strokeLinecap="round"
-                transform="translate(0, 3)"
-              />
-              {/* Rope Base */}
-              <path
-                d="M 25,28 Q 600,105 1175,28"
-                fill="none"
-                stroke="url(#ropeGrad)"
-                strokeWidth="4"
-                strokeLinecap="round"
-              />
-              {/* Rope Twisted Fiber Highlights */}
-              <path
-                d="M 25,28 Q 600,105 1175,28"
-                fill="none"
-                stroke="url(#ropePattern)"
-                strokeWidth="3.2"
-                strokeLinecap="round"
-                opacity="0.85"
-              />
-            </svg>
-
-            {/* Left Sketched Heart & Knot Pin */}
-            <div className="absolute left-1 sm:left-3 md:left-5 top-0 w-11 sm:w-14 h-9 sm:h-11 pointer-events-none select-none z-20">
-              <Image
-                src="/assets/temp/rope-heart-left.webp"
-                alt="Heart Pin"
-                fill
-                sizes="(max-width: 640px) 44px, 56px"
-                className="object-contain"
-              />
-            </div>
-
-            {/* Right Sketched Heart & Knot Pin */}
-            <div className="absolute right-1 sm:right-3 md:right-5 top-0 w-11 sm:w-14 h-9 sm:h-11 pointer-events-none select-none z-20">
-              <Image
-                src="/assets/temp/rope-heart-right.webp"
-                alt="Heart Pin"
-                fill
-                sizes="(max-width: 640px) 44px, 56px"
-                className="object-contain"
-              />
-            </div>
-          </div>
-
-          {/* Hanging Cards Container (Flex on desktop with responsive swipe on mobile) */}
-          <div className="w-full flex items-start justify-center sm:justify-between gap-3 sm:gap-3 md:gap-4 lg:gap-5 overflow-x-auto no-scrollbar py-6 px-2 sm:px-4 sm:overflow-visible">
-            
-            {/* 1. Photo Polaroid 1 */}
-            <div className="hanging-card flex-shrink-0 relative group -rotate-[3.5deg] translate-y-0 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-300 opacity-0 cursor-pointer">
-              {/* Peg */}
-              <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 z-20">
-                <WoodenClothespin />
-              </div>
-
-              {/* Polaroid Frame */}
-              <div className="w-[150px] sm:w-[165px] md:w-[185px] lg:w-[200px] bg-white p-2.5 sm:p-3 pb-7 sm:pb-9 shadow-md group-hover:shadow-xl rounded-xs border border-black/5 transition-shadow duration-300">
-                <div className="relative aspect-square w-full rounded-xs overflow-hidden bg-neutral-100">
                   <Image
-                    src="/assets/temp/review-photo1.webp"
-                    alt="Happy baby in green onesie"
+                    src={review.photo}
+                    alt={review.alt}
                     fill
-                    sizes="(max-width: 640px) 150px, 200px"
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    sizes="160px"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                   />
                 </div>
+                <span
+                  aria-hidden="true"
+                  className="absolute -bottom-2 -right-5 flex size-12 rotate-12 items-center justify-center rounded-full bg-[#FFFCF6] text-[#DC5513] shadow-sm transition-transform duration-500 ease-out group-hover:rotate-45 group-hover:scale-115"
+                >
+                  <Sparkles className="size-6 transition-transform duration-500 group-hover:rotate-12" strokeWidth={1.4} />
+                </span>
               </div>
-            </div>
-
-            {/* 2. Review Card 1 */}
-            <div className="hanging-card flex-shrink-0 relative group -rotate-[1.5deg] translate-y-2 sm:translate-y-3 md:translate-y-4 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-300 opacity-0 cursor-pointer">
-              {/* Peg */}
-              <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 z-20">
-                <WoodenClothespin />
-              </div>
-
-              {/* Note Card */}
-              <div className="w-[150px] sm:w-[165px] md:w-[185px] lg:w-[200px] h-[190px] sm:h-[210px] md:h-[235px] lg:h-[250px] bg-[#FFFDF7] p-3.5 sm:p-4.5 pb-3.5 shadow-md group-hover:shadow-xl rounded-xs border border-[#EFE8DC] flex flex-col justify-between transition-shadow duration-300">
-                <div>
-                  {/* 5 Stars */}
-                  <div className="flex items-center gap-0.5 sm:gap-1 text-[#DE5416] mb-2 sm:mb-3">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#DE5416] stroke-none" />
-                    ))}
-                  </div>
-
-                  {/* Review Quote */}
-                  <p className="font-secondary font-semibold text-xs sm:text-[13px] md:text-sm text-neutral-800 leading-snug sm:leading-snug">
-                    &ldquo;Finally, something she doesn&apos;t want to take off!&rdquo;
-                  </p>
-                </div>
-
-                {/* Author & Heart Icon */}
-                <div className="flex items-center justify-between border-t border-neutral-200/60 pt-2 sm:pt-2.5 mt-auto">
-                  <span className="font-secondary text-[11px] sm:text-xs text-neutral-500 font-medium">
-                    &mdash; Rhea&apos;s Mom
-                  </span>
-                  <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#DE5416] fill-none stroke-[2]" />
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Photo Polaroid 2 (Girl with Teddy Bear) */}
-            <div className="hanging-card flex-shrink-0 relative group -rotate-[0.5deg] translate-y-4 sm:translate-y-6 md:translate-y-7 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-300 opacity-0 cursor-pointer">
-              {/* Peg */}
-              <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 z-20">
-                <WoodenClothespin />
-              </div>
-
-              {/* Polaroid Frame */}
-              <div className="w-[150px] sm:w-[165px] md:w-[185px] lg:w-[200px] bg-white p-2.5 sm:p-3 pb-7 sm:pb-9 shadow-md group-hover:shadow-xl rounded-xs border border-black/5 transition-shadow duration-300">
-                <div className="relative aspect-square w-full rounded-xs overflow-hidden bg-neutral-100">
-                  <Image
-                    src="/assets/temp/review-photo2.webp"
-                    alt="Happy girl hugging teddy bear"
-                    fill
-                    sizes="(max-width: 640px) 150px, 200px"
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+              <div className="mb-4 flex gap-1 text-[#DC5513]" aria-label="5 out of 5 stars">
+                {Array.from({ length: 5 }, (_, star) => (
+                  <Star
+                    key={star}
+                    aria-hidden="true"
+                    className="size-3.5 fill-current stroke-none transition-transform duration-300 group-hover:scale-110"
+                    style={{ transitionDelay: `${star * 40}ms` }}
                   />
-                </div>
+                ))}
               </div>
-            </div>
-
-            {/* 4. Review Card 2 */}
-            <div className="hanging-card flex-shrink-0 relative group rotate-[1deg] translate-y-4 sm:translate-y-6 md:translate-y-7 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-300 opacity-0 cursor-pointer">
-              {/* Peg */}
-              <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 z-20">
-                <WoodenClothespin />
-              </div>
-
-              {/* Note Card */}
-              <div className="w-[150px] sm:w-[165px] md:w-[185px] lg:w-[200px] h-[190px] sm:h-[210px] md:h-[235px] lg:h-[250px] bg-[#FFFDF7] p-3.5 sm:p-4.5 pb-3.5 shadow-md group-hover:shadow-xl rounded-xs border border-[#EFE8DC] flex flex-col justify-between transition-shadow duration-300">
-                <div>
-                  {/* 5 Stars */}
-                  <div className="flex items-center gap-0.5 sm:gap-1 text-[#DE5416] mb-2 sm:mb-3">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#DE5416] stroke-none" />
-                    ))}
-                  </div>
-
-                  {/* Review Quote */}
-                  <p className="font-secondary font-semibold text-xs sm:text-[13px] md:text-sm text-neutral-800 leading-snug sm:leading-snug">
-                    &ldquo;Super soft even after multiple washes.&rdquo;
-                  </p>
-                </div>
-
-                {/* Author & Heart Icon */}
-                <div className="flex items-center justify-between border-t border-neutral-200/60 pt-2 sm:pt-2.5 mt-auto">
-                  <span className="font-secondary text-[11px] sm:text-xs text-neutral-500 font-medium">
-                    &mdash; Aarav&apos;s Mom
-                  </span>
-                  <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#DE5416] fill-none stroke-[2]" />
-                </div>
-              </div>
-            </div>
-
-            {/* 5. Photo Polaroid 3 (Curly Hair Smiling Boy) */}
-            <div className="hanging-card flex-shrink-0 relative group rotate-[2.5deg] translate-y-2 sm:translate-y-3 md:translate-y-4 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-300 opacity-0 cursor-pointer">
-              {/* Peg */}
-              <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 z-20">
-                <WoodenClothespin />
-              </div>
-
-              {/* Polaroid Frame */}
-              <div className="w-[150px] sm:w-[165px] md:w-[185px] lg:w-[200px] bg-white p-2.5 sm:p-3 pb-7 sm:pb-9 shadow-md group-hover:shadow-xl rounded-xs border border-black/5 transition-shadow duration-300">
-                <div className="relative aspect-square w-full rounded-xs overflow-hidden bg-neutral-100">
-                  <Image
-                    src="/assets/temp/review-photo3.webp"
-                    alt="Smiling boy in patterned t-shirt"
-                    fill
-                    sizes="(max-width: 640px) 150px, 200px"
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* 6. Review Card 3 */}
-            <div className="hanging-card flex-shrink-0 relative group rotate-[4deg] translate-y-0 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-300 opacity-0 cursor-pointer">
-              {/* Peg */}
-              <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 z-20">
-                <WoodenClothespin />
-              </div>
-
-              {/* Note Card */}
-              <div className="w-[150px] sm:w-[165px] md:w-[185px] lg:w-[200px] h-[190px] sm:h-[210px] md:h-[235px] lg:h-[250px] bg-[#FFFDF7] p-3.5 sm:p-4.5 pb-3.5 shadow-md group-hover:shadow-xl rounded-xs border border-[#EFE8DC] flex flex-col justify-between transition-shadow duration-300">
-                <div>
-                  {/* 5 Stars */}
-                  <div className="flex items-center gap-0.5 sm:gap-1 text-[#DE5416] mb-2 sm:mb-3">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#DE5416] stroke-none" />
-                    ))}
-                  </div>
-
-                  {/* Review Quote */}
-                  <p className="font-secondary font-semibold text-xs sm:text-[13px] md:text-sm text-neutral-800 leading-snug sm:leading-snug">
-                    &ldquo;Perfect for running around all day.&rdquo;
-                  </p>
-                </div>
-
-                {/* Author & Heart Icon */}
-                <div className="flex items-center justify-between border-t border-neutral-200/60 pt-2 sm:pt-2.5 mt-auto">
-                  <span className="font-secondary text-[11px] sm:text-xs text-neutral-500 font-medium">
-                    &mdash; Kabir&apos;s Dad
-                  </span>
-                  <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#DE5416] fill-none stroke-[2]" />
-                </div>
-              </div>
-            </div>
-
-          </div>
+              <blockquote className="mb-7 font-primary text-[25px] leading-[1.4] tracking-tight lg:text-[28px] transition-colors duration-300 group-hover:text-[#0D03AE]">
+                “{review.quote}”
+              </blockquote>
+              <figcaption className="mt-auto border-t border-[#292240]/10 pt-5 font-secondary">
+                <span className="block text-sm font-semibold">{review.author}</span>
+                <span className={`mt-1 block text-xs ${review.ink}`}>{review.note}</span>
+              </figcaption>
+            </figure>
+          ))}
         </div>
+        <p className="mt-8 flex items-center justify-center gap-2 font-primary text-lg text-[#786C65]"><Heart aria-hidden="true" className="size-4 text-[#DC5513]" /> Little outfits. Lovely memories.</p>
       </div>
     </section>
   );
 }
-
