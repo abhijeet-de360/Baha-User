@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Jost } from "next/font/google";
+import "lenis/dist/lenis.css";
 import "./globals.css";
 import "./index.css";
 import { Header } from "@/components/Header";
@@ -24,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${jost.variable} h-full antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${jost.variable} antialiased`}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -37,9 +38,9 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body suppressHydrationWarning className="min-h-full flex flex-col font-secondary bg-white text-brand-accent-2">
+      <body suppressHydrationWarning className="min-h-screen flex flex-col font-secondary bg-white text-brand-accent-2">
         <SmoothScrollProvider>
-          {/* Header commented out for full-screen hero banner; will enable later */}
+          {/* Header */}
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />

@@ -46,3 +46,13 @@ body {
   color: var(--brand-accent-2);
   font-family: var(--font-secondary);
 }
+
+/* Ensure Lenis smooth scroll container never gets height-locked */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+html {
+  scroll-behavior: auto !important;
+}
