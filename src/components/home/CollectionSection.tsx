@@ -192,7 +192,7 @@ function ProductCardMedia({ item }: { item: ProductItem }) {
       <img
         src={item.image}
         alt={item.name}
-        className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+        className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-108"
         onError={(e) => {
           const target = e.target as HTMLElement;
           target.style.display = "none";
@@ -212,14 +212,14 @@ function ProductCardMedia({ item }: { item: ProductItem }) {
           playsInline
           preload="none"
           poster={item.image}
-          className="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:scale-105"
+          className="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:scale-108"
         />
       ) : item.hoverImage ? (
         /* Alternate View on Hover for image-only products */
         <img
           src={item.hoverImage}
           alt={`${item.name} alternate view`}
-          className="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 pointer-events-none"
+          className="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 group-hover:scale-108 transition-all duration-500 pointer-events-none"
         />
       ) : null}
 
@@ -355,10 +355,10 @@ export default function CollectionSection({
                       {item.category}
                     </span>
 
-                    {/* Product Title in Brand Font */}
+                    {/* Product Title in Jost */}
                     <Link
                       href={productHref}
-                      className="font-primary text-xs sm:text-[13px] text-text-black line-clamp-2 leading-snug hover:text-brand-primary transition-colors mt-0.5 block"
+                      className="font-jost font-medium text-xs sm:text-[13px] text-text-black line-clamp-2 leading-snug mt-0.5 block"
                     >
                       {item.name}
                     </Link>

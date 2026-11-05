@@ -146,7 +146,8 @@ export default function NewsletterSection() {
             width={480}
             height={480}
             priority
-            className="w-[200px] sm:w-[270px] md:w-[340px] lg:w-[400px] xl:w-[460px] h-auto object-contain drop-shadow-md"
+            style={{ height: "auto" }}
+            className="w-[200px] sm:w-[270px] md:w-[340px] lg:w-[400px] xl:w-[460px] object-contain drop-shadow-md"
           />
         </div>
 
@@ -158,7 +159,8 @@ export default function NewsletterSection() {
             width={460}
             height={460}
             priority
-            className="w-[200px] sm:w-[280px] md:w-[350px] lg:w-[420px] xl:w-[460px] h-auto object-contain drop-shadow-md"
+            style={{ height: "auto" }}
+            className="w-[200px] sm:w-[280px] md:w-[350px] lg:w-[420px] xl:w-[460px] object-contain drop-shadow-md"
           />
         </div>
 

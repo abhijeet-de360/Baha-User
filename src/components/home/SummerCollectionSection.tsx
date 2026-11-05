@@ -224,12 +224,12 @@ function SummerProductCard({
 
       {/* Product Information */}
       <div className="flex flex-col mt-2.5 px-0.5">
-        <span className="font-serif italic text-[11px] sm:text-xs text-[#DE5416] font-medium leading-none">
+        <span className="font-jost text-[11px] sm:text-xs text-[#DE5416] font-medium leading-none">
           {item.category}
         </span>
 
         <Link href={productHref}>
-          <h3 className="font-primary text-xs sm:text-sm text-black font-semibold mt-1 leading-snug line-clamp-2 hover:text-[#DC5513] transition-colors">
+          <h3 className="font-jost text-xs sm:text-sm text-black font-medium mt-1 leading-snug line-clamp-2">
             {item.name}
           </h3>
         </Link>
@@ -337,7 +337,7 @@ export default function SummerCollectionSection({
         </div>
 
         {/* 5-Column Grid: 2 on mobile, 3 on sm, 4 on md, max 5 on lg */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 sm:gap-x-5 lg:gap-x-6 gap-y-7 sm:gap-y-9 md:gap-y-10">
           {products.map((item, index) => {
             const visibilityClass = index >= 10 ? "lg:hidden" : "";
             return (

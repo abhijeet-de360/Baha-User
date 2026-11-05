@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, Suspense, type PointerEvent } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Home, Shirt, Clapperboard, ShoppingBag, User } from "lucide-react";
@@ -15,7 +15,7 @@ const items = [
   { label: "Profile", href: "/profile", icon: User },
 ] as const;
 
-export function MobileBottomNav() {
+function MobileBottomNavInner() {
   const pathname = usePathname();
   const router = useRouter();
   const [hash, setHash] = useState("");
@@ -143,5 +143,13 @@ export function MobileBottomNav() {
         </div>
       </nav>
     </>
+  );
+}
+
+export function MobileBottomNav() {
+  return (
+    <Suspense fallback={null}>
+      <MobileBottomNavInner />
+    </Suspense>
   );
 }

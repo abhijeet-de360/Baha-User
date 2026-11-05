@@ -47,7 +47,7 @@ export default function ReviewsClotheslineSection() {
   return (
     <section ref={sectionRef} aria-labelledby="reviews-heading" className="relative isolate overflow-hidden bg-[#FFFCF6] py-14 text-[#292240] sm:py-20 lg:py-24">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-35 [background-image:radial-gradient(#C8BBA4_0.7px,transparent_0.7px)] [background-size:18px_18px]" />
-      <div className="relative mx-auto max-w-[1380px] px-5 sm:px-8 lg:px-12">
+      <div className="relative max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="mb-10 flex flex-col items-center gap-5 text-center lg:mb-14 lg:flex-row lg:items-end lg:justify-between lg:text-left">
           <div>
             <p className="mb-4 flex items-center justify-center gap-2.5 font-secondary text-[11px] font-semibold uppercase tracking-[0.2em] text-[#786C65] lg:justify-start">

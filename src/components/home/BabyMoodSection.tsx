@@ -59,7 +59,7 @@ export default function BabyMoodSection() {
     >
 
       {/* Main 4 Individual Mood Cards */}
-      <div className="relative w-full max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 z-10 flex-1 flex flex-col justify-end">
+      <div className="relative w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 z-10 flex-1 flex flex-col justify-end">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-end">
           {/* Card 1: Warm Terracotta Arch */}
           <div className="mood-card relative flex flex-col items-center justify-end group opacity-0">

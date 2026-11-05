@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { PRODUCTS, getRelatedProducts } from "@/data/products";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductInfo } from "@/components/product/ProductInfo";
+import { VirtualTryOn } from "@/components/product/VirtualTryOn";
 import { CompleteTheLook } from "@/components/product/CompleteTheLook";
 import { ProductReviews } from "@/components/product/ProductReviews";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
@@ -31,8 +32,8 @@ export default function ProductDetailPage() {
       <main className="w-full max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-26 md:pt-28 lg:pt-30 pb-16 sm:pb-24">
         {/* Top 2-Column Product Stage */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 xl:gap-14 items-start">
-          {/* Left Column: Multi-Image Gallery & Reel Video (Sticky on Desktop) */}
-          <div className="lg:col-span-6 xl:col-span-6 lg:sticky lg:top-24">
+          {/* Left Column: Multi-Image Gallery, Reel Video & Virtual Try-On */}
+          <div className="lg:col-span-6 xl:col-span-6 lg:sticky lg:top-24 space-y-4">
             <ProductGallery
               images={product.images}
               video={product.video}
@@ -40,6 +41,8 @@ export default function ProductDetailPage() {
               badge={product.badge}
               discount={product.discount}
             />
+            {/* AI Virtual Try-On Child Simulation Box */}
+            <VirtualTryOn product={product} />
           </div>
 
           {/* Right Column: Product Title, Pricing, Color, Size, and Buy CTA */}

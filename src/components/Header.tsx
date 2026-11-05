@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Heart, ShoppingBag, User, Menu, X, ChevronRight, Sparkles } from "lucide-react";
+import { Search, Heart, ShoppingBag, User, Menu, X, ChevronRight, Sparkles, Package, Coins, LogOut } from "lucide-react";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { useScrollLock } from "@/lib/scroll-lock";
@@ -12,11 +12,27 @@ export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const profileContainerRef = useRef<HTMLDivElement>(null);
+  const profileTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleProfileMouseEnter = () => {
+    if (profileTimeoutRef.current) {
+      clearTimeout(profileTimeoutRef.current);
+    }
+    setProfileDropdownOpen(true);
+  };
+
+  const handleProfileMouseLeave = () => {
+    profileTimeoutRef.current = setTimeout(() => {
+      setProfileDropdownOpen(false);
+    }, 150);
+  };
 
   // Lock page scrolling while mobile sidebar or mobile search bottomsheet is open
   useScrollLock(mobileMenuOpen || mobileSearchOpen);
@@ -177,7 +193,7 @@ export const Header: React.FC = () => {
 
                 {/* Wishlist Icon (Desktop only) */}
                 <Link
-                  href="/#wishlist"
+                  href="/wishlist"
                   className="hidden lg:flex relative p-1.5 sm:p-2 rounded-full text-black hover:bg-black/5 hover:text-brand-primary transition-colors shrink-0"
                   aria-label="Wishlist"
                 >
@@ -196,17 +212,105 @@ export const Header: React.FC = () => {
                   </span>
                 </Link>
 
-                {/* User Account / Profile (Desktop only) */}
-                <Link
-                  href="/profile"
-                  className="hidden lg:flex p-1.5 sm:p-2 rounded-full text-black hover:bg-black/5 hover:text-brand-primary transition-colors shrink-0 cursor-pointer items-center justify-center"
-                  aria-label="Open User Profile"
+                {/* User Account / Profile Dropdown (Desktop only) */}
+                <div
+                  ref={profileContainerRef}
+                  onMouseEnter={handleProfileMouseEnter}
+                  onMouseLeave={handleProfileMouseLeave}
+                  className="hidden lg:block relative"
                 >
-                  <User className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2]" />
-                </Link>
+                  <Link
+                    href="/profile"
+                    className={`flex p-1.5 sm:p-2 rounded-full transition-colors shrink-0 cursor-pointer items-center justify-center ${
+                      profileDropdownOpen
+                        ? "bg-black/5 text-brand-primary"
+                        : "text-black hover:bg-black/5 hover:text-brand-primary"
+                    }`}
+                    aria-label="Open User Profile"
+                  >
+                    <User className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2]" />
+                  </Link>
+                </div>
               </div>
             </div>
           </LiquidGlass>
+
+          {/* Desktop Profile Dropdown (Positioned outside LiquidGlass to prevent overflow-hidden clipping) */}
+          <div
+            onMouseEnter={handleProfileMouseEnter}
+            onMouseLeave={handleProfileMouseLeave}
+            className={`hidden lg:block absolute top-full pt-2 right-4 sm:right-6 md:right-8 lg:right-10 z-[999] transition-all duration-200 ease-out origin-top-right ${
+              profileDropdownOpen
+                ? "opacity-100 visible translate-y-0 pointer-events-auto"
+                : "opacity-0 invisible -translate-y-2 pointer-events-none"
+            }`}
+          >
+            <div className="w-60 rounded-2xl bg-[#fffcf6] border border-[#E7DEC8] shadow-[0_16px_40px_rgba(25,30,45,0.20)] p-2 font-jost backdrop-blur-md">
+              {/* User greeting header */}
+              <div className="px-3 py-2.5 mb-1.5 border-b border-[#E7DEC8] flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-[#0D03AE] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-2xs">
+                  P
+                </div>
+                <div className="flex flex-col overflow-hidden text-left">
+                  <span className="text-xs font-bold text-neutral-900 truncate">
+                    Priya Sharma
+                  </span>
+                  <span className="text-[11px] text-neutral-500 truncate">
+                    priya@example.com
+                  </span>
+                </div>
+              </div>
+
+              {/* Dropdown Options */}
+              <div className="space-y-0.5 text-left">
+                <Link
+                  href="/profile"
+                  onClick={() => setProfileDropdownOpen(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-neutral-800 hover:bg-[#FAF8E8] hover:text-[#0D03AE] transition-colors"
+                >
+                  <User className="w-4 h-4 text-neutral-500" />
+                  <span>Profile</span>
+                </Link>
+
+                <Link
+                  href="/orders"
+                  onClick={() => setProfileDropdownOpen(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-neutral-800 hover:bg-[#FAF8E8] hover:text-[#0D03AE] transition-colors"
+                >
+                  <Package className="w-4 h-4 text-neutral-500" />
+                  <span>My Orders</span>
+                </Link>
+
+                <Link
+                  href="/profile"
+                  onClick={() => setProfileDropdownOpen(false)}
+                  className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-800 hover:bg-[#FAF8E8] hover:text-[#0D03AE] transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Coins className="w-4 h-4 text-[#DC5513]" />
+                    <span>Baha Coins</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-[#DC5513] bg-[#FFF8E0] border border-[#FED174]/60 px-2 py-0.5 rounded-full">
+                    450
+                  </span>
+                </Link>
+
+                <div className="my-1.5 border-t border-[#E7DEC8]" />
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfileDropdownOpen(false);
+                    alert("Logged out successfully");
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer text-left"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
+          </div>
 
           {/* Center Logo Anchor (Circle Badge protruding out of the glass bar at BOTH top and bottom) */}
           <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-30 pointer-events-auto">
@@ -317,7 +421,7 @@ export const Header: React.FC = () => {
               </Link>
 
               <Link
-                href="/#wishlist"
+                href="/wishlist"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-between p-3 rounded-2xl hover:bg-[#FAF8E8] text-neutral-800 hover:text-[#0D03AE] font-semibold text-sm transition-colors group"
               >

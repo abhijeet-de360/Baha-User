@@ -45,7 +45,7 @@ const TRUST_FEATURES: TrustItem[] = [
 export default function TrustCountBar() {
   return (
     <section aria-label="The Baha promise" className="relative bg-[#FCF6E6] pt-6 pb-28 sm:pt-8 sm:pb-6">
-      <div className="mx-auto max-w-[1380px] px-5 py-4 sm:px-8 sm:py-5 lg:px-12">
+      <div className="mx-auto max-w-[1600px] px-5 py-4 sm:px-8 sm:py-5 lg:px-12">
         <p className="mb-8 text-center font-primary text-2xl text-[#0D03AE] sm:text-3xl">A little care, in every order.</p>
         <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4 md:gap-6">
           {TRUST_FEATURES.map((item, index) => {

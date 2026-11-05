@@ -78,19 +78,14 @@ export function ProductInfo({ product }: ProductInfoProps) {
         <span className="text-xs uppercase tracking-wider font-bold text-[#DC5513]">
           {product.category} &bull; {product.gender}
         </span>
-        <span className="text-[11px] text-neutral-400 font-mono">
+        <span className="text-[11px] text-neutral-400 font-jost font-medium tracking-wide">
           SKU: {product.sku}
         </span>
       </div>
 
       {/* Product Title */}
-      <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-semibold text-neutral-900 leading-tight mb-2">
-        <span className="font-['Didot',_'Playfair_Display',_'Times_New_Roman',_Georgia,_serif] italic text-[#0D03AE] mr-2">
-          {product.name.split(" ")[0]}
-        </span>
-        <span className="font-secondary font-bold">
-          {product.name.split(" ").slice(1).join(" ")}
-        </span>
+      <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-bold text-neutral-900 leading-tight mb-2 font-jost">
+        {product.name}
       </h1>
 
       {/* Tagline */}
