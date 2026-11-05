@@ -121,7 +121,7 @@ export default function CartPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fffcf6] text-[#292240] pt-24 sm:pt-28 pb-20 px-4 sm:px-6 lg:px-12 select-none">
+    <div className="min-h-screen bg-[#fffcf6] text-[#292240] pt-24 sm:pt-28 pb-36 sm:pb-28 lg:pb-20 px-4 sm:px-6 lg:px-12 select-none">
       <div className="w-full max-w-[1600px] mx-auto">
         {/* Breadcrumb Navigation */}
         <nav className="mb-6 text-xs sm:text-sm text-[#786C65] flex items-center gap-2">

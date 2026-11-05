@@ -29,11 +29,11 @@ export default function ProductDetailPage() {
   return (
     <div className="w-full min-h-screen bg-white">
       {/* Main Content Container with Top Offset for Floating Liquid Glass Header */}
-      <main className="w-full max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-26 md:pt-28 lg:pt-30 pb-16 sm:pb-24">
+      <main className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 lg:pt-36 pb-36 sm:pb-28 lg:pb-24">
         {/* Top 2-Column Product Stage */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 xl:gap-14 items-start">
           {/* Left Column: Multi-Image Gallery, Reel Video & Virtual Try-On */}
-          <div className="lg:col-span-6 xl:col-span-6 lg:sticky lg:top-24 space-y-4">
+          <div className="lg:col-span-6 xl:col-span-6 lg:sticky lg:top-32 xl:top-36 space-y-4">
             <ProductGallery
               images={product.images}
               video={product.video}

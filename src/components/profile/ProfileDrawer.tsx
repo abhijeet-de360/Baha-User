@@ -20,6 +20,9 @@ import {
   Plus,
 } from "lucide-react";
 import { useScrollLock } from "@/lib/scroll-lock";
+import { LogoutModal } from "./LogoutModal";
+import { LiveTrackingModal } from "@/components/orders/LiveTrackingModal";
+import { getShipmentTracking } from "@/data/shipmentTracking";
 
 export interface KidProfile {
   id: string;
@@ -60,6 +63,8 @@ interface ProfileDrawerProps {
 export function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
   const [kids, setKids] = useState<KidProfile[]>(DEMO_KIDS);
   const [selectedKidId, setSelectedKidId] = useState<string>("k1");
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [trackingModalOpen, setTrackingModalOpen] = useState(false);
 
   const selectedKid = kids.find((k) => k.id === selectedKidId) || kids[0];
 
@@ -306,10 +311,10 @@ export function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
               </span>
               <button
                 type="button"
-                onClick={() => alert("Tracking live shipment details...")}
-                className="text-xs font-bold text-[#0D03AE] hover:text-[#DC5513] transition-colors cursor-pointer"
+                onClick={() => setTrackingModalOpen(true)}
+                className="text-xs font-bold text-[#0D03AE] hover:text-[#DC5513] transition-colors cursor-pointer font-jost"
               >
-                Track Live &rarr;
+                Track Order &rarr;
               </button>
             </div>
           </div>
@@ -458,10 +463,7 @@ export function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
         <div className="p-4 sm:p-5 border-t border-black/5 bg-[#FFFDF7] shrink-0">
           <button
             type="button"
-            onClick={() => {
-              alert("Logged out successfully");
-              onClose();
-            }}
+            onClick={() => setIsLogoutModalOpen(true)}
             className="w-full py-2.5 rounded-xl border border-neutral-200 text-neutral-600 hover:bg-neutral-100 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
@@ -469,6 +471,20 @@ export function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
           </button>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={onClose}
+      />
+
+      {/* Live Milestone Tracking Modal */}
+      <LiveTrackingModal
+        isOpen={trackingModalOpen}
+        onClose={() => setTrackingModalOpen(false)}
+        shipment={getShipmentTracking("BAHA-8921")}
+      />
     </div>
   );
 }

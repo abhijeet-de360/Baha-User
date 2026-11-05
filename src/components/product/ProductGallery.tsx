@@ -61,7 +61,7 @@ export function ProductGallery({
   return (
     <div className="w-full flex flex-col-reverse lg:flex-row gap-3.5 sm:gap-4 lg:gap-5 select-none items-start">
       {/* Thumbnail Bar (Horizontal on mobile/tablet, Vertical on desktop) */}
-      <div className="flex lg:flex-col gap-2 sm:gap-2.5 overflow-x-auto lg:overflow-y-auto no-scrollbar shrink-0 py-0.5 lg:max-h-[540px]">
+      <div className="flex lg:flex-col gap-2 sm:gap-2.5 overflow-x-auto lg:overflow-y-auto no-scrollbar shrink-0 py-0.5 lg:max-h-[490px]">
         {images.map((img, idx) => (
           <button
             key={idx}
@@ -71,7 +71,7 @@ export function ProductGallery({
               setShowVideo(false);
             }}
             aria-label={`View photo ${idx + 1}`}
-            className={`relative w-14 h-14 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] aspect-square rounded-xl sm:rounded-2xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
+            className={`relative w-14 h-14 sm:w-16 sm:h-16 lg:w-[58px] lg:h-[58px] xl:w-[62px] xl:h-[62px] aspect-square rounded-xl sm:rounded-2xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
               !showVideo && selectedIndex === idx
                 ? "border-[#0D03AE] shadow-md ring-2 ring-[#0D03AE]/20 scale-102"
                 : "border-black/5 opacity-75 hover:opacity-100 hover:border-black/20"
@@ -81,7 +81,7 @@ export function ProductGallery({
               src={img}
               alt={`${name} thumbnail ${idx + 1}`}
               fill
-              sizes="68px"
+              sizes="62px"
               className="object-cover object-center"
             />
           </button>
@@ -93,24 +93,24 @@ export function ProductGallery({
             type="button"
             onClick={() => setShowVideo(true)}
             aria-label="Watch video reel preview"
-            className={`relative w-14 h-14 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] aspect-square rounded-xl sm:rounded-2xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer bg-neutral-900 flex flex-col items-center justify-center text-white ${
+            className={`relative w-14 h-14 sm:w-16 sm:h-16 lg:w-[58px] lg:h-[58px] xl:w-[62px] xl:h-[62px] aspect-square rounded-xl sm:rounded-2xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer bg-neutral-900 flex flex-col items-center justify-center text-white ${
               showVideo
                 ? "border-[#DC5513] shadow-md ring-2 ring-[#DC5513]/30 scale-102"
                 : "border-black/5 opacity-85 hover:opacity-100"
             }`}
           >
-            <div className="w-6 h-6 rounded-full bg-[#DC5513] flex items-center justify-center shadow-xs mb-0.5">
-              <Play className="w-3 h-3 fill-white text-white ml-0.5" />
+            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#DC5513] flex items-center justify-center shadow-xs mb-0.5">
+              <Play className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-white text-white ml-0.5" />
             </div>
-            <span className="text-[9px] font-bold tracking-tight uppercase">
+            <span className="text-[8px] sm:text-[9px] font-bold tracking-tight uppercase">
               Reel
             </span>
           </button>
         )}
       </div>
 
-      {/* Main Viewport: Reduced height, 1:1 ratio matching square product assets */}
-      <div className="relative flex-1 aspect-square max-h-[480px] sm:max-h-[520px] lg:max-h-[530px] xl:max-h-[550px] w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#FAF8E8]/60 border border-black/5 shadow-xs">
+      {/* Main Viewport: Balanced height & true 1:1 square ratio preventing cropping */}
+      <div className="relative flex-1 aspect-square w-full max-w-[420px] sm:max-w-[450px] md:max-w-[470px] lg:max-w-[470px] xl:max-w-[490px] max-h-[420px] sm:max-h-[450px] md:max-h-[470px] lg:max-h-[470px] xl:max-h-[490px] rounded-2xl sm:rounded-3xl overflow-hidden bg-[#FAF8E8]/60 border border-black/5 shadow-xs">
         {/* Floating Badges */}
         <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 z-20 flex flex-col gap-2 items-start pointer-events-none">
           {discount && (

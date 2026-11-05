@@ -3,22 +3,29 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Heart, ShoppingBag, User, Menu, X, ChevronRight, Sparkles, Package, Coins, LogOut } from "lucide-react";
+import { Search, Heart, ShoppingBag, User, Menu, X, ChevronRight, Sparkles, Package, Coins, LogOut, Bell } from "lucide-react";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { LogoutModal } from "@/components/profile/LogoutModal";
+import { NotificationDropdown } from "@/components/notifications/NotificationDropdown";
 import { useScrollLock } from "@/lib/scroll-lock";
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(3);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const profileContainerRef = useRef<HTMLDivElement>(null);
+  const notificationContainerRef = useRef<HTMLDivElement>(null);
+  const notificationDropdownRef = useRef<HTMLDivElement>(null);
   const profileTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleProfileMouseEnter = () => {
@@ -68,6 +75,36 @@ export const Header: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [searchOpen]);
+
+  // Click outside & Escape key to close notifications dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const clickedTarget = event.target as Node;
+      if (
+        notificationDropdownRef.current &&
+        !notificationDropdownRef.current.contains(clickedTarget) &&
+        notificationContainerRef.current &&
+        !notificationContainerRef.current.contains(clickedTarget)
+      ) {
+        setNotificationOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setNotificationOpen(false);
+      }
+    };
+
+    if (notificationOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [notificationOpen]);
 
   const navLinks = [
     { label: "New Arrivals", href: "/#new-arrivals" },
@@ -191,6 +228,24 @@ export const Header: React.FC = () => {
                   <Search className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2]" />
                 </button>
 
+                {/* Mobile Notifications Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNotificationOpen((prev) => !prev);
+                    setMobileSearchOpen(false);
+                  }}
+                  className={`lg:hidden relative p-1 sm:p-1.5 rounded-full text-black hover:bg-black/5 hover:text-brand-primary transition-colors cursor-pointer shrink-0 ${
+                    notificationOpen ? "bg-black/5 text-brand-primary" : ""
+                  }`}
+                  aria-label="Open Notifications"
+                >
+                  <Bell className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2]" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-[#DC5513] ring-1.5 ring-white" />
+                  )}
+                </button>
+
                 {/* Wishlist Icon (Desktop only) */}
                 <Link
                   href="/wishlist"
@@ -199,6 +254,33 @@ export const Header: React.FC = () => {
                 >
                   <Heart className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2]" />
                 </Link>
+
+                {/* Notifications Icon (Desktop only) */}
+                <div
+                  ref={notificationContainerRef}
+                  className="hidden lg:block relative"
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNotificationOpen((prev) => !prev);
+                      setProfileDropdownOpen(false);
+                    }}
+                    className={`relative p-1.5 sm:p-2 rounded-full transition-colors shrink-0 cursor-pointer flex items-center justify-center ${
+                      notificationOpen
+                        ? "bg-black/5 text-brand-primary"
+                        : "text-black hover:bg-black/5 hover:text-brand-primary"
+                    }`}
+                    aria-label="Open Notifications"
+                  >
+                    <Bell className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2]" />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-0.5 right-0.5 min-w-4 h-4 px-1 rounded-full bg-[#DC5513] text-white text-[9px] font-bold flex items-center justify-center shadow-xs">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </button>
+                </div>
 
                 {/* Shopping Bag / Cart (Desktop only) */}
                 <Link
@@ -234,6 +316,23 @@ export const Header: React.FC = () => {
               </div>
             </div>
           </LiquidGlass>
+
+          {/* Notifications Dropdown (Positioned outside LiquidGlass to prevent overflow-hidden clipping) */}
+          <div
+            ref={notificationDropdownRef}
+            className={`absolute top-full pt-2 right-2 sm:right-6 md:right-8 lg:right-24 xl:right-28 z-[999] transition-all duration-200 ease-out origin-top-right ${
+              notificationOpen
+                ? "opacity-100 visible translate-y-0 pointer-events-auto"
+                : "opacity-0 invisible -translate-y-2 pointer-events-none"
+            }`}
+          >
+            <NotificationDropdown
+              isOpen={notificationOpen}
+              onClose={() => setNotificationOpen(false)}
+              unreadCount={unreadCount}
+              setUnreadCount={setUnreadCount}
+            />
+          </div>
 
           {/* Desktop Profile Dropdown (Positioned outside LiquidGlass to prevent overflow-hidden clipping) */}
           <div
@@ -301,7 +400,7 @@ export const Header: React.FC = () => {
                   type="button"
                   onClick={() => {
                     setProfileDropdownOpen(false);
-                    alert("Logged out successfully");
+                    setLogoutModalOpen(true);
                   }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer text-left"
                 >
@@ -409,6 +508,23 @@ export const Header: React.FC = () => {
               </span>
 
               <Link
+                href="/orders"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3 rounded-2xl hover:bg-[#FAF8E8] text-neutral-800 hover:text-[#0D03AE] font-semibold text-sm transition-colors group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Package className="w-4 h-4 text-[#0D03AE]" />
+                  <span>My Orders &amp; Delivery</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="px-2 py-0.5 rounded-full bg-[#EDE5FA] text-[#0D03AE] text-[10px] font-bold">
+                    Track
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:translate-x-0.5 group-hover:text-[#0D03AE] transition-transform" />
+                </div>
+              </Link>
+
+              <Link
                 href="/profile"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-between p-3 rounded-2xl hover:bg-[#FAF8E8] text-neutral-800 hover:text-[#0D03AE] font-semibold text-sm transition-colors group"
@@ -431,6 +547,27 @@ export const Header: React.FC = () => {
                 </div>
                 <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:translate-x-0.5 group-hover:text-[#0D03AE] transition-transform" />
               </Link>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setNotificationOpen(true);
+                }}
+                className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-[#FAF8E8] text-neutral-800 hover:text-[#0D03AE] font-semibold text-sm transition-colors group cursor-pointer text-left"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Bell className="w-4 h-4 text-[#0D03AE]" />
+                  <span>Notifications</span>
+                </div>
+                {unreadCount > 0 ? (
+                  <span className="px-2 py-0.5 rounded-full bg-[#DC5513] text-white text-[10px] font-bold">
+                    {unreadCount} New
+                  </span>
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:translate-x-0.5 group-hover:text-[#0D03AE] transition-transform" />
+                )}
+              </button>
             </div>
 
             {/* Bottom Promo Card */}
@@ -455,6 +592,12 @@ export const Header: React.FC = () => {
 
       {/* Cart Drawer */}
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+
+      {/* Logout Confirmation Modal */}
+      <LogoutModal
+        isOpen={logoutModalOpen}
+        onClose={() => setLogoutModalOpen(false)}
+      />
 
       {/* Mobile Search Bottom Sheet */}
       {mobileSearchOpen && (

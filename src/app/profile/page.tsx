@@ -18,6 +18,7 @@ import {
   AlertTriangle,
   Sparkles,
   Camera,
+  Package,
 } from "lucide-react";
 import { useScrollLock } from "@/lib/scroll-lock";
 
@@ -164,8 +165,8 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fffcf6] pt-28 sm:pt-32 pb-16 sm:pb-24 font-secondary">
-      <div className="w-full max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#fffcf6] pt-28 sm:pt-32 pb-36 sm:pb-28 lg:pb-24 font-secondary">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Navigation Breadcrumb / Back button */}
         <div className="flex items-center gap-2 text-xs sm:text-sm text-neutral-500 mb-6 font-jost">
           <Link
@@ -180,13 +181,23 @@ export default function ProfilePage() {
         </div>
 
         {/* Page Title & Tagline */}
-        <div className="mb-8 pb-4 border-b border-[#E7DEC8]">
-          <h1 className="font-primary text-3xl sm:text-4xl text-neutral-900">
-            Account &amp; Family Settings
-          </h1>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-jost">
-            Manage your personal profile details, baby sizing profiles, and account preferences.
-          </p>
+        <div className="mb-8 pb-4 border-b border-[#E7DEC8] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="font-primary text-3xl sm:text-4xl text-neutral-900">
+              Account &amp; Family Settings
+            </h1>
+            <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-jost">
+              Manage your personal profile details, baby sizing profiles, and account preferences.
+            </p>
+          </div>
+
+          <Link
+            href="/orders"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FAF8E8] hover:bg-[#0D03AE] border border-[#E7DEC8] hover:border-[#0D03AE] text-neutral-800 hover:text-white text-xs font-bold transition-all shadow-2xs font-jost self-start sm:self-auto group"
+          >
+            <Package className="w-3.5 h-3.5 text-[#0D03AE] group-hover:text-white transition-colors" />
+            <span>My Orders &amp; Delivery History &rarr;</span>
+          </Link>
         </div>
 
         <div className="space-y-8 font-jost">
@@ -254,7 +265,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Form Input Fields */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wide mb-1.5">
                     Full Name
@@ -353,7 +364,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Kids Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4.5">
               {kids.map((kid) => {
                 const isSelected = selectedKidId === kid.id;
 
