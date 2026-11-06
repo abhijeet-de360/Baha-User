@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Heart, ShoppingBag, User, Menu, X, ChevronRight, Sparkles, Package, Coins, LogOut, Bell } from "lucide-react";
+import { Search, Heart, ShoppingBag, User, Menu, X, ChevronRight, Sparkles, Package, Coins, LogOut, Bell, LogIn } from "lucide-react";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { LogoutModal } from "@/components/profile/LogoutModal";
@@ -315,6 +315,17 @@ export const Header: React.FC = () => {
                     <User className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2]" />
                   </Link>
                 </div>
+
+                {/* Login Icon (Beside Profile, no action) */}
+                <button
+                  type="button"
+                  onClick={(e) => e.preventDefault()}
+                  className="hidden lg:flex p-1.5 sm:p-2 rounded-full text-black hover:bg-black/5 hover:text-brand-primary transition-colors shrink-0 cursor-pointer items-center justify-center"
+                  aria-label="Login"
+                  title="Login"
+                >
+                  <LogIn className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2]" />
+                </button>
               </div>
             </div>
           </LiquidGlass>
