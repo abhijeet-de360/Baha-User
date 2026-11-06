@@ -35,7 +35,7 @@ export function StickyMobileCart({ product }: StickyMobileCartProps) {
   if (!visible) return null;
 
   return (
-    <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-black/10 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] animate-in slide-in-from-bottom duration-300 font-secondary">
+    <div className="lg:hidden fixed bottom-[calc(70px+env(safe-area-inset-bottom))] inset-x-3 z-40 bg-white/95 backdrop-blur-md border border-black/10 rounded-2xl px-4 py-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)] animate-in slide-in-from-bottom duration-300 font-secondary">
       <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
         {/* Product Tiny Meta */}
         <div className="flex items-center gap-2.5 min-w-0">

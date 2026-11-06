@@ -9,21 +9,25 @@ import { ProductReviews } from "@/components/product/ProductReviews";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { StickyMobileCart } from "@/components/product/StickyMobileCart";
 
-// Static fallback single product
-const SINGLE_PRODUCT = PRODUCTS[0];
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
-export const metadata: Metadata = {
-  title: `${SINGLE_PRODUCT.name} — Baha Kids`,
-  description: SINGLE_PRODUCT.tagline,
-  openGraph: {
-    title: `${SINGLE_PRODUCT.name} | Baha Kids`,
-    description: SINGLE_PRODUCT.tagline,
-    images: [{ url: SINGLE_PRODUCT.images[0] }],
-  },
-};
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const product = PRODUCTS[0];
+  return {
+    title: `${product.name} — Baha Kids`,
+    description: product.tagline,
+    openGraph: {
+      title: `${product.name} | Baha Kids`,
+      description: product.tagline,
+      images: [{ url: product.images[0] }],
+    },
+  };
+}
 
-export default function ProductDetailPage() {
-  const product = SINGLE_PRODUCT;
+export default async function ProductDetailPage({ params }: PageProps) {
+  const product = PRODUCTS[0];
   const relatedProducts = getRelatedProducts(product.id, 4);
 
   return (
