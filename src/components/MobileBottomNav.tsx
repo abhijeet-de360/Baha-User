@@ -80,8 +80,8 @@ function MobileBottomNavInner() {
     <>
       <nav aria-label="Mobile Navigation" className="fixed inset-x-0 bottom-0 z-50 font-jost pointer-events-auto lg:hidden">
         <div className="relative mx-3 mb-2.5 pb-[max(0px,env(safe-area-inset-bottom))]">
-          <LiquidGlass radius={28} bevelDepth={100} scale={50} aberration={3} frost={0.5} tint={0.1}
-            className="border border-white/60 shadow-[0_8px_32px_0_rgba(13,3,174,0.12),inset_0_1px_1px_rgba(255,255,255,0.8)]"
+          <LiquidGlass radius={28} bevelDepth={16} scale={24} aberration={0} frost={0.4} tint={0.12}
+            className="border border-white/60 shadow-[0_8px_32px_0_rgba(13,3,174,0.12),inset_0_1px_1px_rgba(255,255,255,0.85)]"
             contentClassName="px-2 py-2">
             <div className="relative grid touch-none select-none grid-cols-5 cursor-grab active:cursor-grabbing [-webkit-touch-callout:none]"
               onPointerDownCapture={event => {
