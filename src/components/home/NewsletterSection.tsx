@@ -67,12 +67,14 @@ export default function NewsletterSection() {
           {/* Email Subscription Form Pill */}
           <form
             onSubmit={handleSubmit}
+            suppressHydrationWarning
             className="mt-6 sm:mt-7 w-full max-w-xl mx-auto"
           >
             <div className="relative flex items-center bg-white rounded-full p-1.5 sm:p-2 border-2 border-[#0D03AE]/15 shadow-[0_8px_25px_rgba(13,3,174,0.08)] hover:border-[#0D03AE]/30 transition-all">
               <input
                 type="email"
                 required
+                suppressHydrationWarning
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"

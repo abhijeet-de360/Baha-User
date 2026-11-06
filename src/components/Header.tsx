@@ -112,6 +112,7 @@ export const Header: React.FC = () => {
     { label: "Girls", href: "/#girls" },
     { label: "Baby", href: "/#baby" },
     { label: "Ethnic Wear", href: "/#ethnic-wear" },
+    { label: "Reels", href: "/reels" },
   ];
 
   return (
@@ -183,6 +184,7 @@ export const Header: React.FC = () => {
                     <input
                       ref={searchInputRef}
                       type="text"
+                      suppressHydrationWarning
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search styles..."
@@ -630,6 +632,7 @@ export const Header: React.FC = () => {
                 <input
                   ref={mobileSearchInputRef}
                   type="text"
+                  suppressHydrationWarning
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search dresses, rompers, baby sets..."

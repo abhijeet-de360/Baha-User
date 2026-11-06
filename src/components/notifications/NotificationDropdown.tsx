@@ -10,7 +10,6 @@ import {
   CheckCheck,
   Package,
   Trash2,
-  ExternalLink,
   Check,
   X,
 } from "lucide-react";
@@ -277,26 +276,6 @@ export function NotificationDropdown({
             </Link>
           ))
         )}
-      </div>
-
-      {/* Footer Bar */}
-      <div className="px-4 py-3 bg-[#FFFBF0] border-t border-[#E7DEC8] flex items-center justify-between text-xs font-bold shrink-0">
-        <Link
-          href="/orders"
-          onClick={onClose}
-          className="text-[#0D03AE] hover:text-[#DC5513] transition-colors flex items-center gap-1"
-        >
-          <span>Track Orders</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </Link>
-
-        <Link
-          href="/profile"
-          onClick={onClose}
-          className="text-neutral-500 hover:text-neutral-900 transition-colors"
-        >
-          Notification Settings &rarr;
-        </Link>
       </div>
     </div>
   );

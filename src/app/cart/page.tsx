@@ -281,9 +281,10 @@ export default function CartPage() {
                   <Tag className="w-4 h-4 text-[#DC5513]" />
                   <span>Coupons &amp; Offers</span>
                 </h3>
-                <form onSubmit={handleApplyPromo} className="flex gap-2">
+                <form onSubmit={handleApplyPromo} suppressHydrationWarning className="flex gap-2">
                   <input
                     type="text"
+                    suppressHydrationWarning
                     value={promoCode}
                     onChange={(e) => setPromoCode(e.target.value)}
                     placeholder="Enter code (e.g. BAHA50)"

@@ -10,7 +10,7 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 const items = [
   { label: "Home", href: "/", icon: Home },
   { label: "Products", href: "/products", icon: Shirt },
-  { label: "Reels", href: "/#reels", icon: Clapperboard },
+  { label: "Reels", href: "/reels", icon: Clapperboard },
   { label: "Cart", href: "/cart", icon: ShoppingBag },
   { label: "Profile", href: "/profile", icon: User },
 ] as const;
@@ -40,14 +40,14 @@ function MobileBottomNavInner() {
     ? 1
     : pathname.startsWith("/profile")
     ? 4
-    : pathname === "/" && hash === "#reels"
+    : pathname.startsWith("/reels") || (pathname === "/" && hash === "#reels")
     ? 2
     : 0;
   const position = dragPosition ?? active;
   const highlighted = Math.round(position);
 
   const activate = (index: number, navigate = true) => {
-    setHash(index === 2 ? "#reels" : "");
+    setHash(index === 2 && items[index].href.includes("#reels") ? "#reels" : "");
     const href = items[index].href;
     if (navigate && href) router.push(href);
   };

@@ -252,7 +252,7 @@ export default function WatchAndShopSection({
     >
       <div className="w-full max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Headline */}
-        <div className="watch-shop-header text-center mb-8 sm:mb-10 md:mb-12 flex flex-col items-center justify-center opacity-0">
+        <div className="watch-shop-header text-center mb-8 sm:mb-10 md:mb-12 flex flex-col items-center justify-center opacity-0 font-jost">
           <h2 className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
             <span className="font-['Didot',_'Playfair_Display',_'Times_New_Roman',_Georgia,_serif] italic font-semibold text-2xl sm:text-3xl md:text-4xl text-[#0D03AE] leading-tight tracking-tight">
               Watch, Play &amp; Shop The
@@ -261,6 +261,12 @@ export default function WatchAndShopSection({
               Look
             </span>
           </h2>
+          <Link
+            href="/reels"
+            className="mt-2.5 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#FAF8E8] border border-[#E7DEC8] text-xs font-bold text-[#DC5513] hover:text-[#0D03AE] hover:border-[#0D03AE] transition-all shadow-2xs"
+          >
+            <span>View All Shoppable Reels &rarr;</span>
+          </Link>
         </div>
 
         {/* 5-Column Grid: 2 on mobile, 3 on sm, 5 on lg */}
