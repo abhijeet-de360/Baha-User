@@ -255,7 +255,7 @@ export const Header: React.FC = () => {
                   aria-label="Wishlist"
                 >
                   <Heart className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2]" />
-                </Link>
+                </Link> 
 
                 {/* Notifications Icon (Desktop only) */}
                 <div
