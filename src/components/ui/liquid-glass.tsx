@@ -138,8 +138,8 @@ export function LiquidGlass({
       data-refract={mode === "pending" && filter ? "true" : "false"}
       className={cn(
         "relative overflow-hidden",
-        mode === "simple" && "bg-white/70 dark:bg-neutral-900/60",
-        mode === "opaque" && "bg-white dark:bg-neutral-900",
+        mode === "simple" && "bg-white/60 backdrop-blur-md",
+        mode === "opaque" && "bg-white/90 backdrop-blur-lg",
         className,
       )}
       style={{
@@ -148,14 +148,14 @@ export function LiquidGlass({
       }}
       {...rest}
     >
-      {/* Base Layer: Instant Glass Backdrop (rendered on Frame 0) */}
+      {/* Base Layer: Instant Glass Backdrop (rendered on Frame 0 and as iOS frosted fallback) */}
       <div
         className="pointer-events-none absolute inset-0 -z-20 transition-opacity duration-700 ease-out"
         style={{
           borderRadius: radius,
-          backgroundColor: `rgb(255 255 255 / ${Math.max(tint, 0.2)})`,
-          backdropFilter: "blur(20px) saturate(1.4)",
-          WebkitBackdropFilter: "blur(20px) saturate(1.4)",
+          backgroundColor: `rgb(255 255 255 / ${Math.max(tint, 0.18)})`,
+          backdropFilter: "blur(12px) saturate(1.8) brightness(1.04)",
+          WebkitBackdropFilter: "blur(12px) saturate(1.8) brightness(1.04)",
           opacity: isReady && filter ? 0 : 1,
         }}
       />

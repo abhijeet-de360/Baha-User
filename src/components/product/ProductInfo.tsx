@@ -232,7 +232,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
       {/* Quantity & CTA Buttons */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-8">
         {/* Quantity Stepper */}
-        <div className="flex items-center justify-between border border-neutral-200 rounded-2xl p-1 bg-white sm:w-36 shrink-0 h-13 shadow-2xs">
+        <div className="flex items-center justify-between border border-neutral-200 rounded-2xl p-1 bg-white sm:w-36 shrink-0 h-[52px] shadow-2xs">
           <button
             type="button"
             onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -259,7 +259,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
         <button
           type="button"
           onClick={handleAddToCart}
-          className={`flex-1 h-13 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md ${
+          className={`w-full sm:flex-1 h-[52px] min-h-[52px] px-6 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shrink-0 ${
             addedToCart
               ? "bg-emerald-600 text-white"
               : "bg-[#DC5513] hover:bg-[#c2460c] active:scale-98 text-white"
@@ -283,7 +283,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
             handleAddToCart();
             // In a full flow this would navigate to checkout
           }}
-          className="h-13 px-6 rounded-2xl bg-[#0D03AE] hover:bg-[#0a028a] active:scale-98 text-white font-semibold text-sm flex items-center justify-center transition-all cursor-pointer shadow-md shrink-0"
+          className="w-full sm:w-auto h-[52px] min-h-[52px] px-8 rounded-2xl bg-[#0D03AE] hover:bg-[#0a028a] active:scale-98 text-white font-semibold text-sm flex items-center justify-center transition-all cursor-pointer shadow-md shrink-0"
         >
           Buy Now
         </button>

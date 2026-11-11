@@ -13,15 +13,11 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export function generateStaticParams() {
-  return PRODUCTS.map((product) => ({
-    id: String(product.id),
-  }));
-}
+
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  const product = getProductById(id) || PRODUCTS[0];
+  const product =  PRODUCTS[0];
 
   return {
     title: `${product.name} — Baha Kids`,

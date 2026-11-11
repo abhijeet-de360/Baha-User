@@ -8,6 +8,7 @@ import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { LogoutModal } from "@/components/profile/LogoutModal";
 import { NotificationDropdown } from "@/components/notifications/NotificationDropdown";
+import { LoginModal } from "@/components/auth/LoginModal";
 import { useScrollLock } from "@/lib/scroll-lock";
 
 export const Header: React.FC = () => {
@@ -18,6 +19,7 @@ export const Header: React.FC = () => {
   const [unreadCount, setUnreadCount] = useState(3);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -107,11 +109,11 @@ export const Header: React.FC = () => {
   }, [notificationOpen]);
 
   const navLinks = [
-    { label: "New Arrivals", href: "/#new-arrivals" },
-    { label: "Boys", href: "/#boys" },
-    { label: "Girls", href: "/#girls" },
-    { label: "Baby", href: "/#baby" },
-    { label: "Ethnic Wear", href: "/#ethnic-wear" },
+    { label: "New Arrivals", href: "/products" },
+    { label: "Boys", href: "/products?gender=Boys" },
+    { label: "Girls", href: "/products?gender=Girls" },
+    { label: "Baby", href: "/products?category=Baby" },
+    { label: "Ethnic Wear", href: "/products?category=Ethnic%20Wear" },
     { label: "Reels", href: "/reels" },
   ];
 
@@ -316,13 +318,13 @@ export const Header: React.FC = () => {
                   </Link>
                 </div>
 
-                {/* Login Icon (Beside Profile, no action) */}
+                {/* Login Icon (Beside Profile) */}
                 <button
                   type="button"
-                  onClick={(e) => e.preventDefault()}
+                  onClick={() => setLoginModalOpen(true)}
                   className="hidden lg:flex p-1.5 sm:p-2 rounded-full text-black hover:bg-black/5 hover:text-brand-primary transition-colors shrink-0 cursor-pointer items-center justify-center"
                   aria-label="Login"
-                  title="Login"
+                  title="Sign In / Login"
                 >
                   <LogIn className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2]" />
                 </button>
@@ -565,6 +567,21 @@ export const Header: React.FC = () => {
                 type="button"
                 onClick={() => {
                   setMobileMenuOpen(false);
+                  setLoginModalOpen(true);
+                }}
+                className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-[#FAF8E8] text-neutral-800 hover:text-[#0D03AE] font-semibold text-sm transition-colors group cursor-pointer text-left"
+              >
+                <div className="flex items-center gap-2.5">
+                  <LogIn className="w-4 h-4 text-[#0D03AE]" />
+                  <span>Sign In / Login</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:translate-x-0.5 group-hover:text-[#0D03AE] transition-transform" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
                   setNotificationOpen(true);
                 }}
                 className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-[#FAF8E8] text-neutral-800 hover:text-[#0D03AE] font-semibold text-sm transition-colors group cursor-pointer text-left"
@@ -610,6 +627,12 @@ export const Header: React.FC = () => {
       <LogoutModal
         isOpen={logoutModalOpen}
         onClose={() => setLogoutModalOpen(false)}
+      />
+
+      {/* Login / Auth Modal */}
+      <LoginModal
+        isOpen={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
       />
 
       {/* Mobile Search Bottom Sheet */}

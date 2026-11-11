@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   SlidersHorizontal,
   X,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { PRODUCTS, Product } from "@/data/products";
+import { useScrollLock } from "@/lib/scroll-lock";
 
 function CatalogProductCard({
   product,
@@ -157,13 +159,45 @@ function CatalogProductCard({
   );
 }
 
-export default function ProductsPage() {
+function ProductsContent() {
+  const searchParams = useSearchParams();
   const [selectedGender, setSelectedGender] = useState<string>("All");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [selectedSize, setSelectedSize] = useState<string>("All");
   const [selectedColor, setSelectedColor] = useState<string>("All");
   const [sortBy, setSortBy] = useState<string>("featured");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+
+  // Lock body/Lenis scroll while mobile filter drawer is open
+  useScrollLock(mobileFilterOpen);
+
+  // Close drawer on ESC key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileFilterOpen(false);
+    };
+    if (mobileFilterOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [mobileFilterOpen]);
+
+  // Sync with URL query parameters (e.g. ?gender=Boys, ?category=Baby)
+  useEffect(() => {
+    const genderParam = searchParams.get("gender");
+    const categoryParam = searchParams.get("category");
+    const sizeParam = searchParams.get("size");
+
+    if (genderParam) {
+      setSelectedGender(genderParam);
+    }
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    }
+    if (sizeParam) {
+      setSelectedSize(sizeParam);
+    }
+  }, [searchParams]);
 
   // Accordion Expand/Collapse States (1st section Color open by default, rest closed)
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({
@@ -603,38 +637,57 @@ function FilterContent({
 
         {/* Mobile Filter Slide-over Drawer */}
         {mobileFilterOpen && (
-          <div className="fixed inset-0 z-50 lg:hidden flex justify-end bg-black/40 backdrop-blur-xs">
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed inset-0 z-[120] lg:hidden flex justify-end"
+          >
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+              onClick={() => setMobileFilterOpen(false)}
+              aria-hidden="true"
+            />
+
+            {/* Slide-over Drawer Panel */}
             <div
               data-lenis-prevent="true"
-              className="w-full max-w-xs h-full bg-[#fffcf6] p-6 shadow-2xl flex flex-col justify-between overflow-y-auto overscroll-contain"
+              className="relative w-full max-w-xs sm:max-w-sm h-full bg-[#fffcf6] shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-300 font-jost"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div>
-                <div className="flex items-center justify-between pb-4 border-b border-[#E7DEC8] mb-5">
-                  <div className="flex items-center gap-2 text-[#0D03AE]">
-                    <SlidersHorizontal className="w-4 h-4" />
-                    <h2 className="font-primary text-xl">Filter Styles</h2>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {hasActiveFilters && (
-                      <button
-                        type="button"
-                        onClick={resetFilters}
-                        className="text-xs font-semibold text-[#DC5513] hover:underline cursor-pointer"
-                      >
-                        Reset
-                      </button>
-                    )}
+              {/* Pinned Header */}
+              <div className="p-5 pb-4 border-b border-[#E7DEC8] flex items-center justify-between shrink-0 bg-[#fffcf6]">
+                <div className="flex items-center gap-2 text-[#0D03AE]">
+                  <SlidersHorizontal className="w-4 h-4" />
+                  <h2 className="font-primary text-xl">Filter Styles</h2>
+                </div>
+                <div className="flex items-center gap-2">
+                  {hasActiveFilters && (
                     <button
                       type="button"
-                      onClick={() => setMobileFilterOpen(false)}
-                      className="w-8 h-8 rounded-full border border-[#E7DEC8] flex items-center justify-center text-neutral-500 hover:text-neutral-900 cursor-pointer"
-                      aria-label="Close filters"
+                      onClick={resetFilters}
+                      className="text-xs font-semibold text-[#DC5513] hover:underline cursor-pointer"
                     >
-                      <X className="w-4 h-4" />
+                      Reset
                     </button>
-                  </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setMobileFilterOpen(false)}
+                    className="w-8 h-8 rounded-full border border-[#E7DEC8] flex items-center justify-center text-neutral-500 hover:text-neutral-900 cursor-pointer transition-colors"
+                    aria-label="Close filters"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
+              </div>
 
+              {/* Scrollable Filters Body */}
+              <div
+                data-lenis-prevent="true"
+                className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 py-4"
+                style={{ touchAction: "pan-y" }}
+              >
                 <FilterContent
                   openSections={openSections}
                   toggleSection={toggleSection}
@@ -653,11 +706,12 @@ function FilterContent({
                 />
               </div>
 
-              <div className="pt-6 mt-6 border-t border-[#E7DEC8]">
+              {/* Pinned Action Footer */}
+              <div className="p-5 pt-3.5 border-t border-[#E7DEC8] bg-[#fffcf6] shrink-0 pb-[max(20px,env(safe-area-inset-bottom))]">
                 <button
                   type="button"
                   onClick={() => setMobileFilterOpen(false)}
-                  className="w-full py-3 rounded-full bg-[#0D03AE] text-white font-primary text-base shadow-sm"
+                  className="w-full py-3.5 rounded-full bg-[#0D03AE] hover:bg-[#090280] active:scale-[0.98] text-white font-primary text-base shadow-md transition-all cursor-pointer flex items-center justify-center font-medium"
                 >
                   Show {filteredProducts.length} Results
                 </button>
@@ -667,5 +721,13 @@ function FilterContent({
         )}
       </main>
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={null}>
+      <ProductsContent />
+    </Suspense>
   );
 }
