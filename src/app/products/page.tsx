@@ -460,7 +460,7 @@ function FilterContent({
   return (
     <div className="w-full min-h-screen bg-[#fffcf6] font-secondary">
       {/* Main Content Area */}
-      <main className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 pt-24 sm:pt-28 md:pt-32 pb-36 sm:pb-28 lg:pb-16">
+      <main className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 pt-24 sm:pt-28 md:pt-32 pb-48 sm:pb-32 lg:pb-16">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-neutral-400 mb-6">
           <Link href="/" className="hover:text-[#0D03AE] transition-colors">
@@ -597,6 +597,9 @@ function FilterContent({
             )}
           </div>
         </div>
+
+        {/* Dedicated Mobile Spacer to prevent overlap with floating bottom nav */}
+        <div className="h-24 lg:hidden" aria-hidden="true" />
 
         {/* Mobile Filter Slide-over Drawer */}
         {mobileFilterOpen && (

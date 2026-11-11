@@ -141,7 +141,7 @@ export default function OurStoryPage() {
   const [activeFeature, setActiveFeature] = useState(0);
 
   return (
-    <div className="min-h-screen bg-[#fffcf6] text-[#292240] pt-24 sm:pt-28 pb-36 sm:pb-28 lg:pb-24 px-4 sm:px-6 lg:px-12 select-none overflow-x-hidden font-secondary">
+    <div className="min-h-screen bg-[#fffcf6] text-[#292240] pt-24 sm:pt-28 pb-48 sm:pb-32 lg:pb-24 px-4 sm:px-6 lg:px-12 select-none overflow-x-hidden font-secondary">
       <div className="w-full max-w-[1600px] mx-auto space-y-16 sm:space-y-24">
         {/* ========================================================= */}
         {/* BREADCRUMB & HERO HEADER */}
@@ -748,6 +748,9 @@ export default function OurStoryPage() {
             </div>
           </div>
         </section>
+
+        {/* Dedicated Mobile Spacer to prevent overlap with floating bottom nav */}
+        <div className="h-24 lg:hidden" aria-hidden="true" />
       </div>
     </div>
   );

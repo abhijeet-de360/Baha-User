@@ -80,7 +80,7 @@ export default function MyOrdersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fffcf6] pt-28 sm:pt-32 pb-36 sm:pb-28 lg:pb-20 font-secondary text-neutral-800">
+    <div className="min-h-screen bg-[#fffcf6] pt-28 sm:pt-32 pb-48 sm:pb-32 lg:pb-20 font-secondary text-neutral-800">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center gap-2 text-xs sm:text-sm text-neutral-500 mb-6 font-jost">
@@ -720,6 +720,9 @@ export default function MyOrdersPage() {
             ) : null}
           </div>
         </div>
+
+        {/* Dedicated Mobile Spacer to prevent overlap with floating bottom nav */}
+        <div className="h-24 lg:hidden" aria-hidden="true" />
       </div>
 
       {/* Web Live Milestone Tracking Modal */}

@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import { PRODUCTS, getRelatedProducts } from "@/data/products";
+import { PRODUCTS, getProductById, getRelatedProducts } from "@/data/products";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductInfo } from "@/components/product/ProductInfo";
 import { VirtualTryOn } from "@/components/product/VirtualTryOn";
@@ -9,27 +9,40 @@ import { ProductReviews } from "@/components/product/ProductReviews";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { StickyMobileCart } from "@/components/product/StickyMobileCart";
 
-// Static fallback single product
-const SINGLE_PRODUCT = PRODUCTS[0];
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
-export const metadata: Metadata = {
-  title: `${SINGLE_PRODUCT.name} — Baha Kids`,
-  description: SINGLE_PRODUCT.tagline,
-  openGraph: {
-    title: `${SINGLE_PRODUCT.name} | Baha Kids`,
-    description: SINGLE_PRODUCT.tagline,
-    images: [{ url: SINGLE_PRODUCT.images[0] }],
-  },
-};
+export function generateStaticParams() {
+  return PRODUCTS.map((product) => ({
+    id: String(product.id),
+  }));
+}
 
-export default function ProductDetailPage() {
-  const product = SINGLE_PRODUCT;
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const product = getProductById(id) || PRODUCTS[0];
+
+  return {
+    title: `${product.name} — Baha Kids`,
+    description: product.tagline,
+    openGraph: {
+      title: `${product.name} | Baha Kids`,
+      description: product.tagline,
+      images: [{ url: product.images[0] }],
+    },
+  };
+}
+
+export default async function ProductDetailPage({ params }: PageProps) {
+  const { id } = await params;
+  const product = getProductById(id) || PRODUCTS[0];
   const relatedProducts = getRelatedProducts(product.id, 4);
 
   return (
     <div className="w-full min-h-screen bg-white">
       {/* Main Content Container with Top Offset for Floating Liquid Glass Header */}
-      <main className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 lg:pt-36 pb-36 sm:pb-28 lg:pb-24">
+      <main className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 lg:pt-36 pb-48 sm:pb-32 lg:pb-24">
         {/* Top 2-Column Product Stage */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 xl:gap-14 items-start">
           {/* Left Column: Multi-Image Gallery, Reel Video & Virtual Try-On */}
@@ -63,6 +76,9 @@ export default function ProductDetailPage() {
 
         {/* Related Products / More You'll Love */}
         <RelatedProducts products={relatedProducts} />
+
+        {/* Dedicated Mobile Spacer to prevent overlap with floating bottom nav */}
+        <div className="h-24 lg:hidden" aria-hidden="true" />
       </main>
 
       {/* Sticky Mobile Add To Bag Bar */}
@@ -70,4 +86,3 @@ export default function ProductDetailPage() {
     </div>
   );
 }
-

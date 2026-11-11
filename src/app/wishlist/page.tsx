@@ -102,7 +102,7 @@ export default function WishlistPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fffcf6] text-[#292240] pt-24 sm:pt-28 pb-36 sm:pb-28 lg:pb-20 px-4 sm:px-6 lg:px-12 select-none">
+    <div className="min-h-screen bg-[#fffcf6] text-[#292240] pt-24 sm:pt-28 pb-48 sm:pb-32 lg:pb-20 px-4 sm:px-6 lg:px-12 select-none">
       <div className="w-full max-w-[1600px] mx-auto">
         {/* Breadcrumb */}
         <nav className="mb-6 text-xs sm:text-sm text-[#786C65] flex items-center gap-2">
@@ -245,6 +245,9 @@ export default function WishlistPage() {
             ))}
           </div>
         )}
+
+        {/* Dedicated Mobile Spacer to prevent overlap with floating bottom nav */}
+        <div className="h-24 lg:hidden" aria-hidden="true" />
       </div>
     </div>
   );
